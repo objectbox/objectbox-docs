@@ -219,7 +219,7 @@ Flex
 
 ### Flex properties
 
-ObjectBox supports properties where the type is not known at compile time using `Object` in Java or `Any?` in Kotlin. These "flex properties" can store types like integers, floating point values, strings and byte arrays. Or lists and maps (using string keys) of those. Some limitations apply, see the [`FlexObjectConverter`](https://objectbox.io/docfiles/java/current/io/objectbox/converter/FlexObjectConverter.html) class documentation for details.
+ObjectBox supports properties where the type is not known at compile time using `Object` in Java or `Any?` in Kotlin. These "flex properties" can store types like integers, floating point values, strings and byte arrays. Or lists and maps (using string keys) of those. In the database these properties are stored as byte arrays. Some limitations apply, see the [FlexObjectConverter](https://objectbox.io/docfiles/java/current/io/objectbox/converter/FlexObjectConverter.html) class documentation for details.
 
 ```kotlin
 @Entity
@@ -238,9 +238,15 @@ val customerIntTag = Customer(tag = 1234)
 box.put(customerStrTag, customerIntTag)
 ```
 
+To override the default converter chosen by ObjectBox, use `@Convert`. For example to use another built-in `FlexObjectConverter` subclass:
 
+```kotlin
+// StringLongMapConverter restores any integers always as Long
+@Convert(converter = StringLongMapConverter::class, dbType = ByteArray::class)
+var stringMap: MutableMap<String, Any>? = null
+```
 
-To store any other type or to override the default behavior, configure a converter like shown below.
+You can also write a custom converter like shown below.
 
 ## Convert annotation and property converter
 
