@@ -235,7 +235,7 @@ val query = userBox
 {% tab title="Dart" %}
 ```dart
 // in ascending order, ignoring case
-final qBuilder = box.query(User_.firstName.equals('Joe').order(User_.lastName);
+final qBuilder = box.query(User_.firstName.equals('Joe')).order(User_.lastName);
 final query = qBuilder.build();
 ```
 {% endtab %}
