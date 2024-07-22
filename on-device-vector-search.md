@@ -9,7 +9,7 @@ description: >-
 
 
 {% hint style="info" %}
-Vector Search is currently only available for Python, Dart/Flutter and Java/Kotlin. Other languages will follow soon.
+Vector Search is currently only available for Python, Dart/Flutter, Java/Kotlin and Swift. Other languages will follow soon.
 {% endhint %}
 
 **Vector search** is the task of searching for objects whose vector is near to a given input query vector. Applications include semantic/similarity search (often performs better than full text search (FTS)), multi-modal search (text, images, video), recommendation engines and various use cases in AI.
@@ -115,6 +115,26 @@ data class City(
 )
 ```
 {% endtab %}
+
+{% tab title="Swift" %}
+```swift
+// objectbox: entity
+class City {
+    var id: Id = 0
+    
+    var name: String?
+    
+    // objectbox:hnswIndex: dimensions=2
+    var location: [Float]?    
+}
+
+// The syntax for all supported options is:
+// objectbox:hnswIndex: dimensions=2, neighborsPerNode=30, indexingSearchCount=100, flags="debugLogs", distanceType="euclidean", reparationBacklinkProbability=0.95, vectorCacheHintSizeKB=2097152
+
+// flags may be a comma-separated list of debugLogs, debugLogsDetailed, reparationLimitCandidates, vectorCacheSimdPaddingOff
+// distanceType may be one of euclidean, cosine, dotProduct, dotProductNonNormalized
+```
+{% endtab %}
 {% endtabs %}
 
 As a starting point the index configuration only needs the number of dimensions. To optimize the index, you can supply additional options via the annotation later once you got things up and running:
@@ -180,6 +200,17 @@ box.put(
     City(name = "Nairobi", location = floatArrayOf(-1.292066f, 36.821945f)),
     City(name = "Salzburg", location = floatArrayOf(47.809490f, 13.055010f))
 )
+```
+{% endtab %}
+
+{% tab title="Swift" %}
+```swift
+let box: Box<City> = store.box()
+try box.put([
+  City("Barcelona", [41.385063, 2.173404]),
+  City("Nairobi", [-1.292066, 36.821945]),
+  City("Salzburg", [47.809490, 13.055010]),
+])
 ```
 {% endtab %}
 {% endtabs %}
@@ -297,6 +328,34 @@ for (result in results) {
 val results = query.findWithScores()
 for (result in results) {
     println("City: ${result.get().id}, distance: ${result.score}")
+}
+```
+{% endtab %}
+
+{% tab title="Swift" %}
+```swift
+let madrid = [40.416775, -3.703790] // query vector
+// Prepare a Query object to search for the 2 closest neighbors:
+let query = try box
+    .query { City.location.nearestNeighbors(queryVector: madrid, maxCount: 2) }
+    .build()
+
+// Combine with other conditions as usual
+final query = box
+    .query { City.location.nearestNeighbors(queryVector: madrid, maxCount: 2)
+             && City.name.startsWith("B") }
+    .build()
+    
+// Retrieve IDs
+let results = try query.findIdsWithScores()
+for result in results {
+    print("City ID: \(result.id), distance: \(result.score)")
+}
+
+// Retrieve objects
+let results = try query.findWithScores()
+for result in results {
+    print("City: \(result.object.name), distance: \(result.score)")
 }
 ```
 {% endtab %}
