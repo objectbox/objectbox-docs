@@ -322,7 +322,7 @@ There is a slight difference if you require a one-to-many (1:N) or many-to-many 
 
 <figure><img src=".gitbook/assets/one-to-many-relations.png" alt="Onte-to-Many"><figcaption><p>One-to-Many (1:N)</p></figcaption></figure>
 
-To define a one-to-many relation, you need to annotate your relation property with @Backlink. It links back to a to-one relation in the target object. Using the customer and orders example, we can modify the customer class to have a to-many relation to the customer's orders:
+To define a one-to-many relation, you need to annotate your relation property with `@Backlink`. It links back to a to-one relation in the target object. Using the customer and orders example, we can modify the customer class to have a to-many relation to the customer's orders:
 
 {% tabs %}
 {% tab title="Java" %}
@@ -333,7 +333,6 @@ public class Customer {
     
     @Id public long id;
     
-    // 'to' is optional if only one relation matches.
     @Backlink(to = "customer")
     public ToMany<Order> orders;
     
@@ -364,7 +363,6 @@ public class Order {
 data class Customer(
         @Id var id: Long = 0
 ) {    
-    // 'to' is optional if only one relation matches.
     @Backlink(to = "customer")
     lateinit var orders: ToMany<Order>
 }
@@ -389,7 +387,6 @@ For Kotlin desktop (Linux, macOS, Windows) apps, additional code is required. Se
 class Customer {
   int id;
 
-  // target-field argument is optional if only one relation matches.
   @Backlink('customer')
   final orders = ToMany<Order>();
 }
@@ -405,7 +402,7 @@ class Order {
 {% endtabs %}
 
 {% hint style="info" %}
-The `@Backlink`  annotation tells ObjectBox which ToOne relation to use to populate the list of orders. If there would be multiple to-one relations using `Customer`  inside the `Order`  class, you would need to explicitly specify the name like  `@Backlink(to = "customer")` .
+The `@Backlink`  annotation tells ObjectBox which ToOne relation, here "customer", to use to populate the ToMany relation of Orders. As there may be multiple ToOne relations at some point using `Customer` inside the `Order` class, it is required to explicitly specify the name.
 {% endhint %}
 
 Let’s **add** some orders together with a new customer. `ToMany` implements the Java List interface, so we can simply add orders to it:
