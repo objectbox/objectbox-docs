@@ -25,7 +25,7 @@ The web app runs directly on your device or on your development machine. Behind 
 
 To run Admin on a desktop operating system, e.g. your development machine, you can launch ObjectBox Admin instantaneously using the official [ObjectBox Admin Docker image](https://hub.docker.com/r/objectboxio/admin) `objectboxio/admin`.\
 \
-This requires [Docker Engine](https://docs.docker.com/engine/) (Linux, Windows/WSL2) or [Docker Desktop](https://docs.docker.com/get-docker/) (Windows, macOS) capable of running a Linux/x86\_64 image.
+**This requires a running Docker Engine or Docker Desktop.** If not done, install and start [Docker Engine](https://docs.docker.com/engine/) (Linux, Windows/WSL2) or [Docker Desktop](https://docs.docker.com/get-docker/) (Windows, macOS) capable of running a Linux/x86\_64 image.
 
 {% tabs %}
 {% tab title="Bash Shell script" %}
