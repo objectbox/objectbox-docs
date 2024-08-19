@@ -442,7 +442,7 @@ ObjectBox supports these index types:
 
 ### Vector Index for Nearest Neighbor Search
 
-To enable nearest neighbors search, a special index type for vector properties is available. See this dedicated page:
+To enable nearest neighbor search, a special index type for vector properties is available:
 
 {% content-ref url="on-device-vector-search.md" %}
 [on-device-vector-search.md](on-device-vector-search.md)
