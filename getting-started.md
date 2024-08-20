@@ -22,16 +22,15 @@ You can get ObjectBox from [the Central repository](https://search.maven.org/). 
 {% code title="/build.gradle(.kts)" %}
 ```java
 buildscript {
-    ext.objectboxVersion = "4.0.1" // For Groovy build scripts
-    // val objectboxVersion by extra("4.0.1") // For KTS build scripts
+    ext.objectboxVersion = "4.0.2" // For Groovy build scripts
+    // val objectboxVersion by extra("4.0.2") // For KTS build scripts
     
     repositories {
         mavenCentral()
-        // Note: 2.9.0 and older are available on jcenter()
     }
     
     dependencies {
-        // Android Gradle Plugin 4.1.0 or later supported.
+        // Android Gradle Plugin 4.1.0 or later supported
         classpath("com.android.tools.build:gradle:8.1.0")
         classpath("io.objectbox:objectbox-gradle-plugin:$objectboxVersion")
     }
@@ -46,16 +45,16 @@ buildscript {
 // Using plugins syntax:
 plugins {
     id("com.android.application")
-    id("kotlin-android") // Only for Kotlin projects.
-    id("kotlin-kapt") // Only for Kotlin projects.
-    id("io.objectbox") // Apply last.
+    id("kotlin-android") // Only for Kotlin projects
+    id("kotlin-kapt") // Only for Kotlin projects
+    id("io.objectbox") // Apply last
 }
 
 // Or using the old apply syntax:
 apply plugin: "com.android.application"
-apply plugin: "kotlin-android" // Only for Kotlin projects.
-apply plugin: "kotlin-kapt" // Only for Kotlin projects.
-apply plugin: "io.objectbox" // Apply last.
+apply plugin: "kotlin-android" // Only for Kotlin projects
+apply plugin: "kotlin-kapt" // Only for Kotlin projects
+apply plugin: "io.objectbox" // Apply last
 ```
 {% endcode %}
 
@@ -88,12 +87,11 @@ To add the ObjectBox plugin:
 {% code title="/build.gradle(.kts)" %}
 ```groovy
 buildscript {
-    ext.objectboxVersion = "4.0.1" // For Groovy build scripts
-    // val objectboxVersion by extra("4.0.1") // For KTS build scripts
+    ext.objectboxVersion = "4.0.2" // For Groovy build scripts
+    // val objectboxVersion by extra("4.0.2") // For KTS build scripts
     
     repositories {
         mavenCentral()
-        // Note: 2.9.0 and older are available on jcenter()
     }
     
     dependencies {
