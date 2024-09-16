@@ -55,8 +55,8 @@ List<Object>
 {% endtab %}
 
 {% tab title="Kotlin" %}
-```java
-// The nullable variants are supported as well.
+```kotlin
+// The nullable variants are supported as well
 Boolean
 Int
 Short
@@ -69,9 +69,10 @@ String
 
 // Kotlin unsigned integer types
 // https://kotlinlang.org/docs/unsigned-integer-types.html
-// Stored as their signed Java equivalent
-// Need to annotate with @JvmName to make them visible to Java code
-// https://kotlinlang.org/docs/inline-classes.html#inline-classes-vs-type-aliases
+// are stored as their signed Java equivalent.
+// These are just Kotlin inline value classes, so to make their
+// getter visible to Java, need to annotate them with @JvmName.
+// https://kotlinlang.org/docs/inline-classes.html#calling-from-java-code
 @get:JvmName("getUnsignedByte")
 var unsignedByte: UByte = 0u
 @get:JvmName("getUnsignedShort")
@@ -80,6 +81,13 @@ var unsignedShort: UShort = 0u
 var unsignedInt: UInt = 0u
 @get:JvmName("getUnsignedLong")
 var unsignedLong: ULong = 0u
+
+// The same applies for other Kotlin inline value classes
+@JvmInline
+value class Custom(val i: Long)
+
+@get:JvmName("getCustom")
+var custom: Custom = Custom(0)
 
 // Strings
 Array<String>
