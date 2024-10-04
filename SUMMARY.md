@@ -32,5 +32,6 @@
 * [FAQ](faq.md)
 * [Troubleshooting](troubleshooting.md)
 * [Data Sync](https://objectbox.io/sync/)
-* [Java Release History (<= v1.5)](release-history.md)
 * [Swift Database for iOS](https://swift.objectbox.io/)
+* [C++ Database Docs](https://cpp.objectbox.io/)
+* [Java Release History (<= v1.5)](release-history.md)
