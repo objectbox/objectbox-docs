@@ -402,7 +402,7 @@ class Order {
 {% endtabs %}
 
 {% hint style="info" %}
-The `@Backlink`  annotation tells ObjectBox which ToOne relation, here "customer", to use to populate the ToMany relation of Orders. As there may be multiple ToOne relations at some point using `Customer` inside the `Order` class, it is required to explicitly specify the name.
+When using `@Backlink` it is recommended to explicitly specify the linked to relation using `to`. It is possible to omit this if there is only one matching relation. However, it helps with code readability and avoids a compile-time error if at any point another matching relation is added (in the above case, if another `ToOne<Customer>` is added to the Order class).
 {% endhint %}
 
 Let’s **add** some orders together with a new customer. `ToMany` implements the Java List interface, so we can simply add orders to it:
