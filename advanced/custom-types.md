@@ -237,10 +237,44 @@ Flex
 
 ### Flex properties
 
+{% hint style="info" %}
+Only Java/Kotlin
+{% endhint %}
+
 ObjectBox supports properties where the type is not known at compile time using `Object` in Java or `Any?` in Kotlin. These "flex properties" can store types like integers, floating point values, strings and byte arrays. Or lists and maps (using string keys) of those. In the database these properties are stored as byte arrays.&#x20;
 
 Some **important limitations** apply, see the [FlexObjectConverter](https://objectbox.io/docfiles/java/current/io/objectbox/converter/FlexObjectConverter.html) class documentation for details.
 
+{% tabs %}
+{% tab title="Java" %}
+```java
+@Entity
+public class Customer {
+    @Id long id;
+    // Stores any supported type at runtime
+    @Nullable Object tag;
+    // Or explicitly use a String map
+    @Nullable Map<String, Object> stringMap;
+    // Or a list
+    @Nullable List<Object> flexList;
+    
+    public Customer(Object tag) {
+        this.id = 0;
+        this.tag = tag;
+    }
+    
+    public Customer() {} // For ObjectBox
+    
+    // TODO getters and setters
+}
+
+Customer customerStrTag = new Customer("string-tag");
+Customer customerIntTag = new Customer(1234);
+box.put(customerStrTag, customerIntTag);
+```
+{% endtab %}
+
+{% tab title="Kotlin" %}
 ```kotlin
 @Entity
 data class Customer(
@@ -248,23 +282,36 @@ data class Customer(
     // Stores any supported type at runtime
     var tag: Any? = null,
     // Or explicitly use a String map
-    var stringMap: MutableMap<String, Any>? = null
+    var stringMap: MutableMap<String, Any?>? = null
     // Or a list
-    var flexList: MutableList<Any>? = null
+    var flexList: MutableList<Any?>? = null
 )
 
 val customerStrTag = Customer(tag = "string-tag")
 val customerIntTag = Customer(tag = 1234)
 box.put(customerStrTag, customerIntTag)
 ```
+{% endtab %}
+{% endtabs %}
 
 To **override the default converter** chosen by ObjectBox, use `@Convert`. For example to use another built-in `FlexObjectConverter` subclass:
 
+{% tabs %}
+{% tab title="Java" %}
+<pre class="language-java"><code class="lang-java">// StringLongMapConverter restores any integers always as Long
+@Convert(converter = StringLongMapConverter.class, dbType = byte[].class)
+<strong>@Nullable Map&#x3C;String, Object> stringMap;
+</strong></code></pre>
+{% endtab %}
+
+{% tab title="Kotlin" %}
 ```kotlin
 // StringLongMapConverter restores any integers always as Long
 @Convert(converter = StringLongMapConverter::class, dbType = ByteArray::class)
 var stringMap: MutableMap<String, Any>? = null
 ```
+{% endtab %}
+{% endtabs %}
 
 You can also write a custom converter like shown below.
 
