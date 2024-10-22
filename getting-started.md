@@ -189,7 +189,7 @@ For **ObjectBox Sync**, append the `--sync` argument to above command.
 
 ```yaml
 dependencies:
-  objectbox: ^4.0.2
+  objectbox: ^4.0.3
   objectbox_flutter_libs: any
   # For ObjectBox Sync this dependency should appear instead:
   # objectbox_sync_flutter_libs: any
@@ -254,7 +254,7 @@ dart pub add --dev build_runner objectbox_generator:any
 
 ```yaml
 dependencies:
-  objectbox: ^4.0.2
+  objectbox: ^4.0.3
 
 dev_dependencies:
   build_runner: ^2.0.0
