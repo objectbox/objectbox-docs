@@ -201,18 +201,6 @@ dev_dependencies:
 
 3. If you added the above lines manually, then install the packages with `flutter pub get`.
 
-**Flutter 3.19 or older:** For the **ObjectBox Sync**-enabled library, to build for Android, increase minSdkVersion to at least 21:
-
-```
-# /android/app/build.gradle
-android {
-    defaultConfig {
-        // ObjectBox Sync requires at least SDK 21 (Android 5.0)
-        minSdkVersion 21
-    }
-}    
-```
-
 {% hint style="info" %}
 **For all macOS apps** need to target macOS 10.15: in `Podfile` change the platform and in the `Runner.xcodeproj/poject.pbxproj` file update `MACOSX_DEPLOYMENT_TARGET`.
 
@@ -238,7 +226,21 @@ Then, in your app code, pass the same string when opening the Store. For example
 {% endhint %}
 
 {% hint style="info" %}
-**For iOS using Flutter 3.0 or older:** increase the deployment target in XCode to iOS 12 and, under Architectures, replace `${ARCHS_STANDARD}` with `arm64` (or `$ARCHS_STANDARD_64_BIT`).&#x20;
+**For Android using Flutter 3.19 or older** and the **ObjectBox Sync**-enabled library: increase minSdkVersion to at least 21.
+
+```
+# /android/app/build.gradle
+android {
+    defaultConfig {
+        // ObjectBox Sync requires at least SDK 21 (Android 5.0)
+        minSdkVersion 21
+    }
+}    
+```
+{% endhint %}
+
+{% hint style="info" %}
+**For iOS using Flutter 3.0 or older:** increase the deployment target in Xcode to iOS 12 and, under Architectures, replace `${ARCHS_STANDARD}` with `arm64` (or `$ARCHS_STANDARD_64_BIT`).&#x20;
 {% endhint %}
 {% endtab %}
 
