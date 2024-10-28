@@ -201,7 +201,7 @@ dev_dependencies:
 
 3. If you added the above lines manually, then install the packages with `flutter pub get`.
 
-For **ObjectBox Sync**, also increase the Android minSdkVersion to at least 21:
+**Flutter 3.19 or older:** For the **ObjectBox Sync**-enabled library, to build for Android, increase minSdkVersion to at least 21:
 
 ```
 # /android/app/build.gradle
