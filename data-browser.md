@@ -29,7 +29,7 @@ To run Admin on a desktop operating system, e.g. your development machine, you c
 
 {% tabs %}
 {% tab title="Bash Shell script" %}
-**Note: we recommend this to launch Admin on Linux, macOS, Windows/WSL2.**
+**Recommended, but the below script needs to be run from a Linux distribution (for example Ubuntu through WSL2 on Windows) or macOS. To run from Windows PowerShell, see the "Run Docker manually" tab.**
 
 {% file src=".gitbook/assets/objectbox-admin (1).sh" %}
 `objectbox-admin.sh` Shell Front-End for ObjectBox Admin Docker Image
