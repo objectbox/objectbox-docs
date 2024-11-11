@@ -95,6 +95,7 @@ class Note {
 {% tab title="Python" %}
 {% code title="example/tasks/main.py" %}
 ```python
+
 @Entity()
 class Task:
     id = Id()

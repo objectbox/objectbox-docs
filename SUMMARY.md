@@ -28,6 +28,7 @@
 * [Changelogs](changelogs.md)
 * [Java API reference](https://objectbox.io/docfiles/java/current/)
 * [Dart API reference](https://pub.dev/documentation/objectbox/latest/objectbox/objectbox-library.html)
+* [Python API reference](https://objectbox.io/docfiles/python/current/)
 * [Binary License](https://objectbox.io/0209-ob-binary-license/)
 * [FAQ](faq.md)
 * [Troubleshooting](troubleshooting.md)

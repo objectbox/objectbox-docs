@@ -369,7 +369,7 @@ You can have multiple entities in the same file (here `models.dart`), or you can
 {% tab title="Python" %}
 {% code title="model.py" %}
 ```python
-from objectbox import *
+from objectbox import Entity, Id, String
 
 @Entity()
 class User:
@@ -624,7 +624,7 @@ The above minimal example omits the argument to `(directory: )`, using the defau
 
 {% tab title="Python" %}
 ```python
-from objectbox import *
+from objectbox import Store
   
 store = Store()
 ```
