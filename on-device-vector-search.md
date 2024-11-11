@@ -6,8 +6,6 @@ description: >-
 
 # On-Device Vector Search
 
-
-
 {% hint style="info" %}
 Vector Search is currently available for Python, C, C++, Dart/Flutter, Java/Kotlin and Swift. Other languages will follow soon.
 {% endhint %}
@@ -244,8 +242,8 @@ try box.put([
 
 {% tab title="C++" %}
 <pre class="language-cpp"><code class="lang-cpp">cityBox.put({
-<strong>             City{0, "Barcelona", {41.385063F, 2.173404F}},
-</strong>             City{0, "Nairobi", {-1.292066F, 36.821945F}},
+             City{0, "Barcelona", {41.385063F, 2.173404F}},
+             City{0, "Nairobi", {-1.292066F, 36.821945F}},
              City{0, "Salzburg", {47.809490F, 13.055010F}}
 });
 </code></pre>
