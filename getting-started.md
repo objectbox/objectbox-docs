@@ -381,6 +381,98 @@ class User:
 {% endtab %}
 {% endtabs %}
 
+{% tabs %}
+{% tab title="Java" %}
+{% code title="User.java" %}
+```java
+@Entity
+public class User {
+    @Id 
+    public long id;
+    public String name;
+}
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Kotlin" %}
+{% code title="models.kt" %}
+```kotlin
+@Entity
+data class User(
+        @Id 
+        var id: Long = 0,
+        var name: String? = null
+)
+```
+{% endcode %}
+
+{% hint style="warning" %}
+When using a data class, **add default values for all parameters**. This will ensure your data class will have a constructor that can be called by ObjectBox. (Technically this is only required if adding properties to the class body, like custom or transient properties or relations, but it's a good idea to do it always.)
+{% endhint %}
+
+{% hint style="warning" %}
+**Avoid naming properties like reserved Java keywords, like `private` and `default`.** ObjectBox tooling works with the Java representation of your Kotlin code to be compatible with both Java and Kotlin. It will ignore such properties.
+{% endhint %}
+{% endtab %}
+
+{% tab title="Dart" %}
+{% code title="models.dart" %}
+```dart
+@Entity()
+class User {
+  @Id()
+  int id = 0;
+  
+  String? name;
+  
+  @Property(type: PropertyType.date) // Store as int in milliseconds
+  DateTime? date;
+
+  @Transient() // Ignore this property, not stored in the database.
+  int? computedProperty;
+}
+```
+{% endcode %}
+
+You can have multiple entities in the same file (here `models.dart`), or you can have them spread across multiple files in your package's `lib` directory.
+{% endtab %}
+
+{% tab title="Python" %}
+{% code title="model.py" %}
+```python
+from objectbox.model import *
+
+@Entity(id=1, uid=1)
+class User:
+  id = Id(id=1,uid=1001)
+  name = Property(str,id=2,uid=1002)
+  
+def create_model():
+  m = Model()
+  m.entity(User, last_property_id=IdUid(2, 1002))
+  m.last_entity_id = IdUid(1, 1)
+  return m
+```
+{% endcode %}
+
+{% hint style="info" %}
+The Python API is currently still in development and differs slightly from other language bindings regarding Model creation.
+
+\
+Each Entity has to have an ID (unique among entities). Properties need an ID as well (unique inside one Entity). Both Entities and Properties must also have an UID, which is a globally unique identifier.
+
+\
+For other ObjectBox supported languages, the binding takes care of assigning these IDs/UIDs but this feature is not yet implemented for Python. To learn more, see [ObjectBox Java documentation](https://docs.objectbox.io/advanced/meta-model-ids-and-uids).\
+\
+In summary:
+
+* Manually specify ID **and** UID. (This will be resolved and settled to a more convenient API soon.)&#x20;
+* No Generator and no support for JSON-based Schema Versioning.
+{% endhint %}
+{% endtab %}
+{% endtabs %}
+
 
 
 **Important:**
