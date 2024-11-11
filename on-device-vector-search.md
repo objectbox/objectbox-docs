@@ -9,7 +9,7 @@ description: >-
 
 
 {% hint style="info" %}
-Vector Search is currently only available for Python, Dart/Flutter, Java/Kotlin and Swift. Other languages will follow soon.
+Vector Search is currently available for Python, C, C++, Dart/Flutter, Java/Kotlin and Swift. Other languages will follow soon.
 {% endhint %}
 
 **Vector search** is the task of searching for objects whose vector is near to a given input query vector. Applications include semantic/similarity search (often performs better than full text search (FTS)), multi-modal search (text, images, video), recommendation engines and various use cases in AI.
@@ -135,6 +135,34 @@ class City {
 // distanceType may be one of euclidean, cosine, dotProduct, dotProductNonNormalized
 ```
 {% endtab %}
+
+{% tab title="C++" %}
+For C++, you define the data model using FlatBuffer schema files (see the [getting started guide](https://cpp.objectbox.io/getting-started) for details):
+
+{% code title="city.fbs" %}
+```
+table City {
+    id: ulong;
+    name: string;
+    /// objectbox: index=hnsw, hnsw-dimensions=2
+    /// objectbox: hnsw-distance-type=Euclidean
+    location: [float];
+}
+
+
+```
+{% endcode %}
+
+Once the ObjectBox Generator was run, it creates a City struct like this:
+
+```cpp
+struct City {
+    obx_id id;
+    std::string name;
+    std::vector<float> location;
+}
+```
+{% endtab %}
 {% endtabs %}
 
 As a starting point the index configuration only needs the number of dimensions. To optimize the index, you can supply additional options via the annotation later once you got things up and running:
@@ -212,6 +240,15 @@ try box.put([
   City("Salzburg", [47.809490, 13.055010]),
 ])
 ```
+{% endtab %}
+
+{% tab title="C++" %}
+<pre class="language-cpp"><code class="lang-cpp">cityBox.put({
+<strong>             City{0, "Barcelona", {41.385063F, 2.173404F}},
+</strong>             City{0, "Nairobi", {-1.292066F, 36.821945F}},
+             City{0, "Salzburg", {47.809490F, 13.055010F}}
+});
+</code></pre>
 {% endtab %}
 {% endtabs %}
 
@@ -356,6 +393,25 @@ for result in results {
 let results = try query.findWithScores()
 for result in results {
     print("City: \(result.object.name), distance: \(result.score)")
+}
+```
+{% endtab %}
+
+{% tab title="C++" %}
+```cpp
+float madrid[] = {40.416775f, -3.703790f};
+obx::Query<City> query = cityBox
+        .query(City_::location.nearestNeighbors(madrid, 1))
+        .build();
+std::vector<std::pair<City, double>> citiesWithScores =
+    queryCityByLocation_.findWithScores();
+
+// Print the results
+printf("%3s  %-18s  %-19s %-10s\n", "ID", "Name", "Location", "Score");
+for (const auto& pair : citiesWithScores) {
+    const City& city = pair.first;
+    printf("%3" PRIu64 "  %-18s  %-9.2f %-9.2f %5.2f\n", city.id, city.name.c_str(),
+           city.location[0], city.location[1], pair.second);
 }
 ```
 {% endtab %}
