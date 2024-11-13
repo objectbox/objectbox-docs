@@ -166,7 +166,7 @@ struct City {
 As a starting point the index configuration only needs the number of dimensions. To optimize the index, you can supply additional options via the annotation later once you got things up and running:
 
 * **dimensions (required)**: how many dimensions of the vector to use for indexing. This is a fixed value that depends on your specific use case (e.g. on your embedding model) and you will typically only use vectors of that exact dimension. For special use cases, you can insert vectors with a higher dimension. However, if the vector of an inserted object has less dimensions, it is completely ignored for indexing (it cannot be found).
-* **distanceType**: the algorithm used to determine the distance between two vectors. By default, (squared) Euclidean distance is used:  `d(v, w) = length(v - w)` Other algorithms, based on cosine and dot product, are available.
+* **distanceType**: the algorithm used to determine the distance between two vectors. By default, (squared) Euclidean distance is used: `d(v, w) = length(v - w)` Other algorithms, based on cosine and dot product, are available.
 * **neighborsPerNode** (aka "M" in HNSW terms): the maximum number of connections per node (default: 30). A higher number increases the graph connectivity which can lead to better results, but higher resources usage. Try e.g. 16 for faster but less accurate results, or 64 for more accurate results.
 * **indexingSearchCount** (aka "efConstruction" in HNSW terms): the number of neighbors searched for while indexing (default: 100). The default value serves as a starting point that can likely be optimized for specific datasets and use cases. The higher the value, the more accurate the search, but the longer the indexing will take. If indexing time is not a major concern, a value of at least 200 is recommended to improve search quality.
 
@@ -241,12 +241,13 @@ try box.put([
 {% endtab %}
 
 {% tab title="C++" %}
-<pre class="language-cpp"><code class="lang-cpp">cityBox.put({
+```cpp
+cityBox.put({
              City{0, "Barcelona", {41.385063F, 2.173404F}},
              City{0, "Nairobi", {-1.292066F, 36.821945F}},
              City{0, "Salzburg", {47.809490F, 13.055010F}}
 });
-</code></pre>
+```
 {% endtab %}
 {% endtabs %}
 
@@ -472,3 +473,27 @@ Expect more features to come:
 * Additional distance functions
 * Quantization and support for non-float vectors
 
+## Vector Search FAQ
+
+#### How does this compare to libraries like FAISS?
+
+ObjectBox Vector Search offers significant advantages by combining the capabilities of a vector search engine with the robustness of a full-featured database:
+
+1. **No Memory Limitations**
+   * Unlike in-memory libraries like FAISS, ObjectBox uses disk storage when data exceeds available memory, enabling scalability.
+   * Smart caching ensures frequently accessed data remains in memory for optimal performance.
+2. **Instant Readiness**
+   * There's no need for an initial data load when starting the application. Simply open the database, and you can immediately begin performing vector searches.
+3. **Efficient Updates**
+   * When data changes (e.g., adding, modifying, or deleting entries), ObjectBox only persists the changes (deltas).
+   * In contrast, most libraries rewrite the entire dataset, if they even support persistent storage.
+4. **ACID Transactions**
+   * ObjectBox ensures all updates are safely persisted, offering robust data integrity.
+   * This eliminates concerns about data corruption during unexpected events, such as power outages.
+5. **Unified Data Storage**
+   * Vector data is rarely standalone; it often ties to related objects or metadata.
+   * ObjectBox enables you to store your entire data model, keeping all related data in one place. For example:
+     * An embedding model can generate vectors for images. These vectors can be stored alongside related properties like creation date, tags, filenames, etc.
+     * Additionally, associated objects like users (e.g., the creator or those who liked the image) can also be stored within the same database.
+
+With ObjectBox Vector Search, you get a powerful, flexible, and scalable solution tailored for modern applications where data relationships matter.
