@@ -535,9 +535,9 @@ query.close();
 {% endtab %}
 {% endtabs %}
 
-### Observe or listen to results
+### Observe or listen to changes
 
-To observe or listen to changes to the results of a query, see the data observers page:
+To learn how to observe or listen to changes to the results of a query, see the data observers page:
 
 {% content-ref url="data-observers-and-rx.md" %}
 [data-observers-and-rx.md](data-observers-and-rx.md)

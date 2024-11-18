@@ -1,6 +1,6 @@
 ---
 description: >-
-  How to observe box and query changes using ObjectBox for Java, how to
+  How to observe box and query changes using ObjectBox with Java or Dart, how to
   integrate with RxJava.
 ---
 
@@ -8,10 +8,10 @@ description: >-
 
 On this page:
 
-* &#x20;[ObjectBox for Java  - Data Observers and Reactive Extensions](data-observers-and-rx.md#objectbox-for-java-data-observers-and-reactive-extensions)
-* [ ObjectBox for Flutter/Dart - Reactive Queries](data-observers-and-rx.md#flutter-dart)
+* [ObjectBox Java - Data Observers and Reactive Extensions](data-observers-and-rx.md#objectbox-for-java-data-observers-and-reactive-extensions)
+* [ObjectBox Dart - Reactive Queries](data-observers-and-rx.md#flutter-dart)
 
-## ObjectBox for Java  - Data Observers and Reactive Extensions
+## ObjectBox Java - Data Observers and Reactive Extensions
 
 ObjectBox for Java makes it easy for your app to react to data changes by providing:
 
@@ -321,7 +321,7 @@ disposable = RxQuery.observable(query).subscribe(this);
 
 &#x20;The extension library is open-source and available [GitHub](https://github.com/objectbox/objectbox-java/tree/master/objectbox-rxjava).
 
-## ObjectBox for Flutter/Dart - Reactive Queries <a href="#flutter-dart" id="flutter-dart"></a>
+## ObjectBox Dart - Reactive Queries <a href="#flutter-dart" id="flutter-dart"></a>
 
 You can build a Stream from a query to get notified any time there is a change to the box of any of the queried entities:
 
