@@ -535,6 +535,14 @@ query.close();
 {% endtab %}
 {% endtabs %}
 
+### Observe or listen to results
+
+To observe or listen to changes to the results of a query, see the data observers page:
+
+{% content-ref url="data-observers-and-rx.md" %}
+[data-observers-and-rx.md](data-observers-and-rx.md)
+{% endcontent-ref %}
+
 ## Query a single property
 
 If you only want to return the values of a particular property and not a list of full objects you can use a [PropertyQuery](https://objectbox.io/files/objectbox-java/current/io/objectbox/query/PropertyQuery.html). After building a query, simply call `property(Property)`  to define the property followed by the appropriate find method.
