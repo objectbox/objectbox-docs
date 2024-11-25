@@ -34,9 +34,9 @@ However, in some cases it might be alright. While ObjectBox and the underlying O
 
 ObjectBox supports **Android 4.4 (API level 19)** or newer and works on most device architectures (armeabi-v7a, arm64-v8a, x86 and x86\_64; note that 64-bit is still only supported on Android 5 resp. API 21 or newer). Android is supported for Java/Kotlin or Dart/Flutter projects.
 
-ObjectBox supports **iOS 11** or higher on **64-bit devices** only. iOS is supported for [Dart/Flutter](https://pub.dev/packages/objectbox) or [Swift](https://objectbox.io/swift-database-for-ios/) projects.
+ObjectBox supports **iOS 12** or newer on **64-bit devices** only. An iOS library is available for [Flutter](https://pub.dev/packages/objectbox) or [Swift](https://objectbox.io/swift-database-for-ios/) projects.
 
-ObjectBox also runs on Linux (x86\_64, arm64, armv7), Windows (x86\_64) and macOS (x86\_64, Apple M1) with support for [Kotlin, Java, Dart, Flutter, Go, C, Swift and Python](https://objectbox.io/offline-first-mobile-database/).
+ObjectBox also runs on Linux (x86\_64, arm64, armv7), Windows (x86\_64) and macOS 10.15 or newer (x86\_64, Apple M1) with support for [Kotlin, Java, Dart, Flutter, Go, C, Swift and Python](https://objectbox.io/offline-first-mobile-database/).
 
 ## **Can I use ObjectBox on the desktop/server?**
 
