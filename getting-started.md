@@ -64,7 +64,7 @@ If you encounter any problems in this or later steps, check out the [FAQ](faq.md
 
 3. Then do "Sync Project with Gradle Files" in Android Studio so the Gradle plugin automatically adds the required ObjectBox libraries and code generation tasks.
 
-### Optional: Advanced Setup
+#### Optional: Advanced Setup
 
 The ObjectBox plugin uses reasonable defaults and detects most configurations automatically. However, if needed you can configure the model file path, the MyObjectBox package, enable debug mode and more [using advanced setup options](advanced/advanced-setup.md).
 {% endtab %}
@@ -72,7 +72,7 @@ The ObjectBox plugin uses reasonable defaults and detects most configurations au
 {% tab title="Java/Kotlin (JVM)" %}
 ObjectBox for Java supports JVM (Linux, macOS, Windows) Java or Kotlin projects.
 
-It ships with a Gradle plugin. To apply it, your project needs to use [Gradle](https://gradle.org/) as the build system. The instructions assume the [recommended multi-project directory structure](https://docs.gradle.org/current/userguide/multi\_project\_builds.html) is used.
+It ships with a Gradle plugin. To apply it, your project needs to use [Gradle](https://gradle.org/) as the build system. The instructions assume the [recommended multi-project directory structure](https://docs.gradle.org/current/userguide/multi_project_builds.html) is used.
 
 {% hint style="info" %}
 There is an experimental Maven plugin available. See the [Java Maven example](https://github.com/objectbox/objectbox-examples/tree/main/java-main-maven). We welcome [your feedback](https://github.com/objectbox/objectbox-java/issues/637) if supporting Maven is of interest to you.
@@ -101,7 +101,7 @@ buildscript {
 ```
 {% endcode %}
 
-2. Open the Gradle build file for [your subproject](https://docs.gradle.org/current/userguide/multi\_project\_builds.html) and, after other plugins, apply the `io.objectbox` plugin:
+2. Open the Gradle build file for [your subproject](https://docs.gradle.org/current/userguide/multi_project_builds.html) and, after other plugins, apply the `io.objectbox` plugin:
 
 {% code title="/app/build.gradle(.kts)" %}
 ```groovy
@@ -124,7 +124,7 @@ Using your IDE of choice with a Gradle project might require additional configur
 * For Eclipse see the [Buildship ](https://projects.eclipse.org/projects/tools.buildship)project and [Getting Started](https://www.vogella.com/tutorials/EclipseGradle/article.html) article.
 {% endhint %}
 
-### Native Libraries
+#### Native Libraries
 
 ObjectBox is an object database running mostly in native code written in C/C++ for optimal performance. Thus, ObjectBox will load a native library: a “.dll” on Windows, a “.so” on Linux, and a “.dylib” on macOS. By default, the ObjectBox Gradle plugin adds a dependency to the native library matching your system. This means that your app is already set up to run on your system.
 
@@ -157,7 +157,7 @@ Video Tutorial on Getting Started with ObjectBox for Flutter
 {% hint style="info" %}
 You can watch these video tutorials as well 😀:
 
-* [Event Management app](https://youtu.be/6YPSQPS\_bhU)
+* [Event Management app](https://youtu.be/6YPSQPS_bhU)
 * [Restaurant: chef and order apps](https://youtu.be/r9Lc2r22KBk)
 * [Task-list app (in Spanish)](https://youtu.be/osUq6B92-BY)
 {% endhint %}
@@ -202,9 +202,27 @@ dev_dependencies:
 3. If you added the above lines manually, then install the packages with `flutter pub get`.
 
 {% hint style="info" %}
+**For Android** increase the NDK version:
+
+{% code title="/android/app/build.gradle" %}
+```groovy
+android {
+    // ObjectBox: Flutter defaults to NDK 23.1.7779620, but
+    // - objectbox_flutter_libs requires Android NDK 25.1.8937393
+    // - path_provider_android requires Android NDK 25.1.8937393
+    // Until Flutter uses a newer version (https://github.com/flutter/flutter/commit/919bed6e0a18bd5b76fb581ede10121f8c14a6f7)
+    // manually set the required one:
+    // ndkVersion flutter.ndkVersion
+    ndkVersion = "25.1.8937393"
+}   
+```
+{% endcode %}
+{% endhint %}
+
+{% hint style="info" %}
 **For all macOS apps** need to target macOS 10.15: in `Podfile` change the platform and in the `Runner.xcodeproj/poject.pbxproj` file update `MACOSX_DEPLOYMENT_TARGET`.
 
-**For sandboxed macOS apps** specify an application group. Check all `macos/Runner/*.entitlements` files if they contain a `<dict>` section with the group ID. If necessary, change the string value to the `DEVELOPMENT_TEAM` you can find in your Xcode settings, plus an application-specific suffix. Due to macOS restrictions the complete string must be 19 characters or shorter. For example:&#x20;
+**For sandboxed macOS apps** specify an application group. Check all `macos/Runner/*.entitlements` files if they contain a `<dict>` section with the group ID. If necessary, change the string value to the `DEVELOPMENT_TEAM` you can find in your Xcode settings, plus an application-specific suffix. Due to macOS restrictions the complete string must be 19 characters or shorter. For example:
 
 {% code title="macos/Runner/*.entitlements" %}
 ```markup
@@ -228,8 +246,8 @@ Then, in your app code, pass the same string when opening the Store. For example
 {% hint style="info" %}
 **For Android using Flutter 3.19 or older** and the **ObjectBox Sync**-enabled library: increase minSdkVersion to at least 21.
 
-```
-# /android/app/build.gradle
+{% code title="/android/app/build.gradle" %}
+```groovy
 android {
     defaultConfig {
         // ObjectBox Sync requires at least SDK 21 (Android 5.0)
@@ -237,10 +255,11 @@ android {
     }
 }    
 ```
+{% endcode %}
 {% endhint %}
 
 {% hint style="info" %}
-**For iOS using Flutter 3.0 or older:** increase the deployment target in Xcode to iOS 12 and, under Architectures, replace `${ARCHS_STANDARD}` with `arm64` (or `$ARCHS_STANDARD_64_BIT`).&#x20;
+**For iOS using Flutter 3.0 or older:** increase the deployment target in Xcode to iOS 12 and, under Architectures, replace `${ARCHS_STANDARD}` with `arm64` (or `$ARCHS_STANDARD_64_BIT`).
 {% endhint %}
 {% endtab %}
 
@@ -279,7 +298,7 @@ bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/i
 By default the library is downloaded into the `lib` subdirectory of the working directory. It's not necessary to install the library system-wide. This also allows to use different versions for different projects. For details see below.
 {% endhint %}
 
-#### Deploying Dart Native projects&#x20;
+**Deploying Dart Native projects**
 
 Natively compiled Dart applications that use ObjectBox Dart require a reference to the [objectbox-c](https://github.com/objectbox/objectbox-c) library. Hence, the shared library file downloaded with `install.sh` needs to be shipped with the executable.
 
@@ -287,8 +306,8 @@ The `install.sh` script downloads the library by default to the `lib` subdirecto
 
 If it is not found there, it falls back to using system directories (using Dart's `DynamicLibrary.open`):
 
-* Windows: working directory and `%WINDIR%\system32`.&#x20;
-* macOS: `/usr/local/lib` (and maybe others).&#x20;
+* Windows: working directory and `%WINDIR%\system32`.
+* macOS: `/usr/local/lib` (and maybe others).
 * Linux: `/lib` and `/usr/lib` (again, possibly others).
 {% endtab %}
 
@@ -308,80 +327,6 @@ pip install --upgrade objectbox
 Define your model by adding an `@Entity` (internal name for database objects) annotation to at least one class and an `@Id` annotation to one of the class variables. [Learn more about the ObjectBox model here](advanced/meta-model-ids-and-uids.md).
 
 A simple entity representing a user could look like this:
-
-{% tabs %}
-{% tab title="Java" %}
-{% code title="User.java" %}
-```java
-@Entity
-public class User {
-    @Id 
-    public long id;
-    public String name;
-}
-```
-{% endcode %}
-{% endtab %}
-
-{% tab title="Kotlin" %}
-{% code title="models.kt" %}
-```kotlin
-@Entity
-data class User(
-        @Id 
-        var id: Long = 0,
-        var name: String? = null
-)
-```
-{% endcode %}
-
-{% hint style="warning" %}
-When using a data class, **add default values for all parameters**. This will ensure your data class will have a constructor that can be called by ObjectBox. (Technically this is only required if adding properties to the class body, like custom or transient properties or relations, but it's a good idea to do it always.)
-{% endhint %}
-
-{% hint style="warning" %}
-**Avoid naming properties like reserved Java keywords, like `private` and `default`.** ObjectBox tooling works with the Java representation of your Kotlin code to be compatible with both Java and Kotlin. It will ignore such properties.
-{% endhint %}
-{% endtab %}
-
-{% tab title="Dart" %}
-{% code title="models.dart" %}
-```dart
-@Entity()
-class User {
-  @Id()
-  int id = 0;
-  
-  String? name;
-  
-  @Property(type: PropertyType.date) // Store as int in milliseconds
-  DateTime? date;
-
-  @Transient() // Ignore this property, not stored in the database.
-  int? computedProperty;
-}
-```
-{% endcode %}
-
-You can have multiple entities in the same file (here `models.dart`), or you can have them spread across multiple files in your package's `lib` directory.
-{% endtab %}
-
-{% tab title="Python" %}
-{% code title="model.py" %}
-```python
-from objectbox import Entity, Id, String
-
-@Entity()
-class User:
-  id = Id
-  name = String
-  
-```
-{% endcode %}
-{% endtab %}
-{% endtabs %}
-
-
 
 **Important:**
 
@@ -414,7 +359,7 @@ To generate the binding code required to use ObjectBox run
 
 ObjectBox generator will look for all `@Entity` annotations in your `lib` folder and create
 
-* a single database definition `lib/objectbox-model.json` and&#x20;
+* a single database definition `lib/objectbox-model.json` and
 * supporting code in `lib/objectbox.g.dart`.
 
 To customize the directory where generated files are written see [advanced-setup.md](advanced/advanced-setup.md "mention").
@@ -442,7 +387,7 @@ Similar to the other bindings, a JSON model file is also used for management of 
 
 Among other files ObjectBox generates a JSON **model file**, by default to
 
-* `app/objectbox-models/default.json` for Android projects,&#x20;
+* `app/objectbox-models/default.json` for Android projects,
 * `lib/objectbox-model.json` for Dart/Flutter projects, or
 * `<user-module-dir>/objectbox-model.json` for Python projects
 
@@ -619,7 +564,7 @@ void main() {
 }
 ```
 
-The above minimal example omits the argument to `(directory: )`, using the default - `./objectbox`  - in the current working directory.
+The above minimal example omits the argument to `(directory: )`, using the default - `./objectbox` - in the current working directory.
 {% endtab %}
 
 {% tab title="Python" %}
@@ -820,7 +765,7 @@ results = query.find()
 {% endtab %}
 {% endtabs %}
 
-**remove and removeAll:** Remove a previously put object from its box (deletes it). `remove` also supports removing multiple objects, which is more efficient. `removeAll`  removes (deletes) all objects in a box.
+**remove and removeAll:** Remove a previously put object from its box (deletes it). `remove` also supports removing multiple objects, which is more efficient. `removeAll` removes (deletes) all objects in a box.
 
 {% tabs %}
 {% tab title="Java" %}
@@ -918,8 +863,6 @@ store.callInTxAsync(() -> {
     }
 });
 ```
-
-
 
 **awaitCallInTx (Kotlin Coroutines only):** wraps callInTxAsync in a coroutine that suspends until the transaction has completed. Likewise, on success the return value of the given callable is returned, on failure an exception is thrown.
 
@@ -1056,9 +999,9 @@ For a detailed explanation see the page on [Object IDs](advanced/object-ids.md).
 
 While ObjectBox offers powerful transactions, it is sufficient for many apps to consider just some basics guidelines about transactions:
 
-* A `put`  runs an implicit transaction.
-* Prefer `put`  bulk overloads for lists (like `put(entities)`) when possible.
-* For a high number of DB interactions in loops, consider explicit transactions, such as using  `runInTx()`.
+* A `put` runs an implicit transaction.
+* Prefer `put` bulk overloads for lists (like `put(entities)`) when possible.
+* For a high number of DB interactions in loops, consider explicit transactions, such as using `runInTx()`.
 
 For more details check the separate [transaction documentation](transactions.md).
 
