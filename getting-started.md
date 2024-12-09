@@ -540,11 +540,17 @@ Future<void> main() async {
 ```
 
 {% hint style="info" %}
-On mobile devices/sandboxed apps, data should be stored in the app's documents directory. See [Flutter: read & write files](https://flutter.dev/docs/cookbook/persistence/reading-writing-files) for more info. This is exactly what `openStore()`does, if the `directory` argument is not specified.
+**On mobile devices or sandboxed apps** data should be stored in the app's documents directory. See [Flutter: read & write files](https://flutter.dev/docs/cookbook/persistence/reading-writing-files) for more info. This is exactly what `openStore()`does, if the `directory` argument is not specified.
 
-On desktop systems it is recommended to specify a `directory` to create a custom sub-directory to avoid conflicts with other apps.
+**On desktop systems** it is recommended to specify a `directory` to create a custom sub-directory to avoid conflicts with other apps.
 
 If your code passes a directory that the application can't write to, you get an error that looks somewhat like this: `failed to create store: 10199 Dir does not exist: objectbox (30)`.
+{% endhint %}
+
+{% hint style="info" %}
+**When using Dart isolates,** note that [each Dart isolate has its own global fields](https://dart.dev/language/concurrency#isolates), they do not share state on the Dart level.
+
+However, as ObjectBox runs on the native or process level (so one native instance shared across all isolates), instead of creating a new Store in another isolate your code should instead [attach to the open native store](https://pub.dev/documentation/objectbox/latest/objectbox/Store/Store.attach.html).
 {% endhint %}
 {% endtab %}
 
@@ -565,6 +571,12 @@ void main() {
 ```
 
 The above minimal example omits the argument to `(directory: )`, using the default - `./objectbox` - in the current working directory.
+
+{% hint style="info" %}
+**When using Dart isolates,** note that [each Dart isolate has its own global fields](https://dart.dev/language/concurrency#isolates), they do not share state on the Dart level.
+
+However, as ObjectBox runs on the native or process level (so one native instance shared across all isolates), instead of creating a new Store in another isolate your code should instead [attach to the open native store](https://pub.dev/documentation/objectbox/latest/objectbox/Store/Store.attach.html).
+{% endhint %}
 {% endtab %}
 
 {% tab title="Python" %}
