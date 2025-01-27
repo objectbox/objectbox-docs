@@ -222,22 +222,6 @@ android {
 
 {% hint style="info" %}
 **For all macOS apps** need to target macOS 10.15: in `Podfile` change the platform and in the `Runner.xcodeproj/poject.pbxproj` file update `MACOSX_DEPLOYMENT_TARGET`.
-
-**For sandboxed macOS apps** specify an application group. Check all `macos/Runner/*.entitlements` files if they contain a `<dict>` section with the group ID. If necessary, change the string value to the `DEVELOPMENT_TEAM` you can find in your Xcode settings, plus an application-specific suffix. Due to macOS restrictions the complete string must be 19 characters or shorter. For example:
-
-{% code title="macos/Runner/*.entitlements" %}
-```markup
-<dict>
-  <key>com.apple.security.application-groups</key>
-  <array>
-    <string>FGDTDLOBXDJ.demo</string>
-  </array>  
-...  
-</dict>
-```
-{% endcode %}
-
-Then, in your app code, pass the same string when opening the Store. For example: `openStore(macosApplicationGroup: 'FGDTDLOBXDJ.demo')`.
 {% endhint %}
 
 {% hint style="info" %}
@@ -524,6 +508,22 @@ class ObjectBox {
 }
 ```
 
+{% hint style="info" %}
+**For sandboxed macOS apps** also pass `macosApplicationGroup` to `openStore()`. See the notes about "macOS application group" in [the constructor documentation](https://pub.dev/documentation/objectbox/latest/objectbox/Store/Store.html) of the `Store` class.&#x20;
+
+For example:
+
+`openStore(macosApplicationGroup: "FGDTDLOBXDJ.demo")`
+{% endhint %}
+
+{% hint style="info" %}
+**On mobile devices or sandboxed apps** data should be stored in the app's documents directory. See [Flutter: read & write files](https://flutter.dev/docs/cookbook/persistence/reading-writing-files) for more info. This is exactly what `openStore()`does, if the `directory` argument is not specified.
+
+**On desktop systems** it is recommended to specify a `directory` to create a custom sub-directory to avoid conflicts with other apps.
+
+If your code passes a directory that the application can't write to, you get an error that looks somewhat like this: `failed to create store: 10199 Dir does not exist: objectbox (30)`.
+{% endhint %}
+
 The best time to **initialize ObjectBox** is when your app starts. We suggest to do it in your app's `main()` function:
 
 ```dart
@@ -540,14 +540,6 @@ Future<void> main() async {
   runApp(MyApp());
 }
 ```
-
-{% hint style="info" %}
-**On mobile devices or sandboxed apps** data should be stored in the app's documents directory. See [Flutter: read & write files](https://flutter.dev/docs/cookbook/persistence/reading-writing-files) for more info. This is exactly what `openStore()`does, if the `directory` argument is not specified.
-
-**On desktop systems** it is recommended to specify a `directory` to create a custom sub-directory to avoid conflicts with other apps.
-
-If your code passes a directory that the application can't write to, you get an error that looks somewhat like this: `failed to create store: 10199 Dir does not exist: objectbox (30)`.
-{% endhint %}
 
 {% hint style="info" %}
 **When using Dart isolates,** note that [each Dart isolate has its own global fields](https://dart.dev/language/concurrency#isolates), they do not share state on the Dart level.
