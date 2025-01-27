@@ -171,8 +171,9 @@ flutter pub add objectbox objectbox_flutter_libs:any
 flutter pub add --dev build_runner objectbox_generator:any
 ```
 
+Or to use [ObjectBox Sync](https://objectbox.io/sync/) (requires access to the Sync feature) instead run:
+
 ```
-# Or when using ObjectBox Sync instead run:
 flutter pub add objectbox objectbox_sync_flutter_libs:any
 flutter pub add --dev build_runner objectbox_generator:any
 ```
@@ -182,7 +183,7 @@ flutter pub add --dev build_runner objectbox_generator:any
 
 `bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)`
 
-For **ObjectBox Sync**, append the `--sync` argument to above command.
+To get a variant of the library that supports **ObjectBox Sync**, append the `--sync` argument to above command.
 {% endhint %}
 
 2. This should add lines like this to your `pubspec.yaml`:
@@ -191,7 +192,7 @@ For **ObjectBox Sync**, append the `--sync` argument to above command.
 dependencies:
   objectbox: ^4.0.3
   objectbox_flutter_libs: any
-  # For ObjectBox Sync this dependency should appear instead:
+  # To use ObjectBox Sync this dependency should appear instead:
   # objectbox_sync_flutter_libs: any
 
 dev_dependencies:
@@ -289,8 +290,9 @@ dev_dependencies:
 bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)
 ```
 
+Or to use [ObjectBox Sync](https://objectbox.io/sync/) (requires access to the Sync feature) instead run:
+
 ```
-# Or when using ObjectBox Sync instead run:
 bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh) --sync
 ```
 
