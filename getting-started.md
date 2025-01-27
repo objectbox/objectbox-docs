@@ -192,7 +192,7 @@ To get a variant of the library that supports **ObjectBox Sync**, append the `--
 dependencies:
   objectbox: ^4.0.3
   objectbox_flutter_libs: any
-  # To use ObjectBox Sync this dependency should appear instead:
+  # If you run the command for ObjectBox Sync it should add instead:
   # objectbox_sync_flutter_libs: any
 
 dev_dependencies:
