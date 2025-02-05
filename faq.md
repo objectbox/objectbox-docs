@@ -32,7 +32,7 @@ However, in some cases it might be alright. While ObjectBox and the underlying O
 
 ## **On which platforms does ObjectBox run?**
 
-ObjectBox supports **Android 4.4 (API level 19)** or newer and works on most device architectures (armeabi-v7a, arm64-v8a, x86 and x86\_64; note that 64-bit is still only supported on Android 5 resp. API 21 or newer). Android is supported for Java/Kotlin or Dart/Flutter projects.
+ObjectBox supports **Android 5.0 (API level 21)** or newer and works on most device architectures (armeabi-v7a, arm64-v8a, x86 and x86\_64). An Android library is available for Java (also Kotlin) and Flutter projects.
 
 ObjectBox supports **iOS 12** or newer on **64-bit devices** only. An iOS library is available for [Flutter](https://pub.dev/packages/objectbox) or [Swift](https://objectbox.io/swift-database-for-ios/) projects.
 
