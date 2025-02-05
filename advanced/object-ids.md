@@ -31,7 +31,7 @@ Also, note that this will mean in some circumstances IDs from deleted objects ma
 
 **By default, only ObjectBox may assign IDs.** If you try to put an object with an ID greater than the currently highest ID, ObjectBox will throw an error.
 
-## Self-assigned Object IDs
+## Manually assigned Object IDs
 
 {% hint style="info" %}
 This is not recommended. Check if using a [unique indexed property](../entity-annotations.md#object-ids-id) is a viable alternative.
@@ -58,7 +58,7 @@ int id = 0;
 This will allow putting an entity with any valid ID (see [#special-object-ids](object-ids.md#special-object-ids "mention")). If the `@Id` field is writable, it can still be set to zero to let ObjectBox auto-assign a new ID.
 
 {% hint style="warning" %}
-**Warning:** self-assigned IDs break automatic state detection (new vs. persisted entity based on the ID). Therefore, you should **put entities with self-assigned IDs immediately and may have to attach the box manually**, especially when working with relations.
+**Warning:** manually assigning IDs breaks automatic state detection (new vs. persisted entity based on the ID). Therefore, **entities with manually assigned IDs should be put immediately and the Box may have to be attached manually**, especially when working with relations.
 
 For details see the documentation about [updating relations](../relations.md#updating-relations).
 {% endhint %}

@@ -13,7 +13,7 @@ Prefer to dive right into code? Check out our
 
 * [Kotlin Android example app](https://github.com/objectbox/objectbox-examples/tree/main/android-app-kotlin) using relations,
 * [Java relations playground](https://github.com/objectbox/objectbox-examples/tree/main/android-app-relations) Android app,
-* [Flutter relations example](https://github.com/objectbox/objectbox-dart/tree/main/objectbox/example/flutter/objectbox\_demo\_relations) app.
+* [Flutter relations example](https://github.com/objectbox/objectbox-dart/tree/main/objectbox/example/flutter/objectbox_demo_relations) app.
 {% endhint %}
 
 {% hint style="info" %}
@@ -132,7 +132,7 @@ int orderId = store.box<Order>().put(order);
 If the customer object does not yet exist in the database (i.e. its ID is zero), `ToOne` will put it (so there will be two puts, one for `Order`, one for `Customer`). If it already exists, `ToOne` will only create the relation (so there's only one put for `Order`, as explicitly written in the code). **See further below for details about** [**updating relations**](relations.md#updating-relations)**.**
 
 {% hint style="info" %}
-**Note:** if your related entity uses self-assigned IDs with `@Id(assignable = true)` ObjectBox won't know if a target object is a new one or an existing one, therefore it will NOT insert it, you would have to call `customerBox.put(customer)`manually (considering the previous example). See below about [updating ToOne](relations.md#updating-toone) for details.
+**Note:** if your related entity uses manually assigned IDs with `@Id(assignable = true)` ObjectBox won't know if a target object is a new one or an existing one, therefore it will NOT insert it, `customerBox.put(customer)` would have to be called manually (considering the previous example). See below about [updating ToOne](relations.md#updating-toone) for details.
 {% endhint %}
 
 Have a look at the following code how you can **get** (read) the customer of an order:
@@ -446,7 +446,7 @@ final customerId = store.box<Customer>().put(customer);
 If the order entities do not yet exist in the database, `ToMany` will put them. If they already exist, it will only create the relation (but not put them). See further below for details about [updating relations](relations.md#updating-relations).
 
 {% hint style="info" %}
-**Note:** if your entities use self-assigned IDs with `@Id(assignable = true)` the above will not work. See below about [updating ToMany](relations.md#updating-tomany) for details.
+**Note:** if your entities use manually assigned IDs with `@Id(assignable = true)` the above will not work. See below about [updating ToMany](relations.md#updating-tomany) for details.
 {% endhint %}
 
 We can easily **get** the orders of a customer back by accessing the list of orders:
@@ -646,7 +646,7 @@ store.box<Student>().putMany([student1, student2]);
 If the teacher entities do not yet exist in the database, `ToMany` will also put them. If they already exist,  `ToMany` will only create the relation (but not put them). See further below for details about [updating relations](relations.md#updating-relations).
 
 {% hint style="info" %}
-**Note:** if your entities use self-assigned IDs with `@Id(assignable = true)` the above will not work. See below about [updating ToMany](relations.md#updating-tomany) for details.
+**Note:** if your entities use manually assigned IDs with `@Id(assignable = true)` the above will not work. See below about [updating ToMany](relations.md#updating-tomany) for details.
 {% endhint %}
 
 To **get** the teachers of a student we just access the list:
@@ -947,11 +947,11 @@ order.customer.setAndPutTarget(customer);
 {% endhint %}
 
 {% hint style="warning" %}
-**Note:** if the target Object uses self-assigned IDs with  `@Id(assignable = true)`it will not be put when the Object that owns the relation is put:
+**Note:** if the target Object class uses manually assigned IDs with  `@Id(assignable = true)` it will not be put when the Object that owns the relation is put:
 
 ```java
 Customer customer = new Customer();
-// If ID is self-assigned, put target Object first
+// If ID is manually assigned, put target Object first
 customer.id = 12;
 customerBox.put(customer);
 // Then can safely set as target
@@ -971,13 +971,13 @@ The `ToMany` relation class is based on a standard `List` with added change trac
 See the documentation on [One-to-Many](relations.md#one-to-many-1-n) and [Many-to-Many](relations.md#many-to-many-n-m) above for details.
 
 {% hint style="warning" %}
-**Note (Java/Kotlin only):** if your entities are using self-assigned IDs with  `@Id(assignable = true)` additional steps are required. Read on for details:
+**Note (Java/Kotlin only):** if your entities are using manually assigned IDs with  `@Id(assignable = true)` additional steps are required. Read on for details:
 {% endhint %}
 
 If the owning, source Object uses `@Id(assignable = true)` attach its Box before modifying its ToMany:
 
 ```java
-// If source has self-assigned ID attach Box first
+// If source has a manually assigned ID attach Box first
 customer.id = 12;
 customerBox.attach(customer);
 // Then can safely modify ToMany
@@ -985,10 +985,10 @@ customer.orders.add(order);
 customerBox.put(customer);
 ```
 
-If the target Object, like `Order` above, is using self-assigned IDs put the target Objects before adding them to the ToMany relation:
+If the target Object, like `Order` above, is using manually assigned IDs put the target Objects before adding them to the ToMany relation:
 
 ```java
-// If ID is self-assigned put target Object first
+// If ID is manually assigned put target Object first
 order.id = 42;
 orderBox.put(order);
 // Then can safely add target Object to ToMany
