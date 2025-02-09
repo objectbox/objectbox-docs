@@ -9,7 +9,7 @@ description: >-
 
 ## ObjectBox - Transactions
 
-A transaction can group several operations into a single unit of work that either executes completely or not at all. If you are looking for a more detailed introduction to transactions in general, please consult other resources like Wikipedia on [database transactions](https://en.wikipedia.org/wiki/Database\_transaction). For ObjectBox transactions continue reading:
+A transaction can group several operations into a single unit of work that either executes completely or not at all. If you are looking for a more detailed introduction to transactions in general, please consult other resources like Datacamp on [database transactions](https://www.datacamp.com/tutorial/sql-transactions). For ObjectBox transactions continue reading:
 
 You may not notice it, but almost all interactions with ObjectBox involve transactions. For example, if you call `put` a write transaction is used. Also if you `get` an object or query for objects, a read transaction is used. All of this is done under the hood and transparent to you. It may be fine to completely ignore transactions altogether in your app without running into any problems. With more complex apps however, it’s usually worth learning transaction basics to make your app more consistent and efficient.
 
