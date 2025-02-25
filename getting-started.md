@@ -314,6 +314,80 @@ Define your model by adding an `@Entity` (internal name for database objects) an
 
 A simple entity representing a user could look like this:
 
+{% tabs %}
+{% tab title="Java" %}
+{% code title="User.java" %}
+```java
+@Entity
+public class User {
+    @Id 
+    public long id;
+    public String name;
+}
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Kotlin" %}
+{% code title="models.kt" %}
+```kotlin
+@Entity
+data class User(
+        @Id 
+        var id: Long = 0,
+        var name: String? = null
+)
+```
+{% endcode %}
+
+{% hint style="warning" %}
+When using a data class, **add default values for all parameters**. This will ensure your data class will have a constructor that can be called by ObjectBox. (Technically this is only required if adding properties to the class body, like custom or transient properties or relations, but it's a good idea to do it always.)
+{% endhint %}
+
+{% hint style="warning" %}
+**Avoid naming properties like reserved Java keywords, like `private` and `default`.** ObjectBox tooling works with the Java representation of your Kotlin code to be compatible with both Java and Kotlin. It will ignore such properties.
+{% endhint %}
+{% endtab %}
+
+{% tab title="Dart" %}
+{% code title="models.dart" %}
+```dart
+@Entity()
+class User {
+  @Id()
+  int id = 0;
+  
+  String? name;
+  
+  @Property(type: PropertyType.date) // Store as int in milliseconds
+  DateTime? date;
+
+  @Transient() // Ignore this property, not stored in the database.
+  int? computedProperty;
+}
+```
+{% endcode %}
+
+You can have multiple entities in the same file (here `models.dart`), or you can have them spread across multiple files in your package's `lib` directory.
+{% endtab %}
+
+{% tab title="Python" %}
+{% code title="model.py" %}
+```python
+from objectbox import Entity, Id, String
+
+@Entity()
+class User:
+  id = Id
+  name = String
+  
+```
+{% endcode %}
+{% endtab %}
+{% endtabs %}
+
+
+
 **Important:**
 
 * **Entities must have one ID property of type `long`** (or `Long` in Kotlin, `int` in Dart). If you need to use other types, like a String ID, [see the @Id annotation docs](entity-annotations.md#object-ids-id). Also, it must have **non-private visibility** (or non-private getter and setter methods).
