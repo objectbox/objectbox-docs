@@ -64,7 +64,7 @@ If you encounter any problems in this or later steps, check out the [FAQ](faq.md
 
 3. Then do "Sync Project with Gradle Files" in Android Studio so the Gradle plugin automatically adds the required ObjectBox libraries and code generation tasks.
 
-#### Optional: Advanced Setup
+**Optional: Advanced Setup**
 
 The ObjectBox plugin uses reasonable defaults and detects most configurations automatically. However, if needed you can configure the model file path, the MyObjectBox package, enable debug mode and more [using advanced setup options](advanced/advanced-setup.md).
 {% endtab %}
@@ -124,7 +124,7 @@ Using your IDE of choice with a Gradle project might require additional configur
 * For Eclipse see the [Buildship ](https://projects.eclipse.org/projects/tools.buildship)project and [Getting Started](https://www.vogella.com/tutorials/EclipseGradle/article.html) article.
 {% endhint %}
 
-#### Native Libraries
+**Native Libraries**
 
 ObjectBox is an object database running mostly in native code written in C/C++ for optimal performance. Thus, ObjectBox will load a native library: a “.dll” on Windows, a “.so” on Linux, and a “.dylib” on macOS. By default, the ObjectBox Gradle plugin adds a dependency to the native library matching your system. This means that your app is already set up to run on your system.
 
@@ -310,9 +310,9 @@ pip install --upgrade objectbox
 
 ## Define Entity Classes
 
-Define your model by adding an `@Entity` (internal name for database objects) annotation to at least one class and an `@Id` annotation to one of the class variables. [Learn more about the ObjectBox model here](advanced/meta-model-ids-and-uids.md).
+Define your data model by creating a class with at least an ID property, a so called entity.
 
-A simple entity representing a user could look like this:
+A simple entity representing a user with an ID and a name property could look like this:
 
 {% tabs %}
 {% tab title="Java" %}
@@ -386,8 +386,6 @@ class User:
 {% endtab %}
 {% endtabs %}
 
-
-
 **Important:**
 
 * **Entities must have one ID property of type `long`** (or `Long` in Kotlin, `int` in Dart). If you need to use other types, like a String ID, [see the @Id annotation docs](entity-annotations.md#object-ids-id). Also, it must have **non-private visibility** (or non-private getter and setter methods).
@@ -396,7 +394,11 @@ class User:
 [Support for many property types](advanced/custom-types.md) is already built-in, but almost any type can be stored [with a converter](advanced/custom-types.md#convert-annotation-and-property-converter).
 
 {% hint style="info" %}
-For a deeper explanation and a look at all other available annotations (e.g. for relations and indexes) check the [Entity Annotations](entity-annotations.md) page.
+For more details check the [entity-annotations.md](entity-annotations.md "mention") page (e.g. for relations and indexes) or [learn more about the ObjectBox model](advanced/meta-model-ids-and-uids.md).
+
+ObjectBox also supports changing your model at a later point. You can **add and remove properties in entities** and the database model is updated **automatically** (after re-generating some code, see section below). There is no need to write migration code.
+
+**To rename entities or properties, change the type of a property** and more details in general see [data-model-updates.md](advanced/data-model-updates.md "mention").
 {% endhint %}
 
 ## Generate ObjectBox code
@@ -583,7 +585,7 @@ class ObjectBox {
 ```
 
 {% hint style="info" %}
-**For sandboxed macOS apps** also pass `macosApplicationGroup` to `openStore()`. See the notes about "macOS application group" in [the constructor documentation](https://pub.dev/documentation/objectbox/latest/objectbox/Store/Store.html) of the `Store` class.&#x20;
+**For sandboxed macOS apps** also pass `macosApplicationGroup` to `openStore()`. See the notes about "macOS application group" in [the constructor documentation](https://pub.dev/documentation/objectbox/latest/objectbox/Store/Store.html) of the `Store` class.
 
 For example:
 
