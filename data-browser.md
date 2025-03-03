@@ -152,8 +152,8 @@ Modify the Gradle build file of the Flutter Android app to add the dependency:
 
 {% code title="android/app/build.gradle" %}
 ```groovy
-// Tell Gradle to exclude the objectbox-android dependency
-// that is added by objectbox_flutter_libs for debug builds.
+// Tell Gradle to exclude the Android library (without Admin)
+// that is added by the objectbox_flutter_libs package for debug builds.
 configurations {
     debugImplementation {
         exclude group: 'io.objectbox', module: 'objectbox-android'
@@ -161,15 +161,24 @@ configurations {
 }
 
 dependencies {
-    // Add objectbox-android-objectbrowser only for debug builds.
-    // Replace <version> with the included objectbox-android version,
-    // e.g. check https://github.com/objectbox/objectbox-dart/releases
-    // Warning: when ObjectBox for Dart updates check if <version>
-    // needs to be updated.
+    // Add the Android library with ObjectBox Admin only for debug builds.
+    // Note: when the objectbox package updates, check if the Android
+    // library below needs to be updated as well.
+    // TODO Replace <version> with the one noted in the release notes (https://github.com/objectbox/objectbox-dart/releases)
     debugImplementation("io.objectbox:objectbox-android-objectbrowser:<version>")
 }
 ```
 {% endcode %}
+
+To avoid a version mismatch on updates, we suggest to change the dependency on the objectbox Dart package from an open to a fixed version as well:
+
+```yaml
+dependencies:
+  # Note: when updating objectbox, check the release notes (https://github.com/objectbox/objectbox-dart/releases)
+  # if objectbox-android-objectbrowser in android/app/build.gradle has to be updated.
+  objectbox: x.y.z # TODO Replace with valid version
+  objectbox_flutter_libs: any
+```
 {% endtab %}
 {% endtabs %}
 
