@@ -22,16 +22,16 @@ You can get ObjectBox from [the Central repository](https://search.maven.org/). 
 {% code title="/build.gradle(.kts)" %}
 ```java
 buildscript {
-    ext.objectboxVersion = "4.1.0" // For Groovy build scripts
-    // val objectboxVersion by extra("4.1.0") // For KTS build scripts
+    ext.objectboxVersion = "4.2.0" // For Groovy build scripts
+    // val objectboxVersion by extra("4.2.0") // For KTS build scripts
     
     repositories {
         mavenCentral()
     }
     
     dependencies {
-        // Android Gradle Plugin 4.1.0 or later supported
-        classpath("com.android.tools.build:gradle:8.1.0")
+        // Android Gradle Plugin 8.1.1 or later supported
+        classpath("com.android.tools.build:gradle:8.1.1")
         classpath("io.objectbox:objectbox-gradle-plugin:$objectboxVersion")
     }
 }
@@ -87,8 +87,8 @@ To add the ObjectBox plugin:
 {% code title="/build.gradle(.kts)" %}
 ```groovy
 buildscript {
-    ext.objectboxVersion = "4.1.0" // For Groovy build scripts
-    // val objectboxVersion by extra("4.1.0") // For KTS build scripts
+    ext.objectboxVersion = "4.2.0" // For Groovy build scripts
+    // val objectboxVersion by extra("4.2.0") // For KTS build scripts
     
     repositories {
         mavenCentral()
