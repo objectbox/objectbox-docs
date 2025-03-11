@@ -170,7 +170,7 @@ dependencies {
 ```
 {% endcode %}
 
-To avoid a version mismatch on updates, we suggest to change the dependency on the objectbox Dart package from an open to a fixed version as well:
+To avoid a version mismatch on updates, we suggest to change the dependency on the objectbox Dart package from a range of versions to a concrete version:
 
 ```yaml
 dependencies:
