@@ -73,7 +73,7 @@ class City {
 
   String? name;
 
-  @HnswIndex(dimensions: 2)
+  @HnswIndex(dimensions: 2, distanceType: VectorDistanceType.geo)
   @Property(type: PropertyType.floatVector)
   List<double>? location;
   
@@ -92,7 +92,7 @@ public class City {
     @Nullable 
     String name;
 
-    @HnswIndex(dimensions = 2)
+    @HnswIndex(dimensions = 2, distanceType = VectorDistanceType.GEO)
     float[] location;
     
     public City(@Nullable String name, float[] location) {
@@ -109,7 +109,8 @@ public class City {
 data class City(
     @Id var id: Long = 0,
     var name: String? = null,
-    @HnswIndex(dimensions = 2) var location: FloatArray? = null
+    @HnswIndex(dimensions = 2, distanceType = VectorDistanceType.GEO) 
+    var location: FloatArray? = null
 )
 ```
 {% endtab %}
@@ -166,7 +167,7 @@ struct City {
 As a starting point the index configuration only needs the number of dimensions. To optimize the index, you can supply additional options via the annotation later once you got things up and running:
 
 * **dimensions (required)**: how many dimensions of the vector to use for indexing. This is a fixed value that depends on your specific use case (e.g. on your embedding model) and you will typically only use vectors of that exact dimension. For special use cases, you can insert vectors with a higher dimension. However, if the vector of an inserted object has less dimensions, it is completely ignored for indexing (it cannot be found).
-* **distanceType**: the algorithm used to determine the distance between two vectors. By default, (squared) Euclidean distance is used: `d(v, w) = length(v - w)` Other algorithms, based on cosine and dot product, are available.
+* **distanceType**: the algorithm used to determine the distance between two vectors. By default, (squared) Euclidean distance is used: `d(v, w) = length(v - w)` Other algorithms, based on cosine, Haversine distance and dot product, are available.
 * **neighborsPerNode** (aka "M" in HNSW terms): the maximum number of connections per node (default: 30). A higher number increases the graph connectivity which can lead to better results, but higher resources usage. Try e.g. 16 for faster but less accurate results, or 64 for more accurate results.
 * **indexingSearchCount** (aka "efConstruction" in HNSW terms): the number of neighbors searched for while indexing (default: 100). The default value serves as a starting point that can likely be optimized for specific datasets and use cases. The higher the value, the more accurate the search, but the longer the indexing will take. If indexing time is not a major concern, a value of at least 200 is recommended to improve search quality.
 
