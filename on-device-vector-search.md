@@ -59,7 +59,7 @@ class City:
     name = String
     location = Float32Vector(index=HnswIndex(
         dimensions=2,
-        distance_type=HnswDistanceType.GEO
+        distance_type=HnswDistanceType.EUCLIDEAN
     ))
 ```
 {% endtab %}
@@ -123,7 +123,7 @@ class City {
     
     var name: String?
     
-    // objectbox:hnswIndex: dimensions=2, distanceType="geo"
+    // objectbox:hnswIndex: dimensions=2
     var location: [Float]?    
 }
 
@@ -131,7 +131,7 @@ class City {
 // objectbox:hnswIndex: dimensions=2, neighborsPerNode=30, indexingSearchCount=100, flags="debugLogs", distanceType="euclidean", reparationBacklinkProbability=0.95, vectorCacheHintSizeKB=2097152
 
 // flags may be a comma-separated list of debugLogs, debugLogsDetailed, reparationLimitCandidates, vectorCacheSimdPaddingOff
-// distanceType may be one of euclidean, cosine, dotProduct, dotProductNonNormalized, geo
+// distanceType may be one of euclidean, cosine, dotProduct, dotProductNonNormalized
 ```
 {% endtab %}
 
@@ -144,7 +144,7 @@ table City {
     id: ulong;
     name: string;
     /// objectbox: index=hnsw, hnsw-dimensions=2
-    /// objectbox: hnsw-distance-type=Geo
+    /// objectbox: hnsw-distance-type=Euclidean
     location: [float];
 }
 
