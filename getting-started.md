@@ -69,10 +69,7 @@ If you encounter any problems in this or later steps, check out the [FAQ](faq.md
 {% endhint %}
 
 3. Then do "Sync Project with Gradle Files" in Android Studio so the Gradle plugin automatically adds the required ObjectBox libraries and code generation tasks.
-
-**Optional: Advanced Setup**
-
-The ObjectBox plugin uses reasonable defaults and detects most configurations automatically. However, if needed you can configure the model file path, the MyObjectBox package, enable debug mode and more [using advanced setup options](advanced/advanced-setup.md).
+4. Your project can now use ObjectBox, continue by defining entity classes.
 {% endtab %}
 
 {% tab title="Java/Kotlin (JVM)" %}
@@ -182,7 +179,7 @@ By default, the Gradle plugin adds a runtime library (only) for your current ope
 ObjectBox only supports 64-bit systems for best performance going forward. Talk to us if you require 32-bit support.
 {% endhint %}
 
-3. Your project can now use ObjectBox, continue by defining an entity class.
+3. Your project can now use ObjectBox, continue by defining entity classes.
 
 {% hint style="info" %}
 On Windows you might have to install the latest [Microsoft Visual C++ Redistributable package (X64)](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022) to use ObjectBox.
@@ -200,6 +197,10 @@ You can watch these video tutorials as well 😀:
 * [Event Management app](https://youtu.be/6YPSQPS_bhU)
 * [Restaurant: chef and order apps](https://youtu.be/r9Lc2r22KBk)
 * [Task-list app (in Spanish)](https://youtu.be/osUq6B92-BY)
+{% endhint %}
+
+{% hint style="info" %}
+Prefer to look at example code? Check out our [examples directory](https://github.com/objectbox/objectbox-dart/tree/main/objectbox/example).
 {% endhint %}
 
 To add ObjectBox to your Flutter project:
@@ -289,6 +290,10 @@ android {
 {% endtab %}
 
 {% tab title="Dart Native" %}
+{% hint style="info" %}
+Prefer to look at example code? Check out our [examples directory](https://github.com/objectbox/objectbox-dart/tree/main/objectbox/example).
+{% endhint %}
+
 1. Run these commands:
 
 ```
@@ -335,9 +340,14 @@ If it is not found there, it falls back to using system directories (using Dart'
 * Windows: working directory and `%WINDIR%\system32`.
 * macOS: `/usr/local/lib` (and maybe others).
 * Linux: `/lib` and `/usr/lib` (again, possibly others).
+*
 {% endtab %}
 
 {% tab title="Python" %}
+{% hint style="info" %}
+Prefer to look at example code? Check out our [examples directory](https://github.com/objectbox/objectbox-python/tree/main/example).
+{% endhint %}
+
 ObjectBox for Python is available via PyPI:\
 \
 Stable Version (4.0.0):
