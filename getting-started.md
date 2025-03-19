@@ -15,7 +15,13 @@ description: >-
 Video Tutorial on Getting Started with ObjectBox for Android and Java
 {% endembed %}
 
-You can get ObjectBox from [the Central repository](https://search.maven.org/). To add ObjectBox to your Android project, follow these steps:
+{% hint style="info" %}
+Prefer to look at example code? Check out [our examples repository](https://github.com/objectbox/objectbox-examples).
+{% endhint %}
+
+ObjectBox tools and dependencies are available on [the Maven Central repository](https://central.sonatype.com/namespace/io.objectbox).
+
+To add ObjectBox to your Android project, follow these steps:
 
 1. Open the Gradle build file of your root project (not the ones for your app or module subprojects) and add a global variable for the version and the ObjectBox Gradle plugin:
 
@@ -70,19 +76,32 @@ The ObjectBox plugin uses reasonable defaults and detects most configurations au
 {% endtab %}
 
 {% tab title="Java/Kotlin (JVM)" %}
-ObjectBox for Java supports JVM (Linux, macOS, Windows) Java or Kotlin projects.
-
-It ships with a Gradle plugin. To apply it, your project needs to use [Gradle](https://gradle.org/) as the build system. The instructions assume the [recommended multi-project directory structure](https://docs.gradle.org/current/userguide/multi_project_builds.html) is used.
-
 {% hint style="info" %}
-There is an experimental Maven plugin available. See the [Java Maven example](https://github.com/objectbox/objectbox-examples/tree/main/java-main-maven). We welcome [your feedback](https://github.com/objectbox/objectbox-java/issues/637) if supporting Maven is of interest to you.
+Prefer to look at example code? Check out [our examples repository](https://github.com/objectbox/objectbox-examples).
 {% endhint %}
 
-ObjectBox is available from [the Maven Central repository](https://central.sonatype.com/).
+The ObjectBox Java SDK and runtime libraries support applications:
 
-To add the ObjectBox plugin:
+* running on the JVM on Linux (x86\_64, arm64, armv7), Windows (x86\_64) and macOS 10.15 or newer (x86\_64, Apple M1)
+* written in Java or Kotlin
+* targeting at least Java 8
+* built with Gradle or Maven
 
-1. Open the Gradle build file of your root project and add a global variable for the version and the ObjectBox Gradle plugin:
+ObjectBox tools and dependencies are available on [the Maven Central repository](https://central.sonatype.com/namespace/io.objectbox).
+
+#### Maven projects
+
+To set up a Maven project, see the [README of the Java Maven example project](https://github.com/objectbox/objectbox-examples/blob/main/java-main-maven/README.md).
+
+#### Gradle projects
+
+{% hint style="info" %}
+The instructions assume a [multi-project build](https://docs.gradle.org/current/userguide/multi_project_builds.html) is used.
+{% endhint %}
+
+1. Open the Gradle build script of your root project and
+   1. add a global variable to store the common version of ObjectBox dependencies and
+   2. add the [ObjectBox Gradle plugin](https://github.com/objectbox/objectbox-java-generator):
 
 {% code title="/build.gradle(.kts)" %}
 ```groovy
@@ -101,7 +120,7 @@ buildscript {
 ```
 {% endcode %}
 
-2. Open the Gradle build file for [your subproject](https://docs.gradle.org/current/userguide/multi_project_builds.html) and, after other plugins, apply the `io.objectbox` plugin:
+2. Open the Gradle build file for your application subproject and, after other plugins, apply the `io.objectbox` plugin:
 
 {% code title="/app/build.gradle(.kts)" %}
 ```groovy
@@ -120,33 +139,54 @@ apply plugin: "io.objectbox" // Apply last.
 {% hint style="info" %}
 Using your IDE of choice with a Gradle project might require additional configuration. E.g.
 
-* For IntelliJ IDEA see the [help page for Gradle](https://www.jetbrains.com/help/idea/gradle.html). Also make sure to use version 2019.1 or newer as it has improved Gradle support, like delegating build actions to Gradle.
+* For IntelliJ IDEA see the [help page for Gradle](https://www.jetbrains.com/help/idea/gradle.html).
 * For Eclipse see the [Buildship ](https://projects.eclipse.org/projects/tools.buildship)project and [Getting Started](https://www.vogella.com/tutorials/EclipseGradle/article.html) article.
 {% endhint %}
 
-**Native Libraries**
+3. **Optionally**, add a runtime library for each platform that your application should run on and instead apply the Gradle plugin after the dependencies block:
 
-ObjectBox is an object database running mostly in native code written in C/C++ for optimal performance. Thus, ObjectBox will load a native library: a “.dll” on Windows, a “.so” on Linux, and a “.dylib” on macOS. By default, the ObjectBox Gradle plugin adds a dependency to the native library matching your system. This means that your app is already set up to run on your system.
+```groovy
+dependencies {
+    // ObjectBox platform-specific runtime libraries
+    // Add or remove them as needed to match what your application supports
+    // Linux (x64)
+    implementation("io.objectbox:objectbox-linux:$objectboxVersion")
+    // macOS (Intel and Apple Silicon)
+    implementation("io.objectbox:objectbox-macos:$objectboxVersion")
+    // Windows (x64)
+    implementation("io.objectbox:objectbox-windows:$objectboxVersion")
+
+    // Additional ObjectBox runtime libraries
+    // Linux (32-bit ARM)
+    implementation("io.objectbox:objectbox-linux-arm64:$objectboxVersion")       
+    // Linux (64-bit ARM)
+    implementation("io.objectbox:objectbox-linux-armv7:$objectboxVersion")
+}
+
+// When manually adding ObjectBox dependencies, the plugin must be
+// applied after the dependencies block so it can detect them.
+// Using Groovy build scripts
+apply plugin: "io.objectbox"
+// Using KTS build scripts
+apply(plugin = "io.objectbox")
+```
 
 {% hint style="info" %}
-On Windows you might have to install the latest [Microsoft Visual C++ Redistributable package (X64)](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022) to use the ObjectBox DLL.
+The ObjectBox database runs mostly in native code written in C/C++ for optimal performance. Thus, ObjectBox will load a runtime library: a “.dll” on Windows, a “.so” on Linux, and a “.dylib” on macOS.\
+
+
+By default, the Gradle plugin adds a runtime library (only) for your current operating system. It also adds the Java SDK (objectbox-java) and if needed the ObjectBox Kotlin extension functions (objectbox-kotlin).
 {% endhint %}
 
 {% hint style="info" %}
-ObjectBox binaries are built for 64-bit systems for best performance. Talk to us if you require 32-bit support.
+ObjectBox only supports 64-bit systems for best performance going forward. Talk to us if you require 32-bit support.
 {% endhint %}
 
-To **add native libraries for all platforms that your app supports** and additional configuration options (configure the model file path, the MyObjectBox package, enable debug mode) see:
+3. Your project can now use ObjectBox, continue by defining an entity class.
 
-{% content-ref url="advanced/advanced-setup.md" %}
-[advanced-setup.md](advanced/advanced-setup.md)
-{% endcontent-ref %}
-
-For examples and how to write unit tests see:
-
-{% content-ref url="java-desktop-apps.md" %}
-[java-desktop-apps.md](java-desktop-apps.md)
-{% endcontent-ref %}
+{% hint style="info" %}
+On Windows you might have to install the latest [Microsoft Visual C++ Redistributable package (X64)](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022) to use ObjectBox.
+{% endhint %}
 {% endtab %}
 
 {% tab title="Flutter" %}
@@ -403,11 +443,13 @@ Next, we generate some binding code based on the model defined in the previous s
 
 {% tabs %}
 {% tab title="Java/Kotlin" %}
-**Build your project** to generate the classes required to use ObjectBox, for example using **Build > Make Project** in Android Studio.
+**Build your project** to generate the `MyObjectBox` class and other classes required to use ObjectBox, for example using **Build > Make Project** in Android Studio.
 
 {% hint style="info" %}
 Note: If you make significant changes to your entities, e.g. by moving them or modifying annotations, make sure to **rebuild** the project so generated ObjectBox code is updated.
 {% endhint %}
+
+To change the package of the `MyObjectBox` class, see the annotation processor options on the [advanced-setup.md](advanced/advanced-setup.md "mention") page.
 {% endtab %}
 
 {% tab title="Flutter/Dart Native" %}
@@ -448,6 +490,8 @@ Among other files ObjectBox generates a JSON **model file**, by default to
 * `app/objectbox-models/default.json` for Android projects,
 * `lib/objectbox-model.json` for Dart/Flutter projects, or
 * `<user-module-dir>/objectbox-model.json` for Python projects
+
+To change the model file path, see [advanced-setup.md](advanced/advanced-setup.md "mention").
 
 {% hint style="info" %}
 In Android Studio you might have to switch the _Project view_ from _Android_ to _Project_ to see the `default.json` model file.\
@@ -1091,3 +1135,5 @@ DaoCompat is a compatibility layer that gives you a greenDAO like API for Object
 
 * Check out the [ObjectBox example projects on GitHub](https://github.com/objectbox/objectbox-examples/).
 * Learn about [Queries](queries.md) and [Relations](relations.md).
+* Learn [how to write unit tests](android/android-local-unit-tests.md).
+* To enable debug mode and for advanced use cases, see the [advanced-setup.md](advanced/advanced-setup.md "mention") page.
