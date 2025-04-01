@@ -110,7 +110,7 @@ Note the user id (`-u`) mapping is omitted on Windows. The port can be changed a
 Once Admin has started, open the local URL printed by the script (typically `http://127.0.0.1:8081`) in your browser. You should see the Data page for an entity type.
 
 {% hint style="info" %}
-For database files stored on a Windows file system (NTFS), to see changes to the database, Admin needs to be restarted.
+To see changes to the database, on macOS and Windows Admin needs to be restarted.
 {% endhint %}
 
 
