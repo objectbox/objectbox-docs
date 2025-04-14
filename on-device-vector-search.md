@@ -39,7 +39,7 @@ In order to enable efficient vector search, a vector database needs to "index" t
 
 HNSW spans a graph over all vectors by connecting each vector node to its closest neighbors. To search for the nearest neighbors of a given vector, you start at an arbitrary node and check which of its neighbors are closer to the given vector. This repeats until the closest nodes are identified. To make this scalable, HNSW uses layers: higher layers have less nodes to get closer to the destination vector faster. Once the closest node in a layer is identified, the algorithm moves down one layer. This repeats until the lowest layer which contains all nodes is reached and the actual approximate nearest neighbors are found.
 
-**Approximate nearest neighbor (ANN) search**: with high-dimensional vectors, exact nearest neighbor search is extremely time consuming (see also: [curse of dimensionality](https://en.wikipedia.org/wiki/Curse\_of\_dimensionality)). Thus, approximate solutions like HNSW are the way to go in this domain. Typically, they come with a quality/performance trade-off. In the case of HNSW you have parameters to control that.
+**Approximate nearest neighbor (ANN) search**: with high-dimensional vectors, exact nearest neighbor search is extremely time consuming (see also: [curse of dimensionality](https://en.wikipedia.org/wiki/Curse_of_dimensionality)). Thus, approximate solutions like HNSW are the way to go in this domain. Typically, they come with a quality/performance trade-off. In the case of HNSW you have parameters to control that.
 
 <img src=".gitbook/assets/hnsw.png" alt="" data-size="original">
 
@@ -123,7 +123,7 @@ class City {
     
     var name: String?
     
-    // objectbox:hnswIndex: dimensions=2
+    // objectbox:hnswIndex: dimensions=2, distanceType="geo"
     var location: [Float]?    
 }
 
@@ -131,7 +131,7 @@ class City {
 // objectbox:hnswIndex: dimensions=2, neighborsPerNode=30, indexingSearchCount=100, flags="debugLogs", distanceType="euclidean", reparationBacklinkProbability=0.95, vectorCacheHintSizeKB=2097152
 
 // flags may be a comma-separated list of debugLogs, debugLogsDetailed, reparationLimitCandidates, vectorCacheSimdPaddingOff
-// distanceType may be one of euclidean, cosine, dotProduct, dotProductNonNormalized
+// distanceType may be one of euclidean, geo, cosine, dotProduct, dotProductNonNormalized
 ```
 {% endtab %}
 
