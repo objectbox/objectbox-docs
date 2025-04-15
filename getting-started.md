@@ -231,13 +231,13 @@ To get a variant of the library that supports **ObjectBox Sync**, append the `--
 
 ```yaml
 dependencies:
-  objectbox: ^4.1.0
+  objectbox: ^4.2.0
   objectbox_flutter_libs: any
   # If you run the command for ObjectBox Sync it should add instead:
   # objectbox_sync_flutter_libs: any
 
 dev_dependencies:
-  build_runner: ^2.0.0
+  build_runner: ^2.4.11
   objectbox_generator: any
 ```
 
@@ -268,25 +268,6 @@ android {
 {% hint style="info" %}
 **For Linux Desktop apps:** the **Flutter snap** ships with an outdated version of CMake. [**Install Flutter manually**](https://docs.flutter.dev/get-started/install/linux#install-flutter-manually) **instead** to use the version of CMake installed on your system.
 {% endhint %}
-
-{% hint style="info" %}
-**For Android using Flutter 3.19 or older** and the **ObjectBox Sync**-enabled library: increase minSdkVersion to at least 21.
-
-{% code title="/android/app/build.gradle" %}
-```groovy
-android {
-    defaultConfig {
-        // ObjectBox Sync requires at least SDK 21 (Android 5.0)
-        minSdkVersion 21
-    }
-}    
-```
-{% endcode %}
-{% endhint %}
-
-{% hint style="info" %}
-**For iOS using Flutter 3.0 or older:** increase the deployment target in Xcode to iOS 12 and, under Architectures, replace `${ARCHS_STANDARD}` with `arm64` (or `$ARCHS_STANDARD_64_BIT`).
-{% endhint %}
 {% endtab %}
 
 {% tab title="Dart Native" %}
@@ -305,10 +286,10 @@ dart pub add --dev build_runner objectbox_generator:any
 
 ```yaml
 dependencies:
-  objectbox: ^4.1.0
+  objectbox: ^4.2.0
 
 dev_dependencies:
-  build_runner: ^2.0.0
+  build_runner: ^2.4.11
   objectbox_generator: any
 ```
 
@@ -340,7 +321,8 @@ If it is not found there, it falls back to using system directories (using Dart'
 * Windows: working directory and `%WINDIR%\system32`.
 * macOS: `/usr/local/lib` (and maybe others).
 * Linux: `/lib` and `/usr/lib` (again, possibly others).
-*
+
+
 {% endtab %}
 
 {% tab title="Python" %}
