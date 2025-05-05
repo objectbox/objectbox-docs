@@ -1,8 +1,7 @@
 ---
 description: >-
-  ObjectBox database persistence for Java is based on objects for
-  object-oriented programming instead of SQL. Learn how to persist entities with
-  entity annotations in this tutorial section.
+  Instead of SQL, you define your data model by annotating your persistent
+  object types on the programming language level.
 ---
 
 # Entity Annotations
