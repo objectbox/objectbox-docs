@@ -121,10 +121,6 @@ apply(plugin = "io.objectbox")
 {% endtab %}
 {% endtabs %}
 
-{% hint style="info" %}
-On Windows you might have to install the latest [Microsoft Visual C++ Redistributable package (X64)](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022) to use the ObjectBox DLL.
-{% endhint %}
-
 ### Add libraries for distribution
 
 For JVM apps, by default, the ObjectBox Gradle plugin only adds the native (Linux, macOS or Windows) library **required to run on your current system**. If your app wants to support multiple platforms, **manually add all of the required native libraries** listed above when you **distribute** your app.

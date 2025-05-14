@@ -28,8 +28,8 @@ To add ObjectBox to your Android project, follow these steps:
 {% code title="/build.gradle(.kts)" %}
 ```java
 buildscript {
-    ext.objectboxVersion = "4.2.0" // For Groovy build scripts
-    // val objectboxVersion by extra("4.2.0") // For KTS build scripts
+    ext.objectboxVersion = "4.3.0" // For Groovy build scripts
+    // val objectboxVersion by extra("4.3.0") // For KTS build scripts
     
     repositories {
         mavenCentral()
@@ -103,8 +103,8 @@ The instructions assume a [multi-project build](https://docs.gradle.org/current/
 {% code title="/build.gradle(.kts)" %}
 ```groovy
 buildscript {
-    ext.objectboxVersion = "4.2.0" // For Groovy build scripts
-    // val objectboxVersion by extra("4.2.0") // For KTS build scripts
+    ext.objectboxVersion = "4.3.0" // For Groovy build scripts
+    // val objectboxVersion by extra("4.3.0") // For KTS build scripts
     
     repositories {
         mavenCentral()
@@ -180,10 +180,6 @@ ObjectBox only supports 64-bit systems for best performance going forward. Talk 
 {% endhint %}
 
 3. Your project can now use ObjectBox, continue by defining entity classes.
-
-{% hint style="info" %}
-On Windows you might have to install the latest [Microsoft Visual C++ Redistributable package (X64)](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022) to use ObjectBox.
-{% endhint %}
 {% endtab %}
 
 {% tab title="Flutter" %}

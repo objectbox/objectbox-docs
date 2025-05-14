@@ -30,6 +30,8 @@ String[]
 List<String>
 Map<String, String>
 
+boolean[]
+
 // integer arrays
 byte[]
 char[]
@@ -93,6 +95,8 @@ var custom: Custom = Custom(0)
 Array<String>
 MutableList<String>
 MutableMap<String, String>
+
+BooleanArray
 
 // integer arrays
 ByteArray
