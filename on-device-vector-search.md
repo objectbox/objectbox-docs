@@ -59,7 +59,7 @@ class City:
     name = String
     location = Float32Vector(index=HnswIndex(
         dimensions=2,
-        distance_type=HnswDistanceType.EUCLIDEAN
+        distance_type=VectorDistanceType.EUCLIDEAN
     ))
 ```
 {% endtab %}
