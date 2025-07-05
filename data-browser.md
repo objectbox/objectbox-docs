@@ -23,9 +23,19 @@ The web app runs directly on your device or on your development machine. Behind 
 
 ## Run via Docker
 
+Latest changes (2025-07-05):
+
+* Add class and dependency diagrams to the schema page (view and download)
+* Improved data view for large vectors by displaying only the first elements and the full vector in a dialog
+* Detects images stored as bytes and shows them as such (PNG, GIF, JPEG, SVG, WEBP)
+
 To run Admin on a desktop operating system, e.g. your development machine, you can launch ObjectBox Admin instantaneously using the official [ObjectBox Admin Docker image](https://hub.docker.com/r/objectboxio/admin) `objectboxio/admin`.\
 \
 **This requires a running Docker Engine or Docker Desktop.** If not done, install and start [Docker Engine](https://docs.docker.com/engine/) (Linux, Windows/WSL2) or [Docker Desktop](https://docs.docker.com/get-docker/) (Windows, macOS) capable of running a Linux/x86\_64 image.
+
+{% hint style="warning" %}
+There's a known issue on macOS and Windows with Docker and changes to the filesystem. Thus, to see changes made to the database, Admin needs to be restarted.
+{% endhint %}
 
 {% tabs %}
 {% tab title="Bash Shell script" %}
@@ -108,12 +118,6 @@ Note the user id (`-u`) mapping is omitted on Windows. The port can be changed a
 {% endtabs %}
 
 Once Admin has started, open the local URL printed by the script (typically `http://127.0.0.1:8081`) in your browser. You should see the Data page for an entity type.
-
-{% hint style="info" %}
-To see changes to the database, on macOS and Windows Admin needs to be restarted.
-{% endhint %}
-
-
 
 ## Admin for Android
 
