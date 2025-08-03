@@ -1,0 +1,526 @@
+---
+description: Learn how to build a simple note-taking app with ObjectBox.
+---
+
+import Tabs from "@theme/Tabs"
+import TabItem from "@theme/TabItem"
+
+
+
+# Tutorial: Demo Project
+
+Learn how to build a simple note-taking app with ObjectBox.
+
+
+This tutorial will walk you through a simple note-taking app explaining how to do basic operations with ObjectBox. To just integrate ObjectBox into your project, look at the [Getting Started](getting-started) page.
+
+You can check out the example code from GitHub. This allows you to run the code and explore it in its entirety. It is a simple app for taking notes where you can add new notes by typing in some text and delete notes by clicking on an existing note.
+
+<Tabs>
+<TabItem value="java" label="Java">
+
+```bash
+git clone https://github.com/objectbox/objectbox-examples.git
+cd objectbox-examples/android-app
+```
+
+</TabItem>
+<TabItem value="kotlin" label="Kotlin">
+
+```bash
+git clone https://github.com/objectbox/objectbox-examples.git
+cd objectbox-examples/android-app-kotlin
+```
+
+</TabItem>
+<TabItem value="dart" label="Dart">
+
+```bash
+git clone https://github.com/objectbox/objectbox-dart.git
+cd objectbox-dart/objectbox/examples/flutter/objectbox_demo
+```
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```sh
+git clone https://github.com/objectbox/objectbox-python.git
+cd objectbox-python
+```
+
+</TabItem>
+</Tabs>
+
+## The Note entity and Box class
+
+To store notes there is an entity class called `Note` (or `Task` in Python). It defines the structure or model of the data persisted (saved) in the database for a note: its id, the note text and the creation date.
+
+<Tabs>
+<TabItem value="java" label="Java">
+
+```java title="src/Note.java"
+@Entity
+public class Note {
+    
+    @Id
+    long id;
+    
+    String text;
+    String comment;
+    Date date;
+    
+    ...
+}
+```
+
+</TabItem>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin title="src/Note.kt"
+@Entity
+data class Note(
+        @Id var id: Long = 0,
+        var text: String? = null,
+        var comment: String? = null,
+        var date: Date? = null
+)
+```
+
+</TabItem>
+<TabItem value="dart" label="Dart">
+
+```dart title="lib/model.dart"
+@Entity()
+class Note {
+  int id;
+  String text;
+  String? comment;
+  DateTime date;
+
+  ...
+}
+```
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python title="example/tasks/main.py"
+@Entity()
+class Task:
+    id = Id()
+    text = String()
+    date_created = Date(py_type=int)
+    date_finished = Date(py_type=int)
+```
+
+</TabItem>
+</Tabs>
+
+In general, an ObjectBox _entity_ is an annotated class persisted in the database with its properties. In order to extend the note or to create new entities, you simply modify or create new plain classes and annotate them with `@Entity` and `@Id;` in Python opt-in `uid` argument i.e. `@Entity(uid=)`.&#x20;
+
+<div className="custom-nav-card">
+  <a href="/entity-annotations" className="custom-nav-card-link">
+    <div className="custom-nav-card-content">
+      <h3 className="custom-nav-card-title">Entity Annotations</h3>
+      <p className="custom-nav-card-description">Learn more about entity annotations</p>
+    </div>
+    <div className="custom-nav-card-arrow">›</div>
+  </a>
+</div>
+
+<Tabs>
+<TabItem value="java" label="Java">
+
+Go ahead and build the project, for example by using **Build > Make project** in Android Studio. This triggers ObjectBox to generate some classes, like `MyObjectBox.java`, and some other classes used by ObjectBox internally.
+
+</TabItem>
+<TabItem value="kotlin" label="Kotlin">
+
+Go ahead and build the project, for example by using **Build > Make project** in Android Studio. This triggers ObjectBox to generate some classes, like `MyObjectBox.kt`, and some other classes used by ObjectBox internally.
+
+</TabItem>
+<TabItem value="dart" label="Dart">
+
+Before running the app, run the ObjectBox code generator to create binding code for the entity classes: `flutter pub run build_runner build`&#x20;
+
+Also re-run this after changing the note class.
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python
+# Make sure to install objectbox >= 4.0.0
+$ pip install --upgrade objectbox
+$ ls example
+ollama 
+tasks
+vectorsearch-cities
+
+$ cd tasks
+$ python main.py
+
+Welcome to the ObjectBox tasks-list app example. Type help or ? for a list of commands.
+> 
+```
+
+</TabItem>
+</Tabs>
+
+### Inserting notes
+
+To see how new notes are added to the database, take a look at the following code fragments. The `Box` provides database operations for `Note` objects. A Box is the main interaction with object data.
+
+<Tabs>
+<TabItem value="java" label="Java">
+
+```java title="NoteActivity.java"
+@Override
+public void onCreate(Bundle savedInstanceState) {
+    ...
+    notesBox = ObjectBox.get().boxFor(Note.class);
+    ...
+}
+```
+
+:::info
+Note: In the example project, `ObjectBox` is the name of a helper class to set up and keep a reference to `BoxStore`.
+:::
+
+</TabItem>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin title="NoteActivity.kt"
+public override fun onCreate(savedInstanceState: Bundle?) {
+    ...
+    notesBox = ObjectBox.boxStore.boxFor()
+    ...
+}
+```
+
+:::info
+Note: In the example project, `ObjectBox` is the name of a helper class to set up and keep a reference to `BoxStore`.
+:::
+
+</TabItem>
+<TabItem value="dart" label="Dart">
+
+```dart title="lib/objectbox.dart"
+class ObjectBox {
+  late final Store _store;
+  late final Box<Note> _box;
+  
+  ObjectBox._create(this._store) {
+    _noteBox = Box<Note>(_store);
+    ...
+```
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python title="example/tasks/main.py"
+class TasklistCmd(Cmd):
+    # ...
+
+    def __init__(self):
+        # ...
+        self._store = Store(directory="tasklist-db")
+        self._task_box = self._store.box(Task)
+```
+
+</TabItem>
+</Tabs>
+
+When a user adds a note the method `addNote()` is called. There, a new `Note` object is created and put into the database using the `Box` reference:
+
+<Tabs>
+<TabItem value="java" label="Java">
+
+```java title="NoteActivity.java"
+private void addNote() {
+    ...
+    Note note = new Note();
+    note.setText(noteText);
+    note.setComment(comment);
+    note.setDate(new Date());
+    notesBox.put(note);
+    Log.d(App.TAG, "Inserted new note, ID: " + note.getId());
+    ...
+}
+```
+
+</TabItem>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin title="NoteActivity.kt"
+private fun addNote() {
+    ...
+    val note = Note(text = noteText, comment = comment, date = Date())
+    notesBox.put(note)
+    Log.d(App.TAG, "Inserted new note, ID: " + note.id)
+    ...
+}
+```
+
+</TabItem>
+<TabItem value="dart" label="Dart">
+
+```dart title="lib/objectbox.dart"
+Future<void> addNote(String text) => _noteBox.putAsync(Note(text));
+```
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python title="example/tasks/main.py"
+def add_task(self, text: str):
+    task = Task(text=text, date_created=now_ms())
+    self._task_box.put(task)
+```
+
+</TabItem>
+</Tabs>
+
+Note that the ID property (0 when creating the `Note` object), is assigned by ObjectBox during a put.
+
+### Removing/deleting notes
+
+When the user taps a note, it is deleted. The `Box` provides `remove()` to achieve this:
+
+<Tabs>
+<TabItem value="java" label="Java">
+
+```java title="NoteActivity.java"
+OnItemClickListener noteClickListener = new OnItemClickListener() {
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Note note = notesAdapter.getItem(position);
+        notesBox.remove(note);
+        Log.d(App.TAG, "Deleted note, ID: " + note.getId());
+        ...
+    }
+};
+```
+
+</TabItem>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin title="NoteActivity.kt"
+private val noteClickListener = OnItemClickListener { _, _, position, _ ->
+    notesAdapter.getItem(position)?.also {
+        notesBox.remove(it)
+        Log.d(App.TAG, "Deleted note, ID: " + it.id)
+    }
+    ...
+}
+```
+
+</TabItem>
+<TabItem value="dart" label="Dart">
+
+```dart title="lib/objectbox.dart"
+Future<void> removeNote(int id) => _noteBox.removeAsync(id);
+```
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python title="example/tasks/main.py"
+def remove_task(self, task_id: int) -> bool:
+    is_removed = self._task_box.remove(task_id)
+    return is_removed
+```
+
+</TabItem>
+</Tabs>
+
+### Querying notes
+
+To query and display notes in a list a `Query` instance is built once:
+
+<Tabs>
+<TabItem value="java" label="Java">
+
+```java title="NoteActivity.java"
+@Override
+public void onCreate(Bundle savedInstanceState) {
+    ...
+    // Query all notes, sorted a-z by their text.
+    notesQuery = notesBox.query().order(Note_.text).build();
+    ...
+}
+```
+
+</TabItem>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin title="NoteActivity.kt"
+public override fun onCreate(savedInstanceState: Bundle?) {
+    ...
+    // Query all notes, sorted a-z by their text.
+    notesQuery = notesBox.query {
+        order(Note_.text)
+    }
+    ...
+}
+```
+
+</TabItem>
+<TabItem value="dart" label="Dart">
+
+```dart title="lib/objectbox.dart"
+Stream<List<Note>> getNotes() {
+  // Query for all notes, sorted by their date.
+  // https://docs.objectbox.io/queries
+  final builder = _noteBox.query().order(Note_.date, flags: Order.descending);
+  ...
+```
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python title="example/tasks/main.py"
+def __init__(self):
+    # ...
+    self._query = self._task_box.query().build()
+```
+
+</TabItem>
+</Tabs>
+
+And then executed each time any notes change:
+
+<Tabs>
+<TabItem value="java" label="Java">
+
+```java title="NoteActivity.java"
+private void updateNotes() {
+    List<Note> notes = notesQuery.find();
+    notesAdapter.setNotes(notes);
+}
+```
+
+</TabItem>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin title="NoteActivity.kt"
+private fun updateNotes() {
+    val notes = notesQuery.find()
+    notesAdapter.setNotes(notes)
+}
+```
+
+</TabItem>
+<TabItem value="dart" label="Dart">
+
+```dart title="lib/objectbox.dart"
+  ...
+  // Build and watch the query,
+  // set triggerImmediately to emit the query immediately on listen.
+  return builder
+      .watch(triggerImmediately: true)
+      // Map it to a list of notes to be used by a StreamBuilder.
+      .map((query) => query.find());
+}
+```
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python title="example/tasks/main.py"
+def find_tasks(self):
+    return self._query.find()
+```
+
+:::info
+You can also use `self._task_box.get_all()` to get all Task objects without any condition (instead of building a query).
+:::
+
+</TabItem>
+</Tabs>
+
+In addition to a result sort order, you can add various conditions to filter the results, like equality or less/greater than, when building a query.
+
+<div className="custom-nav-card">
+  <a href="/queries" className="custom-nav-card-link">
+    <div className="custom-nav-card-content">
+      <h3 className="custom-nav-card-title">Queries</h3>
+      <p className="custom-nav-card-description">Learn more about queries</p>
+    </div>
+    <div className="custom-nav-card-arrow">›</div>
+  </a>
+</div>
+
+### Updating notes and more
+
+What is not shown in the example, is how to update an existing (== the ID is not 0) note. Do so by just modifying any of its properties and then put it again with the changed object:
+
+<Tabs>
+<TabItem value="java" label="Java">
+
+```java
+note.setText("This note has changed.");
+notesBox.put(note);
+```
+
+</TabItem>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+note.text = "This note has changed."
+notesBox.put(note)
+```
+
+</TabItem>
+<TabItem value="dart" label="Dart">
+
+```dart
+note.text = "This note has changed.";
+_noteBox.putAsync(note);
+```
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+```python
+task.text = "This task has changed."
+self._task_box.put(task)
+```
+
+</TabItem>
+</Tabs>
+
+There are **additional methods to put, find, query, count or remove** entities. Check out the methods of the Box class in API docs (for [Java/Kotlin](https://objectbox.io/docfiles/java/current/io/objectbox/Box.html) or [Dart](https://pub.dev/documentation/objectbox/latest/objectbox/Box-class.html)) to learn more.
+
+<div className="custom-nav-card">
+  <a href="/getting-started" className="custom-nav-card-link">
+    <div className="custom-nav-card-content">
+      <h3 className="custom-nav-card-title">How to get started</h3>
+      <p className="custom-nav-card-description">Learn the basics of using ObjectBox in your application</p>
+    </div>
+    <div className="custom-nav-card-arrow">›</div>
+  </a>
+</div>
+
+## Setting up the database
+
+Now that you saw ObjectBox in action, how did we get that database (or store) instance? Typically you should set up a BoxStore or Store once for the whole app. This example uses a [helper class as recommended in the Getting Started guide](getting-started#core-initialization).
+
+<div className="custom-nav-card">
+  <a href="/getting-started" className="custom-nav-card-link">
+    <div className="custom-nav-card-content">
+      <h3 className="custom-nav-card-title">How to get started</h3>
+      <p className="custom-nav-card-description">Learn the basics of using ObjectBox in your application</p>
+    </div>
+    <div className="custom-nav-card-arrow">›</div>
+  </a>
+</div>
+
+Remember: ObjectBox is a NoSQL database on its own and thus NOT based on SQL or SQLite. That’s why you do not need to set up “CREATE TABLE” statements during initialization.
+
+:::info
+Note: it is perfectly fine to never close the database. That’s even recommended for most apps.
+:::
+
+## More In-Depth Tutorials
+
+🌿 [Learn how to build a Food Sharing app with ObjectBox in Flutter/Dart](https://youtube.com/playlist?list=PLZQbl9Jhl-VCUWJh3969Oxt8ykDzUlQMR)
