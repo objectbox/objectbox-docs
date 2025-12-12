@@ -9,7 +9,7 @@ description: >-
 
 ## ObjectBox - Transactions
 
-A transaction can group several operations into a single unit of work that either executes completely or not at all. If you are looking for a more detailed introduction to transactions in general, please consult other resources like Wikipedia on [database transactions](https://en.wikipedia.org/wiki/Database\_transaction). For ObjectBox transactions continue reading:
+A transaction can group several operations into a single unit of work that either executes completely or not at all. If you are looking for a more detailed introduction to transactions in general, please consult other resources like Wikipedia on [database transactions](https://en.wikipedia.org/wiki/Database_transaction). For ObjectBox transactions continue reading:
 
 You may not notice it, but almost all interactions with ObjectBox involve transactions. For example, if you call `put` a write transaction is used. Also if you `get` an object or query for objects, a read transaction is used. All of this is done under the hood and transparent to you. It may be fine to completely ignore transactions altogether in your app without running into any problems. With more complex apps however, it’s usually worth learning transaction basics to make your app more consistent and efficient.
 
@@ -32,7 +32,7 @@ The advantage of explicit transactions over the bulk put operations is that you 
 Example for a write transaction:
 
 {% tabs %}
-{% tab title="Java, Kotlin" %}
+{% tab title="Java" %}
 The class [BoxStore](https://objectbox.io/docfiles/java/current/io/objectbox/BoxStore.html) offers the following methods to perform explicit transactions:
 
 * **runInTx:** Runs the given runnable inside a transaction.
@@ -42,14 +42,55 @@ The class [BoxStore](https://objectbox.io/docfiles/java/current/io/objectbox/Box
 
 ```java
 boxStore.runInTx(() -> {
-   for(User user: allUsers) {
-     if(modify(user)) box.put(user);
-     else box.remove(user);
-   }
+    for (User user : allUsers) {
+        if (modify(user)) {
+            box.put(user);
+        } else {
+            box.remove(user);
+        }
+    }
 });
 ```
+{% endtab %}
 
+{% tab title="Kotlin" %}
+The class [BoxStore](https://objectbox.io/docfiles/java/current/io/objectbox/BoxStore.html) offers the following methods to perform explicit transactions:
 
+* **runInTx:** Runs the given runnable inside a transaction.
+* **runInReadTx:** Runs the given runnable inside a read(-only) transaction. Unlike write transactions, multiple read transactions can run at the same time.
+* **runInTxAsync:** Runs the given Runnable as a transaction in a separate thread. Once the transaction completes the given callback is called (callback may be null).
+* **callInTx:** Like runInTx(Runnable), but allows returning a value and throwing an exception.
+
+```java
+boxStore.runInTx {
+    for (user in allUsers) {
+        if (modify(user)) {
+            box.put(user)
+        } else {
+            box.remove(user)
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="Dart" %}
+The class [Store](https://pub.dev/documentation/objectbox/latest/objectbox/Store-class.html) offers the following methods to perform explicit transactions:
+
+* [**runInTransaction**](https://pub.dev/documentation/objectbox/latest/objectbox/Store/runInTransaction.html)**:** Runs the given function inside a read or write transaction, depending on the given mode. Note that unlike write transactions, multiple read transactions can run at the same time.
+* [**runInTransactionAsync**](https://pub.dev/documentation/objectbox/latest/objectbox/Store/runInTransactionAsync.html)**:** Spawns an isolate to run the given callback within a read or write transaction, depending on the given mode.
+
+```dart
+store.runInTransaction(TxMode.write, () {
+  for (var user in allUsers) {
+    if (modify(user)) {
+      box.put(user);
+    } else {
+      box.remove(user.id);
+    }
+  }
+});
+```
 {% endtab %}
 
 {% tab title="Python" %}
@@ -74,23 +115,70 @@ Committing a transaction involves syncing data to physical storage, which is a r
 
 Consider this example:
 
+{% tabs %}
+{% tab title="Java" %}
 ```java
-for(User user: allUsers) {
-   modify(user); // modifies properties of given user
-   box.put(user);
+// DON'T DO THIS!
+for (User user : allUsers) {
+    modify(user);
+    box.put(user);
 }
 ```
+{% endtab %}
 
-Do you see what’s wrong with that code? There is an implicit transaction for each user which is very inefficient, especially for a high number of objects. It is much more efficient to use one of the put overloads to store all users at once:
+{% tab title="Kotlin" %}
+```kotlin
+// DON'T DO THIS!
+for (user in allUsers) {
+    modify(user)
+    box.put(user)
+}
+```
+{% endtab %}
 
+{% tab title="Dart" %}
+```dart
+// DON'T DO THIS!
+for (var user in allUsers) {
+    modify(user);
+    box.put(user);
+}
+```
+{% endtab %}
+{% endtabs %}
+
+Do you see the performance issue with that code? An implicit write transaction is created for each user. This will consume a lot of resources, especially for a high number of user objects. It is much more efficient to put all users at once, in a single transaction:
+
+{% tabs %}
+{% tab title="Java" %}
 ```java
-for(User user: allUsers) {
-   modify(user); // modifies properties of given user
+for (User user : allUsers) {
+    modify(user);
 }
 box.put(allUsers);
 ```
+{% endtab %}
 
-Much better! If you have 1,000 users, the latter example uses a single transaction to store all users. The first code example uses 1,000 (!) implicit transactions, causing a massive slow down.
+{% tab title="Kotlin" %}
+```kotlin
+for (user in allUsers) {
+    modify(user)
+}
+box.put(allUsers)
+```
+{% endtab %}
+
+{% tab title="Dart" %}
+```dart
+for (var user in allUsers) {
+    modify(user);
+}
+box.putMany(allUsers);
+```
+{% endtab %}
+{% endtabs %}
+
+Much better! Even if you would have a database with 1,000 users, the latter example would use a single write transaction to store all user objects at once. The first code example would use 1,000 (!) implicit transactions, causing a massive slow down.
 
 ## Read Transactions
 
@@ -100,7 +188,7 @@ While read transactions are much cheaper than write transactions, there is still
 
 ## Multiversion Concurrency
 
-ObjectBox gives developers [Multiversion concurrency control (MVCC)](https://en.wikipedia.org/wiki/Multiversion\_concurrency\_control) semantics. This allows multiple concurrent readers (read transactions) which can execute immediately without blocking or waiting. This is guaranteed by storing multiple versions of (committed) data. Even if a write transaction is in progress, a read transaction can read the last consistent state immediately. Write transactions are executed sequentially to ensure a consistent state. Thus, it is advised to keep write transactions short to avoid blocking other pending write transactions. For example, it is usually a bad idea to do networking or complex calculations while inside a write transaction. Instead, do any expensive operation and prepare objects before entering a write transaction.
+ObjectBox gives developers [Multiversion concurrency control (MVCC)](https://en.wikipedia.org/wiki/Multiversion_concurrency_control) semantics. This allows multiple concurrent readers (read transactions) which can execute immediately without blocking or waiting. This is guaranteed by storing multiple versions of (committed) data. Even if a write transaction is in progress, a read transaction can read the last consistent state immediately. Write transactions are executed sequentially to ensure a consistent state. Thus, it is advised to keep write transactions short to avoid blocking other pending write transactions. For example, it is usually a bad idea to do networking or complex calculations while inside a write transaction. Instead, do any expensive operation and prepare objects before entering a write transaction.
 
 Note that you do not have to worry about making write transactions sequential yourself. If multiple threads want to write at the same time (e.g. via  `put` or  `runInTx`), one of the threads will be selected to go first, while the other threads have to wait. It works just like a lock or `synchronized` in Java.
 

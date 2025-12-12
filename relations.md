@@ -191,7 +191,37 @@ Note that this does not remove the customer from the database, it just dissolves
 
 ### How ToOne works behind the scenes
 
-If you look at your model in `objectbox-models/default.json` (or `lib/bjectbox-model.json` in Dart) you can see, a ToOne property is not actually stored. Instead, the ID of the target object is saved in a virtual property named like the ToOne property appended with _Id_.
+If you look at your model in `objectbox-models/default.json` (or `lib/bjectbox-model.json` in Dart) you can see, a ToOne property is not actually stored. Instead, the ID of the target object is saved in a virtual property named by default like the ToOne property appended with _Id_.
+
+### Rename the ToOne target ID property
+
+To change the default name of the target ID property created for a ToOne relation, use the `TargetIdProperty` annotation:
+
+{% tabs %}
+{% tab title="Java" %}
+```java
+@Entity
+public class Order {
+    // Change from default "customerId" to "customerRef"
+    @TargetIdProperty("customerRef")
+    public ToOne<Customer> customer;
+    // Optional: expose target ID property (using changed name)
+    public long customerRef;
+}
+```
+{% endtab %}
+
+{% tab title="Dart" %}
+```dart
+@Entity()
+class Order {
+    // Change from default "customerId" to "customerRef"
+    @TargetIdProperty("customerRef")
+    final customer = ToOne<Customer>();
+}
+```
+{% endtab %}
+{% endtabs %}
 
 ### Expose the ToOne target ID property
 
@@ -226,8 +256,6 @@ data class Order(
 ```
 {% endtab %}
 {% endtabs %}
-
-You can change the name of the expected target ID property by adding the [@TargetIdProperty(String)](https://objectbox.io/files/objectbox-java/current/io/objectbox/annotation/TargetIdProperty.html) annotation to a ToOne.
 
 ## Initialization Magic
 

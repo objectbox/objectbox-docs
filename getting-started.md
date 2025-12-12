@@ -28,8 +28,8 @@ To add ObjectBox to your Android project, follow these steps:
 {% code title="/build.gradle(.kts)" %}
 ```java
 buildscript {
-    ext.objectboxVersion = "4.3.0" // For Groovy build scripts
-    // val objectboxVersion by extra("4.3.0") // For KTS build scripts
+    ext.objectboxVersion = "5.0.1" // For Groovy build scripts
+    // val objectboxVersion by extra("5.0.1") // For KTS build scripts
     
     repositories {
         mavenCentral()
@@ -86,11 +86,11 @@ The ObjectBox Java SDK and runtime libraries support applications:
 
 ObjectBox tools and dependencies are available on [the Maven Central repository](https://central.sonatype.com/namespace/io.objectbox).
 
-#### Maven projects
+**Maven projects**
 
 To set up a Maven project, see the [README of the Java Maven example project](https://github.com/objectbox/objectbox-examples/blob/main/java-main-maven/README.md).
 
-#### Gradle projects
+**Gradle projects**
 
 {% hint style="info" %}
 The instructions assume a [multi-project build](https://docs.gradle.org/current/userguide/multi_project_builds.html) is used.
@@ -103,8 +103,8 @@ The instructions assume a [multi-project build](https://docs.gradle.org/current/
 {% code title="/build.gradle(.kts)" %}
 ```groovy
 buildscript {
-    ext.objectboxVersion = "4.3.0" // For Groovy build scripts
-    // val objectboxVersion by extra("4.3.0") // For KTS build scripts
+    ext.objectboxVersion = "5.0.1" // For Groovy build scripts
+    // val objectboxVersion by extra("5.0.1") // For KTS build scripts
     
     repositories {
         mavenCentral()
@@ -169,8 +169,7 @@ apply(plugin = "io.objectbox")
 ```
 
 {% hint style="info" %}
-The ObjectBox database runs mostly in native code written in C/C++ for optimal performance. Thus, ObjectBox will load a runtime library: a “.dll” on Windows, a “.so” on Linux, and a “.dylib” on macOS.\
-
+The ObjectBox database runs mostly in native code written in C/C++ for optimal performance. Thus, ObjectBox will load a runtime library: a “.dll” on Windows, a “.so” on Linux, and a “.dylib” on macOS.\\
 
 By default, the Gradle plugin adds a runtime library (only) for your current operating system. It also adds the Java SDK (objectbox-java) and if needed the ObjectBox Kotlin extension functions (objectbox-kotlin).
 {% endhint %}
@@ -227,7 +226,7 @@ To get a variant of the library that supports **ObjectBox Sync**, append the `--
 
 ```yaml
 dependencies:
-  objectbox: ^4.3.0
+  objectbox: ^5.0.4
   objectbox_flutter_libs: any
   # If you run the command for ObjectBox Sync it should add instead:
   # objectbox_sync_flutter_libs: any
@@ -240,25 +239,11 @@ dev_dependencies:
 3. If you added the above lines manually, then install the packages with `flutter pub get`.
 
 {% hint style="info" %}
-**For Android** increase the NDK version:
+**For all iOS apps** target iOS 15.0: in `ios/Podfile` change the platform and in the `ios/Runner.xcodeproj/poject.pbxproj` file update `IPHONEOS_DEPLOYMENT_TARGET` (or open the Runner workspace in Xcode and edit the build setting). In `ios/Flutter/AppframeworkInfo.plist` update `MinimumOSVersion` to `15.0`.
 
-{% code title="/android/app/build.gradle" %}
-```groovy
-android {
-    // ObjectBox: Flutter defaults to NDK 23.1.7779620, but
-    // - objectbox_flutter_libs requires Android NDK 25.1.8937393
-    // - path_provider_android requires Android NDK 25.1.8937393
-    // Until Flutter uses a newer version (https://github.com/flutter/flutter/commit/919bed6e0a18bd5b76fb581ede10121f8c14a6f7)
-    // manually set the required one:
-    // ndkVersion flutter.ndkVersion
-    ndkVersion = "25.1.8937393"
-}   
-```
-{% endcode %}
-{% endhint %}
+**For all macOS apps** target macOS 11.0: in `macos/Podfile` change the platform and in the `macos/Runner.xcodeproj/poject.pbxproj` file update `MACOSX_DEPLOYMENT_TARGET` (or open the Runner workspace in Xcode and edit the build setting).
 
-{% hint style="info" %}
-**For all macOS apps** need to target macOS 10.15: in `Podfile` change the platform and in the `Runner.xcodeproj/poject.pbxproj` file update `MACOSX_DEPLOYMENT_TARGET`.
+**For macOS apps using Sync,** open `macos/Runner.xcodeproj` in Xcode and for the Runner target under Signing & Capabilities in the App Sandbox sections, enable incoming and outgoing network access.
 {% endhint %}
 
 {% hint style="info" %}
@@ -282,7 +267,7 @@ dart pub add --dev build_runner objectbox_generator:any
 
 ```yaml
 dependencies:
-  objectbox: ^4.3.0
+  objectbox: ^5.0.4
 
 dev_dependencies:
   build_runner: ^2.4.11
@@ -317,8 +302,6 @@ If it is not found there, it falls back to using system directories (using Dart'
 * Windows: working directory and `%WINDIR%\system32`.
 * macOS: `/usr/local/lib` (and maybe others).
 * Linux: `/lib` and `/usr/lib` (again, possibly others).
-
-
 {% endtab %}
 
 {% tab title="Python" %}

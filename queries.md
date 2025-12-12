@@ -54,16 +54,16 @@ joes = query.find()
 
 **To combine multiple conditions** use `and(condition)` and `or(condition)`. This implicitly adds parentheses around the combined conditions, e.g. `cond1.and(cond2)` is logically equivalent to `(cond1 AND cond2)`.
 
-For example to get users with the first name “Joe” that are born later than 1970 and whose last name starts with “O”:
+For example to get users with the first name “Joe” that are born later than 2015 and whose last name starts with “O”:
 
 {% tabs %}
 {% tab title="Java" %}
 ```java
 Query<User> query = userBox.query(
         User_.firstName.equal("Joe")
-                .and(User_.yearOfBirth.greater(1970))
-                .and(User_.lastName.startsWith("O")))
-        .build();
+                .and(User_.yearOfBirth.greater(2015))
+                .and(User_.lastName.startsWith("O"))
+).build();
 List<User> youngJoes = query.find();
 query.close();
 ```
@@ -72,10 +72,10 @@ query.close();
 {% tab title="Kotlin" %}
 ```kotlin
 val query = userBox.query(
-        User_.firstName equal "Joe"
-                and (User_.yearOfBirth greater 1970)
-                and (User_.lastName startsWith "O")
-        .build()
+    User_.firstName equal "Joe" and
+            (User_.yearOfBirth greater 2015) and
+            (User_.lastName startsWith "O")
+).build()
 val youngJoes = query.find()
 query.close()
 ```
@@ -83,18 +83,18 @@ query.close()
 
 {% tab title="Dart" %}
 ```dart
-Query<User> query = userBox.query(
-            User_.firstName.equal('Joe')
-            .and(User_.yearOfBirth.greaterThan(1970))
-            .and(User_.lastName.startsWith('O')))
-        .build();
-        
+Query<User> query = userBox
+    .query(User_.firstName.equals('Joe')
+        .and(User_.yearOfBirth.greaterThan(2015))
+        .and(User_.lastName.startsWith('O')))
+    .build();
+
 // or use operator overloads:
-Query<User> query = userBox.query(
-            User_.firstName.equal('Joe') &
-            User_.yearOfBirth.greaterThan(1970) &
-            User_.lastName.startsWith('O'))
-        .build();
+Query<User> query2 = userBox
+    .query(User_.firstName.equals('Joe') &
+        User_.yearOfBirth.greaterThan(2015) &
+        User_.lastName.startsWith('O'))
+    .build();
 ```
 {% endtab %}
 
@@ -102,10 +102,44 @@ Query<User> query = userBox.query(
 ```python
 query = userBox.query( 
   User.firstName.equals("Joe") & 
-  User.yearOfBirth.greater_than(1970) & 
+  User.yearOfBirth.greater_than(2015) & 
   User.lastName.starts_with('O')
 ).build()
 joes = query.find()
+```
+{% endtab %}
+{% endtabs %}
+
+This also makes it possible to **make a condition optional:**
+
+{% tabs %}
+{% tab title="Java" %}
+```java
+QueryCondition<User> conditions = User_.firstName.equal("Joe");
+if (onlyYoungJoes) {
+    conditions = conditions.and(User_.yearOfBirth.greater(2015));
+}
+Query<User> query = userBox.query(conditions).build();
+```
+{% endtab %}
+
+{% tab title="Kotlin" %}
+```kotlin
+var conditions: QueryCondition<User> = User_.firstName equal "Joe"
+if (onlyYoungJoes) {
+    conditions = conditions and (User_.yearOfBirth greater 2015)
+}
+val query = userBox.query(conditions).build()
+```
+{% endtab %}
+
+{% tab title="Dart" %}
+```dart
+var conditions = User_.firstName.equals('Joe');
+if (onlyYoungJoes) {
+  conditions = conditions & User_.yearOfBirth.greaterThan(2015);
+}
+Query<User> query = userBox.query(conditions).build();
 ```
 {% endtab %}
 {% endtabs %}
@@ -116,36 +150,25 @@ joes = query.find()
 {% tab title="Java" %}
 ```java
 // equal AND (less OR oneOf)
-Query<User> query = box.query(
-        User_.firstName.equal("Joe")
-                .and(User_.age.less(12)
-                        .or(User_.stamp.oneOf(new long[]{1012}))))
-        .order(User_.age)
-        .build();
+QueryCondition<User> conditions = User_.firstName.equal("Joe")
+        .and(User_.age.less(12)
+                .or(User_.stamp.oneOf(new long[]{1012})));
 ```
 {% endtab %}
 
 {% tab title="Kotlin" %}
 ```kotlin
 // equal AND (less OR oneOf)
-val query = box.query(
-        User_.firstName equal "Joe"
-                and (User_.age less 12
-                or (User_.stamp oneOf longArrayOf(1012))))
-        .order(User_.age)
-        .build()        
+val conditions = User_.firstName equal "Joe" and
+        (User_.age less 12 or (User_.stamp oneOf longArrayOf(1012)))   
 ```
 {% endtab %}
 
 {% tab title="Dart" %}
-```dart
-Query<User> query = box.query(
-    User_.firstName.equal('Joe')
-        .and(User_.age.lessThan(12)
-        .or(User_.stamp.oneOf([1012]))))
-    .order(User_.age)
-    .build();
-```
+<pre class="language-dart"><code class="lang-dart">// equal AND (less OR oneOf)
+<strong>final conditions = User_.firstName.equals('Joe')
+</strong>    .and(User_.age.lessThan(12).or(User_.stamp.oneOf([1012])));
+</code></pre>
 {% endtab %}
 
 {% tab title="Python" %}
