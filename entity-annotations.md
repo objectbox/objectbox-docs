@@ -8,7 +8,7 @@ description: >-
 
 ## ObjectBox - Database Persistence with Entity Annotations
 
-ObjectBox is a database that persists objects. For a clear distinction, we sometimes call those persistable objects **entities**.
+ObjectBox is a database that persists objects, which we sometimes also call **entities**.
 
 To let ObjectBox know which classes are entities you annotate them with `@Entity`. This annotation identifies the class `User` in the following example as a persistable entity. This will trigger ObjectBox to generate persistence code tailored for this class:
 
@@ -284,11 +284,13 @@ class User {
 
 ## Supported property types
 
-ObjectBox can store almost any type (class) of property as long as it can be converted to one of the built-in types. See the dedicated page for details:
+ObjectBox supports a wide range of property types including integers, floats, strings, dates, lists, and flex properties for dynamic data. See the dedicated page for details:
 
-{% content-ref url="advanced/custom-types.md" %}
-[custom-types.md](advanced/custom-types.md)
+{% content-ref url="property-types.md" %}
+[property-types.md](property-types.md)
 {% endcontent-ref %}
+
+If the built-in types don't cover your needs, you can use [custom types and converters](advanced/custom-types.md).
 
 ## Basic annotations for entity properties
 
