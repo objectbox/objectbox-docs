@@ -150,25 +150,33 @@ Query<User> query = userBox.query(conditions).build();
 {% tab title="Java" %}
 ```java
 // equal AND (less OR oneOf)
-QueryCondition<User> conditions = User_.firstName.equal("Joe")
-        .and(User_.age.less(12)
-                .or(User_.stamp.oneOf(new long[]{1012})));
+Query<User> query = box.query(
+        User_.firstName.equal("Joe")
+                .and(User_.age.less(12)
+                        .or(User_.stamp.oneOf(new long[]{1012}))))
+        .build();
 ```
 {% endtab %}
 
 {% tab title="Kotlin" %}
 ```kotlin
 // equal AND (less OR oneOf)
-val conditions = User_.firstName equal "Joe" and
-        (User_.age less 12 or (User_.stamp oneOf longArrayOf(1012)))   
+val query = box.query(
+        User_.firstName equal "Joe" and
+                (User_.age less 12 or 
+                        (User_.stamp oneOf longArrayOf(1012))))
+        .build()        
 ```
 {% endtab %}
 
 {% tab title="Dart" %}
-<pre class="language-dart"><code class="lang-dart">// equal AND (less OR oneOf)
-<strong>final conditions = User_.firstName.equals('Joe')
-</strong>    .and(User_.age.lessThan(12).or(User_.stamp.oneOf([1012])));
-</code></pre>
+```dart
+Query<User> query = box.query(
+    User_.firstName.equals('Joe')
+        .and(User_.age.lessThan(12)
+        .or(User_.stamp.oneOf([1012]))))
+    .build();
+```
 {% endtab %}
 
 {% tab title="Python" %}
