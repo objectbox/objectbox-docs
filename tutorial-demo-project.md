@@ -493,6 +493,3 @@ Remember: ObjectBox is a NoSQL database on its own and thus NOT based on SQL or 
 Note: it is perfectly fine to never close the database. That’s even recommended for most apps.
 {% endhint %}
 
-## More In-Depth Tutorials
-
-🌿 [Learn how to build a Food Sharing app with ObjectBox in Flutter/Dart](https://youtube.com/playlist?list=PLZQbl9Jhl-VCUWJh3969Oxt8ykDzUlQMR)
