@@ -4,6 +4,7 @@
 * [Getting started](getting-started.md)
 * [Tutorial: Demo Project](tutorial-demo-project.md)
 * [Entity Annotations](entity-annotations.md)
+* [Property Types](property-types.md)
 * [Android (Java/Kotlin)](android/README.md)
   * [Android Local Unit Tests](android/android-local-unit-tests.md)
   * [LiveData (Arch. Comp.)](android/livedata-architecture-components.md)
