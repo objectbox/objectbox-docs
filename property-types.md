@@ -318,6 +318,8 @@ Customer customerStrTag = new Customer("string-tag");
 Customer customerIntTag = new Customer(1234);
 box.put(customerStrTag, customerIntTag);
 ```
+
+See [FlexObjectConverter](https://objectbox.io/docfiles/java/current/io/objectbox/converter/FlexObjectConverter.html) for Java/Kotlin additional notes.
 {% endtab %}
 
 {% tab title="Kotlin" %}
@@ -340,6 +342,7 @@ val customerStrTag = Customer(tag = "string-tag")
 val customerIntTag = Customer(tag = 1234)
 box.put(customerStrTag, customerIntTag)
 ```
+See [FlexObjectConverter](https://objectbox.io/docfiles/java/current/io/objectbox/converter/FlexObjectConverter.html) for Java/Kotlin  additional notes.
 {% endtab %}
 
 {% tab title="Dart/Flutter" %}
@@ -368,8 +371,6 @@ box.putMany([customerStrTag, customerIntTag]);
 ```
 {% endtab %}
 {% endtabs %}
-
-Flex properties are stored as binary [FlexBuffers](https://google.github.io/flatbuffers/flexbuffers.html). See [FlexObjectConverter](https://objectbox.io/docfiles/java/current/io/objectbox/converter/FlexObjectConverter.html) for Java/Kotlin limitations.
 
 ## Custom Types
 
