@@ -17,25 +17,25 @@ This page covers the property types ObjectBox supports:
 
 ## Standard Types
 
-Standard types include boolean, integers, floating point types, string, binary data, and date types.
+Standard types include boolean, integers, floating point types, string, and date types.
 These are the most common types you will use in typical applications.
 
 ### Quick Reference
 
-| Category         | Java/Kotlin            | Dart                                                  | Python     | Stored as      |
-|------------------|------------------------|-------------------------------------------------------|------------|----------------|
-| Boolean          | `boolean` / `Boolean`  | `bool`                                                | `Bool`     | 1 byte         |
-| Integer (8-bit)  | `byte` / `Byte`        | `int` + `@Property(type: PropertyType.byte)`          | `Int8`     | 1 byte         |
-| Integer (16-bit) | `short` / `Short`      | `int` + `@Property(type: PropertyType.short)`         | `Int16`    | 2 bytes        |
-| Integer (32-bit) | `int` / `Integer`      | `int` + `@Property(type: PropertyType.int)`           | `Int32`    | 4 bytes        |
-| Integer (64-bit) | `long` / `Long`        | `int`                                                 | `Int64`    | 8 bytes        |
-| Float (32-bit)   | `float` / `Float`      | `double` + `@Property(type: PropertyType.float)`      | `Float32`  | 4 bytes        |
-| Float (64-bit)   | `double` / `Double`    | `double`                                              | `Float64`  | 8 bytes        |
-| Character        | `char` / `Character`   | `int` + `@Property(type: PropertyType.char)`          | —          | 2 bytes        |
-| String           | `String`               | `String`                                              | `String`   | UTF-8 bytes    |
-| Binary data      | `byte[]`               | `Uint8List`                                           | `Bytes`    | Raw bytes      |
-| Date (ms)        | `java.util.Date`       | `DateTime`                                            | `Date`     | 8 bytes (long) |
-| Date (ns)        | `@Type(DateNano) long` | `DateTime` + `@Property(type: PropertyType.dateNano)` | `DateNano` | 8 bytes (long) |
+| Category         | ObjectBox Type | Stored as      |
+|------------------|----------------|----------------|
+| Boolean          | Bool           | 1 byte         |
+| Integer (8-bit)  | Byte           | 1 byte         |
+| Integer (16-bit) | Short          | 2 bytes        |
+| Integer (32-bit) | Int            | 4 bytes        |
+| Integer (64-bit) | Long           | 8 bytes        |
+| To-One Relation  | Relation       | 8 bytes        |
+| Float (32-bit)   | Float          | 4 bytes        |
+| Float (64-bit)   | Double         | 8 bytes        |
+| Text Character   | Char           | 2 bytes        |
+| String           | String         | UTF-8 bytes    |
+| Date (ms)        | Date           | 8 bytes (long) |
+| Date (ns)        | DateNano       | 8 bytes (long) |
 
 {% hint style="info" %}
 **Nullable types:** All ObjectBox property types support null values.
@@ -80,6 +80,10 @@ Kotlin unsigned types (`UByte`, `UShort`, `UInt`, `ULong`) are also supported—
 {% endtab %}
 
 {% tab title="Dart" %}
+
+Note: Dart just has `int` and does not differentiate between the integer types.
+You can still use ObjectBox types to pick the storage type and align with other languages (e.g. when using Sync).   
+
 ```dart
 @Entity()
 class Sensor {
@@ -185,9 +189,43 @@ For UTC handling, store as a transient property and convert manually.
 {% endtab %}
 {% endtabs %}
 
+### IDs and Relations
+
+Every ObjectBox entity must have exactly one **ID property** of type Long (64-bit integer).
+See [Entity Annotations](entity-annotations.md#object-ids-id) for details.
+
+**"Relation"** is used for one of two relation types available in ObjectBox.
+It's a 64-bit integer that references the ID of another object.
+Depending on the programming language you use, it may translate to a "to-one" construct.
+See [Relations](relations.md) for complete documentation.
+
 ## Lists and Arrays
 
 Store collections of values directly; no special tables or joins required.
+The internal type names are "vectors", but they may translate to lists or arrays in the programming language you use. 
+
+{% hint style="info" %}
+**Binary data** is stored as a `ByteVector`.
+In other databases, this is may be called a "BLOB" (Binary Large Object). 
+{% endhint %}
+
+### Quick Reference
+
+| ObjectBox Type | Description                                       |
+|----------------|---------------------------------------------------|
+| BoolVector     | Bool values (stored using one byte per value)     |
+| ByteVector     | Byte values (8-bit integers), binary data, BLOB   |
+| ShortVector    | Short values (16-bit integers)                    |
+| CharVector     | Char values (16-bit characters)                   |
+| IntVector      | Int values (32-bit integers)                      |
+| LongVector     | Long values (64-bit integers)                     |
+| FloatVector    | Float values (32-bit floating point)              |
+| DoubleVector   | Double values (64-bit floating point)             |
+| StringVector   | String values (UTF-8 encoded strings)             |
+| DateVector     | Date values (64-bit timestamp)                    |
+| DateNanoVector | DateNano values (high precision 64-bit timestamp) |
+
+### Language Examples
 
 {% tabs %}
 {% tab title="Java" %}
@@ -242,11 +280,11 @@ See [On-Device Vector Search](on-device-vector-search.md).
 
 ## Flex Properties
 
-Flex properties can hold various types of data in a single property including complex structures.
+Flex properties can hold data values of various types, including complex structures, in a single property.
 They serve two main purposes:
 
 * Dynamic data: you want to process JSON-like data dynamically
-* Nested objects: for some reason you don't want to use relations, and want to embed map-like data directly 
+* Nested objects: as an alternative to relations, you can embed map-like data directly 
 
 {% hint style="info" %}
 When syncing with MongoDB, flex properties can hold nested documents.
