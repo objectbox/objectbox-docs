@@ -151,13 +151,17 @@ public String description;  // Can be very long
 
 ### Dates and Times
 
-ObjectBox stores dates as integers representing time since Unix epoch.
+ObjectBox stores dates as 64-bit integers ("timestamps") representing time since the Unix epoch (January 1, 1970, 00:00:00 UTC).
 Choose your precision:
 
-| Precision    | Annotation                                  | Use case                  |
-|--------------|---------------------------------------------|---------------------------|
-| Milliseconds | Default for `Date`/`DateTime`               | Most applications         |
-| Nanoseconds  | `@Type(DateNano)` / `PropertyType.dateNano` | High-precision timestamps |
+| Precision    | ObjectBox Type     | Use case                  |
+|--------------|--------------------|---------------------------|
+| Milliseconds | Date (the default) | Most applications         |
+| Nanoseconds  | DateNano           | High-precision timestamps |
+
+Note: while DateNano values are always stored as nanoseconds,
+the actual precision of the values depends on the platform and programming language.
+For example, Dart uses only microsecond precision (the last three digits of the nanosecond are "truncated").
 
 {% tabs %}
 {% tab title="Java" %}
@@ -174,17 +178,19 @@ public long preciseTimestamp;
 {% tab title="Dart" %}
 ```dart
 // Millisecond precision (default)
-@Property(type: PropertyType.date)
+@Property(type: PropertyType.dateUtc)
 DateTime? createdAt;
 
-// Nanosecond precision
-@Property(type: PropertyType.dateNano)
+// Stored with nanosecond precision; however,
+// Dart uses only microsecond precision! 
+@Property(type: PropertyType.dateNanoUtc)
 DateTime? preciseTimestamp;
 ```
 
 {% hint style="warning" %}
-Dart `DateTime` is always restored in the device's local time zone.
-For UTC handling, store as a transient property and convert manually.
+Proper UTC handling requires ObjectBox for Dart/Flutter 5.1 with the `dateUtc` and `dateNanoUtc` annotations.
+Prior versions do not support proper UTC handling.
+Please update and avoid the old `date` and `dateNano` annotations.
 {% endhint %}
 {% endtab %}
 {% endtabs %}
