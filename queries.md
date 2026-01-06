@@ -50,6 +50,14 @@ query = userBox.query(User.firstName.equals("Joe")).build()
 joes = query.find()
 ```
 {% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+const query = userBox.query(User_.firstName.equals("Joe")).build();
+const joes = query.find();
+query.close();
+```
+{% endtab %}
 {% endtabs %}
 
 **To combine multiple conditions** use `and(condition)` and `or(condition)`. This implicitly adds parentheses around the combined conditions, e.g. `cond1.and(cond2)` is logically equivalent to `(cond1 AND cond2)`.
@@ -108,6 +116,18 @@ query = userBox.query(
 joes = query.find()
 ```
 {% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+const query = userBox.query(
+    User_.firstName.equals("Joe")
+        .and(User_.yearOfBirth.greaterThan(2015))
+        .and(User_.lastName.startsWith("O"))
+).build();
+const youngJoes = query.find();
+query.close();
+```
+{% endtab %}
 {% endtabs %}
 
 This also makes it possible to **make a condition optional:**
@@ -140,6 +160,16 @@ if (onlyYoungJoes) {
   conditions = conditions & User_.yearOfBirth.greaterThan(2015);
 }
 Query<User> query = userBox.query(conditions).build();
+```
+{% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+let conditions = User_.firstName.equals("Joe");
+if (onlyYoungJoes) {
+    conditions = conditions.and(User_.yearOfBirth.greaterThan(2015));
+}
+const query = userBox.query(conditions).build();
 ```
 {% endtab %}
 {% endtabs %}
@@ -193,6 +223,18 @@ joes = query.find()
 one\_of is not yet available in Python.
 {% endhint %}
 {% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+// equals AND (lessThan OR greaterThan)
+const query = box.query(
+    User_.firstName.equals("Joe")
+        .and(User_.age.lessThan(12)
+            .or(User_.age.greaterThan(60)))
+).build();
+```
+
+{% endtab %}
 {% endtabs %}
 
 #### Other notable features
@@ -200,6 +242,10 @@ one\_of is not yet available in Python.
 * In Kotlin, instead of `condition1.and(condition2)` you can write `condition1`` `**`and`**` ``condition2` (similarly `condition1`` `**`or`**` ``condition2`).
 * In Dart and Python, instead of `condition1.and(condition2)` you can write `condition1`` `**`&`**` ``condition2` (similarly `condition1`` `**`|`**` ``conditon2`).
 * Use `condition.alias(aliasName)` to set an alias for a `condition` that can later be used to change the parameter value of the condition on the built query.
+
+{% hint style="info" %}
+**TypeScript:** String conditions are **case-sensitive by default**. Pass `false` as the second argument for case-insensitive matching: `User_.name.equals("joe", false)`.
+{% endhint %}
 
 ### Common conditions
 
@@ -276,6 +322,16 @@ final query = qBuilder.build();
 Order results feature is not yet available in Python.
 {% endhint %}
 {% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+// in ascending order
+const query = userBox
+    .query(User_.firstName.equals("Joe"))
+    .order(User_.lastName)
+    .build();
+```
+{% endtab %}
 {% endtabs %}
 
 You can also pass flags to `order()` to sort in descending order, to sort case sensitive or to specially treat null values. For example to sort the above results in descending order and case sensitive instead:
@@ -304,6 +360,14 @@ You can also pass flags to `order()` to sort in descending order, to sort case s
 Order results feature is not yet available in Python.
 {% endhint %}
 {% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+import { OrderFlags } from "objectbox";
+// ...
+.order(User_.lastName, OrderFlags.DESCENDING | OrderFlags.CASE_SENSITIVE)
+```
+{% endtab %}
 {% endtabs %}
 
 Order directives can also be chained. Check the method documentation ([Java](https://objectbox.io/files/objectbox-java/current/io/objectbox/query/QueryBuilder.html#order\(io.objectbox.Property,int\))) for details.
@@ -322,6 +386,8 @@ Once the query is created, it allows various operations, which we will explore i
 
 &#x20;There are a couple of find methods to retrieve objects matching the query:
 
+{% tabs %}
+{% tab title="Java" %}
 ```java
 // return all entities matching the query
 List<User> joes = query.find();
@@ -332,6 +398,27 @@ User joe = query.findFirst();
 // return the only result or null if none, throw if more than one result
 User joe = query.findUnique();
 ```
+{% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+// return all entities matching the query
+const joes = query.find();
+
+// return only the first result or null if none
+const joe = query.findFirst();
+
+// return the only result or null if none, throw if more than one result
+const uniqueJoe = query.findUnique();
+
+// return only the IDs of matching entities
+const ids: bigint[] = query.findIds();
+
+// return the count of matching entities
+const count: number = query.count();
+```
+{% endtab %}
+{% endtabs %}
 
 To return all entities matching the query simply call `find()`.
 
@@ -341,7 +428,39 @@ If you expect a unique result, call `findUnique()` instead. It will give you a s
 
 ### Remove objects
 
-To remove all objects matching a query, call `query.remove()` .
+To remove all objects matching a query, call `query.remove()`.
+
+{% tabs %}
+{% tab title="Java" %}
+```java
+long removedCount = query.remove();
+```
+{% endtab %}
+
+{% tab title="Kotlin" %}
+```kotlin
+val removedCount = query.remove()
+```
+{% endtab %}
+
+{% tab title="Dart" %}
+```dart
+int removedCount = query.remove();
+```
+{% endtab %}
+
+{% tab title="Python" %}
+```python
+removed_count = query.remove()
+```
+{% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+const removedCount: number = query.remove();
+```
+{% endtab %}
+{% endtabs %}
 
 ### Reuse Queries and Parameters
 
@@ -380,6 +499,12 @@ final query = userBox.query(User_.firstName.equals('')).build();
 # build a query
 query = userBox.query(User.firstName.equals('')).build();
 ```
+{% endtab %}
+
+{% tab title="TypeScript" %}
+{% hint style="info" %}
+Query parameter reuse via `setParameter()` is not yet available in TypeScript. Rebuild the query with new values instead.
+{% endhint %}
 {% endtab %}
 {% endtabs %}
 
@@ -531,6 +656,13 @@ List<User> joes = query.find();
 </strong><strong>    .find()
 </strong></code></pre>
 {% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+// offset by 10, limit to at most 5 results
+const joes = query.offset(10).limit(5).find();
+```
+{% endtab %}
 {% endtabs %}
 
 `offset:` The first `offset` results are skipped.
@@ -607,6 +739,15 @@ final query = userBox.query().build();
 List<String> emails = query.property(User_.email).find();
 query.close();
 ```
+{% endtab %}
+
+{% tab title="TypeScript" %}
+{% hint style="info" %}
+Property queries are not yet available in TypeScript. Use `find()` and map the results instead:
+```typescript
+const emails = query.find().map(user => user.email);
+```
+{% endhint %}
 {% endtab %}
 {% endtabs %}
 
@@ -923,7 +1064,7 @@ query.close();
 ## Eager-load relations
 
 {% hint style="info" %}
-Only Java/Kotlin
+Only Java/Kotlin. Relations are not yet available in TypeScript.
 {% endhint %}
 
 By default [relations](relations.md) are loaded lazily: when you first access a `ToOne` or `ToMany` property it will perform a database lookup to get its data. On each subsequent access it will use a cached version of that data.
@@ -977,7 +1118,7 @@ Eager loading only works one level deep. If you have **nested relations** and yo
 ## Query filters
 
 {% hint style="info" %}
-Only Java/Kotlin. For Dart, use the built-in [`where()`](https://api.dart.dev/stable/2.19.2/dart-core/Iterable/where.html) method.
+Only Java/Kotlin. For Dart and TypeScript, use the built-in array filter methods (`where()` in Dart, `filter()` in TypeScript).
 {% endhint %}
 
 Query filters come into play when you are looking for objects that need to match complex conditions, which cannot be fully expressed with the QueryBuilder class. Filters are written in Java and thus can express any complexity. Needless to say, that database conditions can be matched more efficiently than Java-based filters. Thus you will get the best results when you use both together:
@@ -1039,6 +1180,12 @@ query.find()
 ```dart
 print(query.describeParameters());
 ```
+{% endtab %}
+
+{% tab title="TypeScript" %}
+{% hint style="info" %}
+Query debugging is not yet available in TypeScript.
+{% endhint %}
 {% endtab %}
 {% endtabs %}
 
