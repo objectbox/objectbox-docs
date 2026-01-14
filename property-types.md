@@ -7,9 +7,7 @@ description: >-
 
 # Property Types
 
-ObjectBox stores data as objects, which are instances of entity classes you define.
-Objects consist of properties, which are the individual fields that hold your data, like a user's name or age.
-This page covers the property types ObjectBox supports:
+ObjectBox stores data as objects, which are instances of entity classes you define. Objects consist of properties, which are the individual fields that hold your data, like a user's name or age. This page covers the property types ObjectBox supports:
 
 * **Standard types** for single values of a fixed type
 * **List/Vector types** for collections of values of a fixed type
@@ -17,13 +15,12 @@ This page covers the property types ObjectBox supports:
 
 ## Standard Types
 
-Standard types include boolean, integers, floating point types, string, and date types.
-These are the most common types you will use in typical applications.
+Standard types include boolean, integers, floating point types, string, and date types. These are the most common types you will use in typical applications.
 
 ### Quick Reference
 
 | Category         | ObjectBox Type | Stored as      |
-|------------------|----------------|----------------|
+| ---------------- | -------------- | -------------- |
 | Boolean          | Bool           | 1 byte         |
 | Integer (8-bit)  | Byte           | 1 byte         |
 | Integer (16-bit) | Short          | 2 bytes        |
@@ -38,16 +35,12 @@ These are the most common types you will use in typical applications.
 | Date (ns)        | DateNano       | 8 bytes (long) |
 
 {% hint style="info" %}
-**Nullable types:** All ObjectBox property types support null values.
-In Java, use wrapper classes (`Integer` vs `int`) for nullable types.
-In Kotlin, Dart, and Python, nullability is part of the type system.
+**Nullable types:** All ObjectBox property types support null values. In Java, use wrapper classes (`Integer` vs `int`) for nullable types. In Kotlin, Dart, and Python, nullability is part of the type system.
 {% endhint %}
 
 ### Integers
 
-ObjectBox supports all standard integer types, from 8-bit to 64-bit.
-Rule of thumb: use large enough integer types that are safe for your use case in the future.
-Use smaller types only if you are certain about the range of values as you cannot change the type of an existing property later.
+ObjectBox supports all standard integer types, from 8-bit to 64-bit. Rule of thumb: use large enough integer types that are safe for your use case in the future. Use smaller types only if you are certain about the range of values as you cannot change the type of an existing property later.
 
 {% tabs %}
 {% tab title="Java" %}
@@ -80,9 +73,7 @@ Kotlin unsigned types (`UByte`, `UShort`, `UInt`, `ULong`) are also supported—
 {% endtab %}
 
 {% tab title="Dart" %}
-
-Note: Dart just has `int` and does not differentiate between the integer types.
-You can still use ObjectBox types to pick the storage type and align with other languages (e.g. when using Sync).   
+Note: Dart just has `int` and does not differentiate between the integer types. You can still use ObjectBox types to pick the storage type and align with other languages (e.g. when using Sync).
 
 ```dart
 @Entity()
@@ -119,8 +110,7 @@ class Sensor:
 
 ### Floating Point
 
-Choose 32-bit floats for memory efficiency when ~7 digits of precision is enough.
-Use 64-bit doubles when you need ~15 digits.
+Choose 32-bit floats for memory efficiency when \~7 digits of precision is enough. Use 64-bit doubles when you need \~15 digits.
 
 {% tabs %}
 {% tab title="Java" %}
@@ -151,17 +141,14 @@ public String description;  // Can be very long
 
 ### Dates and Times
 
-ObjectBox stores dates as 64-bit integers ("timestamps") representing time since the Unix epoch (January 1, 1970, 00:00:00 UTC).
-Choose your precision:
+ObjectBox stores dates as 64-bit integers ("timestamps") representing time since the Unix epoch (January 1, 1970, 00:00:00 UTC). Choose your precision:
 
 | Precision    | ObjectBox Type     | Use case                  |
-|--------------|--------------------|---------------------------|
+| ------------ | ------------------ | ------------------------- |
 | Milliseconds | Date (the default) | Most applications         |
 | Nanoseconds  | DateNano           | High-precision timestamps |
 
-Note: while DateNano values are always stored as nanoseconds,
-the actual precision of the values depends on the platform and programming language.
-For example, Dart uses only microsecond precision (the last three digits of the nanosecond are "truncated").
+Note: while DateNano values are always stored as nanoseconds, the actual precision of the values depends on the platform and programming language. For example, Dart uses only microsecond precision (the last three digits of the nanosecond are "truncated").
 
 {% tabs %}
 {% tab title="Java" %}
@@ -188,37 +175,29 @@ DateTime? preciseTimestamp;
 ```
 
 {% hint style="warning" %}
-Proper UTC handling requires ObjectBox for Dart/Flutter 5.1 with the `dateUtc` and `dateNanoUtc` annotations.
-Prior versions do not support proper UTC handling.
-Please update and avoid the old `date` and `dateNano` annotations.
+Proper UTC handling requires ObjectBox for Dart/Flutter 5.1 with the `dateUtc` and `dateNanoUtc` annotations. Prior versions do not support proper UTC handling. Please update and avoid the old `date` and `dateNano` annotations.
 {% endhint %}
 {% endtab %}
 {% endtabs %}
 
 ### IDs and Relations
 
-Every ObjectBox entity must have exactly one **ID property** of type Long (64-bit integer).
-See [Entity Annotations](entity-annotations.md#object-ids-id) for details.
+Every ObjectBox entity must have exactly one **ID property** of type Long (64-bit integer). See [Entity Annotations](entity-annotations.md#object-ids-id) for details.
 
-**"Relation"** is used for one of two relation types available in ObjectBox.
-It's a 64-bit integer that references the ID of another object.
-Depending on the programming language you use, it may translate to a "to-one" construct.
-See [Relations](relations.md) for complete documentation.
+**"Relation"** is used for one of two relation types available in ObjectBox. It's a 64-bit integer that references the ID of another object. Depending on the programming language you use, it may translate to a "to-one" construct. See [Relations](relations.md) for complete documentation.
 
 ## Lists and Arrays
 
-Store collections of values directly; no special tables or joins required.
-The internal type names are "vectors", but they may translate to lists or arrays in the programming language you use. 
+Store collections of values directly; no special tables or joins required. The internal type names are "vectors", but they may translate to lists or arrays in the programming language you use.
 
 {% hint style="info" %}
-**Binary data** is stored as a `ByteVector`.
-In other databases, this is may be called a "BLOB" (Binary Large Object). 
+**Binary data** is stored as a `ByteVector`. In other databases, this is may be called a "BLOB" (Binary Large Object).
 {% endhint %}
 
 ### Quick Reference
 
 | ObjectBox Type | Description                                       |
-|----------------|---------------------------------------------------|
+| -------------- | ------------------------------------------------- |
 | BoolVector     | Bool values (stored using one byte per value)     |
 | ByteVector     | Byte values (8-bit integers), binary data, BLOB   |
 | ShortVector    | Short values (16-bit integers)                    |
@@ -280,17 +259,15 @@ measurements = Float64Vector
 {% endtabs %}
 
 {% hint style="info" %}
-**For vector search:** Float vectors used for embeddings and similarity search have special indexing support.
-See [On-Device Vector Search](on-device-vector-search.md).
+**For vector search:** Float vectors used for embeddings and similarity search have special indexing support. See [On-Device Vector Search](on-device-vector-search.md).
 {% endhint %}
 
 ## Flex Properties
 
-Flex properties can hold data values of various types, including complex structures, in a single property.
-They serve two main purposes:
+Flex properties can hold data values of various types, including complex structures, in a single property. They serve two main purposes:
 
 * Dynamic data: you want to process JSON-like data dynamically
-* Nested objects: as an alternative to relations, you can embed map-like data directly 
+* Nested objects: as an alternative to relations, you can embed map-like data directly
 
 {% hint style="info" %}
 When syncing with MongoDB, flex properties can hold nested documents.
@@ -348,7 +325,8 @@ val customerStrTag = Customer(tag = "string-tag")
 val customerIntTag = Customer(tag = 1234)
 box.put(customerStrTag, customerIntTag)
 ```
-See [FlexObjectConverter](https://objectbox.io/docfiles/java/current/io/objectbox/converter/FlexObjectConverter.html) for Java/Kotlin  additional notes.
+
+See [FlexObjectConverter](https://objectbox.io/docfiles/java/current/io/objectbox/converter/FlexObjectConverter.html) for Java/Kotlin additional notes.
 {% endtab %}
 
 {% tab title="Dart/Flutter" %}
