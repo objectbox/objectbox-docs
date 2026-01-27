@@ -19,57 +19,9 @@ Video Tutorial on Getting Started with ObjectBox for Android and Java
 Prefer to look at example code? Check out [our examples repository](https://github.com/objectbox/objectbox-examples).
 {% endhint %}
 
-ObjectBox tools and dependencies are available on [the Maven Central repository](https://central.sonatype.com/namespace/io.objectbox).
+To add ObjectBox to your Android project, [follow the instructions in the objectbox-java README](https://github.com/objectbox/objectbox-java?tab=readme-ov-file#getting-started).
 
-To add ObjectBox to your Android project, follow these steps:
-
-1. Open the Gradle build file of your root project (not the ones for your app or module subprojects) and add a global variable for the version and the ObjectBox Gradle plugin:
-
-{% code title="/build.gradle(.kts)" %}
-```java
-buildscript {
-    ext.objectboxVersion = "5.0.1" // For Groovy build scripts
-    // val objectboxVersion by extra("5.0.1") // For KTS build scripts
-    
-    repositories {
-        mavenCentral()
-    }
-    
-    dependencies {
-        // Android Gradle Plugin 8.0 or later supported
-        classpath("com.android.tools.build:gradle:8.0.2")
-        classpath("io.objectbox:objectbox-gradle-plugin:$objectboxVersion")
-    }
-}
-```
-{% endcode %}
-
-2. Open the Gradle build file for your app or module subproject and, after the `com.android.application` plugin, apply the `io.objectbox` plugin:
-
-{% code title="/app/build.gradle(.kts)" %}
-```java
-// Using plugins syntax:
-plugins {
-    id("com.android.application")
-    id("kotlin-android") // Only for Kotlin projects
-    id("kotlin-kapt") // Only for Kotlin projects
-    id("io.objectbox") // Apply last
-}
-
-// Or using the old apply syntax:
-apply plugin: "com.android.application"
-apply plugin: "kotlin-android" // Only for Kotlin projects
-apply plugin: "kotlin-kapt" // Only for Kotlin projects
-apply plugin: "io.objectbox" // Apply last
-```
-{% endcode %}
-
-{% hint style="info" %}
-If you encounter any problems in this or later steps, check out the [FAQ](faq.md) and [Troubleshooting](troubleshooting.md) pages.
-{% endhint %}
-
-3. Then do "Sync Project with Gradle Files" in Android Studio so the Gradle plugin automatically adds the required ObjectBox libraries and code generation tasks.
-4. Your project can now use ObjectBox, continue by defining entity classes.
+Once completed, continue with the next step of defining entity classes below.
 {% endtab %}
 
 {% tab title="Java/Kotlin (JVM)" %}
@@ -318,6 +270,10 @@ pip install --upgrade objectbox
 ```
 {% endtab %}
 {% endtabs %}
+
+{% hint style="info" %}
+If you encounter any problems in this or later steps, also check the [FAQ](faq.md) and [Troubleshooting](troubleshooting.md) pages.
+{% endhint %}
 
 ## Define Entity Classes
 
@@ -947,7 +903,7 @@ store.callInTxAsync(() -> {
     Box<User> box = store.boxFor(User.class);
     String name = box.get(userId).name;
     box.remove(userId);
-    return text;
+    return name;
 }, (result, error) -> {
     if (error != null) {
         System.out.println("Failed to remove user with id " + userId);
@@ -957,7 +913,30 @@ store.callInTxAsync(() -> {
 });
 ```
 
-**awaitCallInTx (Kotlin Coroutines only):** wraps callInTxAsync in a coroutine that suspends until the transaction has completed. Likewise, on success the return value of the given callable is returned, on failure an exception is thrown.
+**newCachedThreadPoolExecutor** and **newFixedThreadPoolExecutor**: create an [ObjectBoxThreadPoolExecutor](https://github.com/objectbox/objectbox-java/blob/V5.1.0/objectbox-java/src/main/java/io/objectbox/ObjectBoxThreadPoolExecutor.java) to asynchronously execute ObjectBox operations. This default thread pool executor implementation properly cleans up thread-local ObjectBox resources. Use this if the async methods above don't work for your use case or your code needs full control over the thread pool.
+
+```java
+// Create a cached thread pool executor optimized for ObjectBox.
+// Use ObjectBoxThreadPoolExecutor directly for more customization options.
+private ObjectBoxThreadPoolExecutor executor = store.newCachedThreadPoolExecutor();
+
+try {
+    Future<String> future = executor.submit(() -> store.callInTx(() -> {
+        Box<User> box = store.boxFor(User.class);
+        String name = box.get(userId).name;
+        box.remove(userId);
+        return name;
+    }));
+    String result = future.get();
+    System.out.println("Removed user with name: " + result);
+} catch (Exception e) {
+    System.err.println("Failed to remove user with id " + userId);
+}
+```
+
+#### Kotlin Coroutines
+
+**awaitCallInTx:** wraps callInTxAsync in a coroutine that suspends until the transaction has completed. Likewise, on success the return value of the given callable is returned, on failure an exception is thrown.
 
 ```kotlin
 try {
@@ -968,9 +947,29 @@ try {
         name
     }
     println("Removed user with name $name")
-} catch (e: Exception) {
+} catch (_: Exception) {
     println("Failed to remove user with id $userId")
 }
+```
+
+**newCachedThreadPoolDispatcher** and **newFixedThreadPoolDispatcher**: create a coroutine dispatcher backed by an [ObjectBoxThreadPoolExecutor](https://github.com/objectbox/objectbox-java/blob/V5.1.0/objectbox-java/src/main/java/io/objectbox/ObjectBoxThreadPoolExecutor.java) to asynchronously execute ObjectBox operations. The executor properly cleans up thread-local ObjectBox resources. For example, use it instead of `Dispatchers.IO` when doing ObjectBox operations in coroutines.
+
+```kotlin
+// Create a Coroutine Dispatcher optimized for ObjectBox.
+// Use ObjectBoxThreadPoolExecutor and asCoroutineDispatcher() directly 
+// for more customization options.
+private val dispatcher = store.newCachedThreadPoolDispatcher()
+
+// Within a suspend function
+val name = withContext(dispatcher) {
+    store.callInTx {
+        val box = store.boxFor(User::class.java)
+        val name = box.get(userId).name
+        box.remove(userId)
+        name
+    }
+}
+println("Removed user with name $name")
 ```
 {% endtab %}
 
