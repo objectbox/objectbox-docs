@@ -913,7 +913,7 @@ store.callInTxAsync(() -> {
 });
 ```
 
-**newCachedThreadPoolExecutor** and **newFixedThreadPoolExecutor**: create an [ObjectBoxThreadPoolExecutor](https://github.com/objectbox/objectbox-java/blob/V5.1.0/objectbox-java/src/main/java/io/objectbox/ObjectBoxThreadPoolExecutor.java) to asynchronously execute ObjectBox operations. This default thread pool executor implementation properly cleans up thread-local ObjectBox resources. Use this if the async methods above don't work for your use case or your code needs full control over the thread pool.
+**newCachedThreadPoolExecutor** and **newFixedThreadPoolExecutor**: create an [ObjectBoxThreadPoolExecutor](https://github.com/objectbox/objectbox-java/blob/main/objectbox-java/src/main/java/io/objectbox/ObjectBoxThreadPoolExecutor.java) to asynchronously execute ObjectBox operations. This default thread pool executor implementation properly cleans up thread-local ObjectBox resources. Use this if the async methods above don't work for your use case or your code needs full control over the thread pool.
 
 ```java
 // Create a cached thread pool executor optimized for ObjectBox.
@@ -952,7 +952,7 @@ try {
 }
 ```
 
-**newCachedThreadPoolDispatcher** and **newFixedThreadPoolDispatcher**: create a coroutine dispatcher backed by an [ObjectBoxThreadPoolExecutor](https://github.com/objectbox/objectbox-java/blob/V5.1.0/objectbox-java/src/main/java/io/objectbox/ObjectBoxThreadPoolExecutor.java) to asynchronously execute ObjectBox operations. The executor properly cleans up thread-local ObjectBox resources. For example, use it instead of `Dispatchers.IO` when doing ObjectBox operations in coroutines.
+**newCachedThreadPoolDispatcher** and **newFixedThreadPoolDispatcher**: create a coroutine dispatcher backed by an [ObjectBoxThreadPoolExecutor](https://github.com/objectbox/objectbox-java/blob/main/objectbox-java/src/main/java/io/objectbox/ObjectBoxThreadPoolExecutor.java) to asynchronously execute ObjectBox operations. The executor properly cleans up thread-local ObjectBox resources. For example, use it instead of `Dispatchers.IO` when doing ObjectBox operations in coroutines.
 
 ```kotlin
 // Create a Coroutine Dispatcher optimized for ObjectBox.
