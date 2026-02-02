@@ -16,7 +16,7 @@ Video Tutorial on Getting Started with ObjectBox for Android and Java
 {% endembed %}
 
 {% hint style="info" %}
-Prefer to look at example code? Check out [our examples repository](https://github.com/objectbox/objectbox-examples).
+Prefer to look at example code? Check out [our Java SDK examples repository](https://github.com/objectbox/objectbox-examples).
 {% endhint %}
 
 To add ObjectBox to your Android project, [follow the instructions in the objectbox-java README](https://github.com/objectbox/objectbox-java?tab=readme-ov-file#getting-started).
@@ -26,7 +26,7 @@ Once completed, continue with the next step of defining entity classes below.
 
 {% tab title="Java/Kotlin (JVM)" %}
 {% hint style="info" %}
-Prefer to look at example code? Check out [our examples repository](https://github.com/objectbox/objectbox-examples).
+Prefer to look at example code? Check out [our Java SDK examples repository](https://github.com/objectbox/objectbox-examples).
 {% endhint %}
 
 The ObjectBox Java SDK and runtime libraries support applications:
@@ -144,116 +144,23 @@ You can watch these video tutorials as well 😀:
 * [Event Management app](https://youtu.be/6YPSQPS_bhU)
 * [Restaurant: chef and order apps](https://youtu.be/r9Lc2r22KBk)
 * [Task-list app (in Spanish)](https://youtu.be/osUq6B92-BY)
+
+Prefer to look at example code? Check out our [Flutter and Dart SDK examples directory](https://github.com/objectbox/objectbox-dart/tree/main/objectbox/example).
 {% endhint %}
 
-{% hint style="info" %}
-Prefer to look at example code? Check out our [examples directory](https://github.com/objectbox/objectbox-dart/tree/main/objectbox/example).
-{% endhint %}
+To add ObjectBox to your project, [follow the instructions for Flutter projects of the objectbox package](https://pub.dev/packages/objectbox#flutter-projects).
 
-To add ObjectBox to your Flutter project:
-
-1. Run these commands:
-
-```
-flutter pub add objectbox objectbox_flutter_libs:any
-flutter pub add --dev build_runner objectbox_generator:any
-```
-
-Or to use [ObjectBox Sync](https://objectbox.io/sync/) (requires access to the Sync feature) instead run:
-
-```
-flutter pub add objectbox objectbox_sync_flutter_libs:any
-flutter pub add --dev build_runner objectbox_generator:any
-```
-
-{% hint style="info" %}
-**To run unit tests on your machine**, download the latest native ObjectBox library for your machine by running this script in a bash shell (e.g. Git Bash on Windows):
-
-`bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)`
-
-To get a variant of the library that supports **ObjectBox Sync**, append the `--sync` argument to above command.
-{% endhint %}
-
-2. This should add lines like this to your `pubspec.yaml`:
-
-```yaml
-dependencies:
-  objectbox: ^5.1.0
-  objectbox_flutter_libs: any
-  # If you run the command for ObjectBox Sync it should add instead:
-  # objectbox_sync_flutter_libs: any
-
-dev_dependencies:
-  build_runner: ^2.4.11
-  objectbox_generator: any
-```
-
-3. If you added the above lines manually, then install the packages with `flutter pub get`.
-
-{% hint style="info" %}
-**For all iOS apps** target iOS 15.0: in `ios/Podfile` change the platform and in the `ios/Runner.xcodeproj/poject.pbxproj` file update `IPHONEOS_DEPLOYMENT_TARGET` (or open the Runner workspace in Xcode and edit the build setting). In `ios/Flutter/AppframeworkInfo.plist` update `MinimumOSVersion` to `15.0`.
-
-**For all macOS apps** target macOS 11.0: in `macos/Podfile` change the platform and in the `macos/Runner.xcodeproj/poject.pbxproj` file update `MACOSX_DEPLOYMENT_TARGET` (or open the Runner workspace in Xcode and edit the build setting).
-
-**For macOS apps using Sync,** open `macos/Runner.xcodeproj` in Xcode and for the Runner target under Signing & Capabilities in the App Sandbox sections, enable incoming and outgoing network access.
-{% endhint %}
-
-{% hint style="info" %}
-**For Linux Desktop apps:** the **Flutter snap** ships with an outdated version of CMake. [**Install Flutter manually**](https://docs.flutter.dev/get-started/install/linux#install-flutter-manually) **instead** to use the version of CMake installed on your system.
-{% endhint %}
+Once completed, continue with the next step of defining entity classes below.
 {% endtab %}
 
 {% tab title="Dart Native" %}
 {% hint style="info" %}
-Prefer to look at example code? Check out our [examples directory](https://github.com/objectbox/objectbox-dart/tree/main/objectbox/example).
+Prefer to look at example code? Check out our [Flutter and Dart SDK examples directory](https://github.com/objectbox/objectbox-dart/tree/main/objectbox/example).
 {% endhint %}
 
-1. Run these commands:
+To add ObjectBox to your project, [follow the instructions for Dart Native projects of the objectbox package](https://pub.dev/packages/objectbox#dart-native-projects).
 
-```
-dart pub add objectbox
-dart pub add --dev build_runner objectbox_generator:any
-```
-
-2. This should add lines like this to your `pubspec.yaml`:
-
-```yaml
-dependencies:
-  objectbox: ^5.1.0
-
-dev_dependencies:
-  build_runner: ^2.4.11
-  objectbox_generator: any
-```
-
-3. If you added the above lines manually, then install the packages with `dart pub get`
-4. Install the [ObjectBox C library](https://github.com/objectbox/objectbox-c) for your system (on Windows you can use "Git Bash"):
-
-```
-bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)
-```
-
-Or to use [ObjectBox Sync](https://objectbox.io/sync/) (requires access to the Sync feature) instead run:
-
-```
-bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh) --sync
-```
-
-{% hint style="info" %}
-By default the library is downloaded into the `lib` subdirectory of the working directory. It's not necessary to install the library system-wide. This also allows to use different versions for different projects. For details see below.
-{% endhint %}
-
-**Deploying Dart Native projects**
-
-Natively compiled Dart applications that use ObjectBox Dart require a reference to the [objectbox-c](https://github.com/objectbox/objectbox-c) library. Hence, the shared library file downloaded with `install.sh` needs to be shipped with the executable.
-
-The `install.sh` script downloads the library by default to the `lib` subdirectory of the working directory. An executable using ObjectBox Dart looks for the library in this `lib` directory.
-
-If it is not found there, it falls back to using system directories (using Dart's `DynamicLibrary.open`):
-
-* Windows: working directory and `%WINDIR%\system32`.
-* macOS: `/usr/local/lib` (and maybe others).
-* Linux: `/lib` and `/usr/lib` (again, possibly others).
+Once completed, continue with the next step of defining entity classes below.
 {% endtab %}
 
 {% tab title="Python" %}
