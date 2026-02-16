@@ -29,61 +29,7 @@ Once completed, continue with the next step of defining entity classes below.
 Prefer to look at example code? Check out [our Java SDK examples repository](https://github.com/objectbox/objectbox-examples).
 {% endhint %}
 
-The ObjectBox Java SDK and runtime libraries support applications:
-
-* running on the JVM on Linux (x86\_64, arm64, armv7), Windows (x86\_64) and macOS 10.15 or newer (x86\_64, Apple M1)
-* written in Java or Kotlin
-* targeting at least Java 8
-* built with Gradle or Maven
-
-ObjectBox tools and dependencies are available on [the Maven Central repository](https://central.sonatype.com/namespace/io.objectbox).
-
-**Maven projects**
-
-To set up a Maven project, see the [README of the Java Maven example project](https://github.com/objectbox/objectbox-examples/blob/main/java-main-maven/README.md).
-
-**Gradle projects**
-
-{% hint style="info" %}
-The instructions assume a [multi-project build](https://docs.gradle.org/current/userguide/multi_project_builds.html) is used.
-{% endhint %}
-
-1. Open the Gradle build script of your root project and
-   1. add a global variable to store the common version of ObjectBox dependencies and
-   2. add the [ObjectBox Gradle plugin](https://github.com/objectbox/objectbox-java-generator):
-
-{% code title="/build.gradle(.kts)" %}
-```groovy
-buildscript {
-    ext.objectboxVersion = "5.0.1" // For Groovy build scripts
-    // val objectboxVersion by extra("5.0.1") // For KTS build scripts
-    
-    repositories {
-        mavenCentral()
-    }
-    
-    dependencies {
-        classpath("io.objectbox:objectbox-gradle-plugin:$objectboxVersion")
-    }
-}
-```
-{% endcode %}
-
-2. Open the Gradle build file for your application subproject and, after other plugins, apply the `io.objectbox` plugin:
-
-{% code title="/app/build.gradle(.kts)" %}
-```groovy
-// Using plugins syntax:
-plugins {
-    id("java-library") // or org.jetbrains.kotlin.jvm for Kotlin projects.
-    id("io.objectbox") // Apply last.
-}
-
-// Or using the old apply syntax:
-apply plugin: "java-library" // or org.jetbrains.kotlin.jvm for Kotlin projects.
-apply plugin: "io.objectbox" // Apply last.
-```
-{% endcode %}
+1. To add ObjectBox to your JVM project, [follow the instructions in the objectbox-java README](https://github.com/objectbox/objectbox-java?tab=readme-ov-file#getting-started).
 
 {% hint style="info" %}
 Using your IDE of choice with a Gradle project might require additional configuration. E.g.
@@ -92,12 +38,13 @@ Using your IDE of choice with a Gradle project might require additional configur
 * For Eclipse see the [Buildship ](https://projects.eclipse.org/projects/tools.buildship)project and [Getting Started](https://www.vogella.com/tutorials/EclipseGradle/article.html) article.
 {% endhint %}
 
-3. **Optionally**, add a runtime library for each platform that your application should run on and instead apply the Gradle plugin after the dependencies block:
+2. **Optionally**, add a database library for each platform that your application should run on. If you do, apply the Gradle plugin **after** the dependencies block so it doesn't add conflicting variants:
 
 ```groovy
 dependencies {
-    // ObjectBox platform-specific runtime libraries
-    // Add or remove them as needed to match what your application supports
+    // ObjectBox platform-specific database libraries
+    // Add or remove them as needed to match what your application supports.
+    // There are Sync variants available named like "objectbox-sync-<platform>".
     // Linux (x64)
     implementation("io.objectbox:objectbox-linux:$objectboxVersion")
     // macOS (Intel and Apple Silicon)
@@ -121,9 +68,9 @@ apply(plugin = "io.objectbox")
 ```
 
 {% hint style="info" %}
-The ObjectBox database runs mostly in native code written in C/C++ for optimal performance. Thus, ObjectBox will load a runtime library: a “.dll” on Windows, a “.so” on Linux, and a “.dylib” on macOS.\\
+The ObjectBox database runs mostly in native code written in C/C++ for optimal performance. Thus, ObjectBox will load a database library: a “.dll” on Windows, a “.so” on Linux, and a “.dylib” on macOS.
 
-By default, the Gradle plugin adds a runtime library (only) for your current operating system. It also adds the Java SDK (objectbox-java) and if needed the ObjectBox Kotlin extension functions (objectbox-kotlin).
+By default, the Gradle plugin adds a database library (only) for your current operating system. It also adds the Java SDK (objectbox-java) and if needed the ObjectBox Kotlin extension functions (objectbox-kotlin).
 {% endhint %}
 
 {% hint style="info" %}
