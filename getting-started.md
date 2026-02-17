@@ -11,17 +11,96 @@ description: >-
 
 {% tabs %}
 {% tab title="Java/Kotlin (Android)" %}
-{% embed url="https://www.youtube.com/watch?v=flmAeYY-u9I" %}
-Video Tutorial on Getting Started with ObjectBox for Android and Java
-{% endembed %}
-
 {% hint style="info" %}
 Prefer to look at example code? Check out [our Java SDK examples repository](https://github.com/objectbox/objectbox-examples).
 {% endhint %}
 
-To add ObjectBox to your Android project, [follow the instructions in the objectbox-java README](https://github.com/objectbox/objectbox-java?tab=readme-ov-file#getting-started).
+These instructions show how to add ObjectBox to an Android project built with at least Android Gradle Plugin 9.0 and using a TOML version catalog.
 
-Once completed, continue with the next step of defining entity classes below.
+For other setup options and more details, see [the instructions in the objectbox-java README](https://github.com/objectbox/objectbox-java?tab=readme-ov-file#getting-started).
+
+1. In the TOML version catalog file define a version variable using the [latest ObjectBox version](https://github.com/objectbox/objectbox-java/releases/latest) and an alias for the ObjectBox and kapt plugin:
+
+{% code title="gradle/libs.versions.toml" fullWidth="false" %}
+```toml
+[versions]
+agp = "<AGP_VERSION>"
+
+# Define a variable for the version of the ObjectBox plugin
+objectbox = "<OBJECTBOX_VERSION>"
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+
+# Add an alias for the kapt plugin
+kotlin-kapt = { id = "com.android.legacy-kapt", version.ref = "agp" }
+# Add an alias for the ObjectBox plugin
+objectbox = { id = "io.objectbox", version.ref = "objectbox" }
+```
+{% endcode %}
+
+2. In the root Gradle build script, add the ObjectBox and kapt plugin and add Maven Central to the dependency repositories:
+
+{% code title="build.gradle.kts" %}
+```kts
+plugins {
+    alias(libs.plugins.android.application) apply false
+    
+    // Add the kapt plugin
+    alias(libs.plugins.kotlin.kapt) apply false    
+    // Add the ObjectBox plugin
+    alias(libs.plugins.objectbox) apply false
+    
+}
+
+allprojects {
+    repositories {
+        // Add Maven Central to the dependency repositories
+        mavenCentral()
+    }
+}
+```
+{% endcode %}
+
+3. In the Gradle settings file, add Maven Central to the plugin repositories and add a mapping for the ObjectBox Gradle plugin ID:
+
+{% code title="settings.gradle.kts" %}
+```kts
+pluginManagement {
+    repositories {
+        // Add Maven Central to the plugin repositories
+        mavenCentral()
+    }
+    
+    resolutionStrategy {
+        eachPlugin {
+            // Map the plugin ID to the Maven artifact
+            if (requested.id.id == "io.objectbox") {
+                useModule("io.objectbox:objectbox-gradle-plugin:${requested.version}")
+            }
+        }
+    }
+}
+```
+{% endcode %}
+
+4. In the Gradle build script of your app project, apply the ObjectBox and kapt plugin next to the Android application plugin:
+
+{% code title="app/build.gradle.kts" %}
+```kts
+plugins {
+    alias(libs.plugins.android.application)
+    
+    // Apply the kapt plugin
+    alias(libs.plugins.kotlin.kapt)
+    // Apply the ObjectBox plugin
+    alias(libs.plugins.objectbox)
+    
+}
+```
+{% endcode %}
+
+5. Your project can now use ObjectBox, continue below with defining entity classes.
 {% endtab %}
 
 {% tab title="Java/Kotlin (JVM)" %}
@@ -29,7 +108,9 @@ Once completed, continue with the next step of defining entity classes below.
 Prefer to look at example code? Check out [our Java SDK examples repository](https://github.com/objectbox/objectbox-examples).
 {% endhint %}
 
-1. To add ObjectBox to your JVM project, [follow the instructions in the objectbox-java README](https://github.com/objectbox/objectbox-java?tab=readme-ov-file#getting-started).
+These instructions show how to add ObjectBox to a JVM project built with at least Gradle 7.0 and using a TOML version catalog.
+
+For other setup options and more details, see [the instructions in the objectbox-java README](https://github.com/objectbox/objectbox-java?tab=readme-ov-file#getting-started).
 
 {% hint style="info" %}
 Using your IDE of choice with a Gradle project might require additional configuration. E.g.
@@ -38,8 +119,91 @@ Using your IDE of choice with a Gradle project might require additional configur
 * For Eclipse see the [Buildship ](https://projects.eclipse.org/projects/tools.buildship)project and [Getting Started](https://www.vogella.com/tutorials/EclipseGradle/article.html) article.
 {% endhint %}
 
-2. **Optionally**, add a database library for each platform that your application should run on. If you do, apply the Gradle plugin **after** the dependencies block so it doesn't add conflicting variants:
+1. In the TOML version catalog file define a version variable using the [latest ObjectBox version](https://github.com/objectbox/objectbox-java/releases/latest) and an alias for the ObjectBox plugin:
 
+{% code title="gradle/libs.versions.toml" fullWidth="false" %}
+```toml
+[versions]
+# Define a variable for the version of the ObjectBox plugin
+objectbox = "<OBJECTBOX_VERSION>"
+
+# If using Kotlin
+kotlin = "<KOTLIN_VERSION>"
+
+[plugins]
+# Add an alias for the ObjectBox plugin
+objectbox = { id = "io.objectbox", version.ref = "objectbox" }
+
+# If using Kotlin 
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+```
+{% endcode %}
+
+2. In the root Gradle build script, add the ObjectBox plugin and add Maven Central to the dependency repositories:
+
+{% code title="build.gradle.kts" %}
+```kts
+plugins {
+    // Add the ObjectBox plugin
+    alias(libs.plugins.objectbox) apply false
+    
+    // If using Kotlin
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.kotlin.kapt) apply false
+}
+
+allprojects {
+    repositories {
+        // Add Maven Central to the dependency repositories
+        mavenCentral()
+    }
+}
+```
+{% endcode %}
+
+3. In the Gradle settings file, add Maven Central to the plugin repositories and add a mapping for the ObjectBox Gradle plugin ID:
+
+{% code title="settings.gradle.kts" %}
+```kts
+pluginManagement {
+    repositories {
+        // Add Maven Central to the plugin repositories
+        mavenCentral()
+    }
+    
+    resolutionStrategy {
+        eachPlugin {
+            // Map the plugin ID to the Maven artifact
+            if (requested.id.id == "io.objectbox") {
+                useModule("io.objectbox:objectbox-gradle-plugin:${requested.version}")
+            }
+        }
+    }
+}
+```
+{% endcode %}
+
+4. In the Gradle build script of your app project, apply the ObjectBox plugin next to the application or java-library plugin:
+
+{% code title="app/build.gradle.kts" %}
+```kts
+plugins {
+    id("application") // or id("java-library")
+    // Optional, if using Kotlin
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.kapt)
+    
+    // Apply the ObjectBox plugin
+    alias(libs.plugins.objectbox)
+    
+}
+```
+{% endcode %}
+
+5. **Optionally**, add a database library dependency for each platform that your application should run on. If you do, change to apply the ObjectBox Gradle plugin **after** the dependencies block so it doesn't add conflicting variants:
+
+{% code title="app/build.gradle.kts" %}
 ```groovy
 dependencies {
     // ObjectBox platform-specific database libraries
@@ -66,6 +230,7 @@ apply plugin: "io.objectbox"
 // Using KTS build scripts
 apply(plugin = "io.objectbox")
 ```
+{% endcode %}
 
 {% hint style="info" %}
 The ObjectBox database runs mostly in native code written in C/C++ for optimal performance. Thus, ObjectBox will load a database library: a “.dll” on Windows, a “.so” on Linux, and a “.dylib” on macOS.
@@ -77,7 +242,7 @@ By default, the Gradle plugin adds a database library (only) for your current op
 ObjectBox only supports 64-bit systems for best performance going forward. Talk to us if you require 32-bit support.
 {% endhint %}
 
-3. Your project can now use ObjectBox, continue by defining entity classes.
+6. Your project can now use ObjectBox, continue below with defining entity classes.
 {% endtab %}
 
 {% tab title="Flutter" %}
