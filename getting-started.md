@@ -246,18 +246,15 @@ ObjectBox only supports 64-bit systems for best performance going forward. Talk 
 {% endtab %}
 
 {% tab title="Flutter" %}
-{% embed url="https://www.youtube.com/watch?v=AxYbdriXKI8" %}
-Video Tutorial on Getting Started with ObjectBox for Flutter
-{% endembed %}
-
 {% hint style="info" %}
-You can watch these video tutorials as well 😀:
+Prefer to look at example code? Check out our [Flutter and Dart SDK examples directory](https://github.com/objectbox/objectbox-dart/tree/main/objectbox/example).
 
+Some fine people have created videos explaining core concepts, you can watch these as well:
+
+* [Shop order app](https://www.youtube.com/watch?v=AxYbdriXKI8)
 * [Event Management app](https://youtu.be/6YPSQPS_bhU)
 * [Restaurant: chef and order apps](https://youtu.be/r9Lc2r22KBk)
 * [Task-list app (in Spanish)](https://youtu.be/osUq6B92-BY)
-
-Prefer to look at example code? Check out our [Flutter and Dart SDK examples directory](https://github.com/objectbox/objectbox-dart/tree/main/objectbox/example).
 {% endhint %}
 
 To add ObjectBox to your Flutter project:
