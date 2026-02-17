@@ -326,7 +326,7 @@ bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/i
 By default the library is downloaded into the `lib` subdirectory of the working directory. It's not necessary to install the library system-wide. This also allows to use different versions for different projects. See the notes on deploying below.
 {% endhint %}
 
-5. Your project can now use ObjectBox, continue by defining entity classes.
+3. Your project can now use ObjectBox, continue by defining entity classes.
 
 **Deploying Dart Native projects**
 
