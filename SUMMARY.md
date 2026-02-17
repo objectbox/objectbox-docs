@@ -1,7 +1,7 @@
 # Table of contents
 
 * [ObjectBox Docs](README.md)
-* [Getting started](getting-started.md)
+* [Getting Started](getting-started.md)
 * [Tutorial: Demo Project](tutorial-demo-project.md)
 * [Entity Annotations](entity-annotations.md)
 * [Property Types](property-types.md)
