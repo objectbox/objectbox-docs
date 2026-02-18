@@ -131,7 +131,7 @@ We strongly recommend using Admin **only for debug builds** as it ships with add
 {% tab title="Java" %}
 Modify the app's Gradle build file to add the dependency and change **the “io.objectbox” plugin to be applied after the dependencies block:**
 
-{% code title="app/build.gradle" %}
+{% code title="app/build.gradle(.kts)" %}
 ```java
 dependencies {
     // Manually add objectbox-android-objectbrowser only for debug builds,
@@ -152,7 +152,31 @@ If the plugin is not applied afterwards, the build will fail with a duplicate fi
 {% endtab %}
 
 {% tab title="Flutter" %}
-Modify the Gradle build file of the Flutter Android app to add the dependency:
+Modify the Gradle build file of the Flutter Android app to exclude the variant added by the objectbox\_flutter\_libs package and add the dependency.
+
+For a Kotlin buildscript (KTS):
+
+{% code title="android/app/build.gradle.kts" %}
+```groovy
+// Tell Gradle to exclude the Android library (without Admin)
+// that is added by the objectbox_flutter_libs package for debug builds.
+configurations {
+    named("debugImplementation") {
+        exclude(group = "io.objectbox", module = "objectbox-android")
+    }
+}
+
+dependencies {
+    // Add the Android library with ObjectBox Admin only for debug builds.
+    // Note: when the objectbox package updates, check if the Android
+    // library below needs to be updated as well.
+    // TODO Replace <version> with the one noted in the release notes (https://github.com/objectbox/objectbox-dart/releases)
+    debugImplementation("io.objectbox:objectbox-android-objectbrowser:<version>")
+}
+```
+{% endcode %}
+
+Or when using the old Groovy syntax:
 
 {% code title="android/app/build.gradle" %}
 ```groovy
@@ -174,12 +198,12 @@ dependencies {
 ```
 {% endcode %}
 
-To avoid a version mismatch on updates, we suggest to change the dependency on the objectbox Dart package from a range of versions to a concrete version:
+To avoid a version mismatch on updates, we suggest to change the dependency on the [objectbox Dart package](https://pub.dev/packages/objectbox) from a range of versions to a concrete version:
 
 ```yaml
 dependencies:
   # Note: when updating objectbox, check the release notes (https://github.com/objectbox/objectbox-dart/releases)
-  # if objectbox-android-objectbrowser in android/app/build.gradle has to be updated.
+  # if objectbox-android-objectbrowser in android/app/build.gradle(.kts) has to be updated.
   objectbox: x.y.z # TODO Replace with valid version
   objectbox_flutter_libs: any
 ```
