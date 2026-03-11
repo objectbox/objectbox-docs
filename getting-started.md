@@ -24,14 +24,12 @@ For other setup options and more details, see [the instructions in the objectbox
 {% code title="gradle/libs.versions.toml" fullWidth="false" %}
 ```toml
 [versions]
-agp = "<AGP_VERSION>"
-
+agp = "AGP_VERSION"
 # Define a variable for the version of the ObjectBox plugin
-objectbox = "<OBJECTBOX_VERSION>"
+objectbox = "OBJECTBOX_VERSION"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-
 # Add an alias for the kapt plugin
 kotlin-kapt = { id = "com.android.legacy-kapt", version.ref = "agp" }
 # Add an alias for the ObjectBox plugin
@@ -39,30 +37,21 @@ objectbox = { id = "io.objectbox", version.ref = "objectbox" }
 ```
 {% endcode %}
 
-2. In the root Gradle build script, add the ObjectBox and kapt plugin and add Maven Central to the dependency repositories:
+2. In the root Gradle build script, add the ObjectBox and kapt plugin:
 
 {% code title="build.gradle.kts" %}
 ```kts
 plugins {
     alias(libs.plugins.android.application) apply false
-    
     // Add the kapt plugin
     alias(libs.plugins.kotlin.kapt) apply false    
     // Add the ObjectBox plugin
     alias(libs.plugins.objectbox) apply false
-    
-}
-
-allprojects {
-    repositories {
-        // Add Maven Central to the dependency repositories
-        mavenCentral()
-    }
 }
 ```
 {% endcode %}
 
-3. In the Gradle settings file, add Maven Central to the plugin repositories and add a mapping for the ObjectBox Gradle plugin ID:
+3. In the Gradle settings file, add Maven Central to the plugin and dependency repositories:
 
 {% code title="settings.gradle.kts" %}
 ```kts
@@ -71,31 +60,28 @@ pluginManagement {
         // Add Maven Central to the plugin repositories
         mavenCentral()
     }
-    
-    resolutionStrategy {
-        eachPlugin {
-            // Map the plugin ID to the Maven artifact
-            if (requested.id.id == "io.objectbox") {
-                useModule("io.objectbox:objectbox-gradle-plugin:${requested.version}")
-            }
-        }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        // Add Maven Central to the dependency repositories
+        mavenCentral()
     }
 }
 ```
 {% endcode %}
 
-4. In the Gradle build script of your app project, apply the ObjectBox and kapt plugin next to the Android application plugin:
+4. In the Gradle build script of your app project, apply the kapt and then the ObjectBox plugin after the Android application plugin:
 
 {% code title="app/build.gradle.kts" %}
 ```kts
 plugins {
-    alias(libs.plugins.android.application)
-    
+    alias(libs.plugins.android.application)  
     // Apply the kapt plugin
     alias(libs.plugins.kotlin.kapt)
     // Apply the ObjectBox plugin
-    alias(libs.plugins.objectbox)
-    
+    alias(libs.plugins.objectbox)    
 }
 ```
 {% endcode %}
@@ -108,7 +94,7 @@ plugins {
 Prefer to look at example code? Check out [our Java SDK examples repository](https://github.com/objectbox/objectbox-examples).
 {% endhint %}
 
-These instructions show how to add ObjectBox to a JVM project built with at least Gradle 7.0 and using a TOML version catalog.
+These instructions show how to add ObjectBox to a Java Virtual Machine (JVM) project built with at least Gradle 7.0 and using a TOML version catalog.
 
 For other setup options and more details, see [the instructions in the objectbox-java README](https://github.com/objectbox/objectbox-java?tab=readme-ov-file#getting-started).
 
@@ -124,45 +110,35 @@ Using your IDE of choice with a Gradle project might require additional configur
 {% code title="gradle/libs.versions.toml" fullWidth="false" %}
 ```toml
 [versions]
-# Define a variable for the version of the ObjectBox plugin
-objectbox = "<OBJECTBOX_VERSION>"
-
 # If using Kotlin
-kotlin = "<KOTLIN_VERSION>"
+kotlin = "KOTLIN_VERSION"
+# Define a variable for the version of the ObjectBox plugin
+objectbox = "OBJECTBOX_VERSION"
 
 [plugins]
-# Add an alias for the ObjectBox plugin
-objectbox = { id = "io.objectbox", version.ref = "objectbox" }
-
 # If using Kotlin 
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+# Add an alias for the ObjectBox plugin
+objectbox = { id = "io.objectbox", version.ref = "objectbox" }
 ```
 {% endcode %}
 
-2. In the root Gradle build script, add the ObjectBox plugin and add Maven Central to the dependency repositories:
+2. In the root Gradle build script, add the ObjectBox plugin:
 
 {% code title="build.gradle.kts" %}
 ```kts
-plugins {
-    // Add the ObjectBox plugin
-    alias(libs.plugins.objectbox) apply false
-    
+plugins {   
     // If using Kotlin
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotlin.kapt) apply false
-}
-
-allprojects {
-    repositories {
-        // Add Maven Central to the dependency repositories
-        mavenCentral()
-    }
+    // Add the ObjectBox plugin
+    alias(libs.plugins.objectbox) apply false
 }
 ```
 {% endcode %}
 
-3. In the Gradle settings file, add Maven Central to the plugin repositories and add a mapping for the ObjectBox Gradle plugin ID:
+3. In the Gradle settings file, add Maven Central to the plugin and dependency repositories:
 
 {% code title="settings.gradle.kts" %}
 ```kts
@@ -171,37 +147,34 @@ pluginManagement {
         // Add Maven Central to the plugin repositories
         mavenCentral()
     }
-    
-    resolutionStrategy {
-        eachPlugin {
-            // Map the plugin ID to the Maven artifact
-            if (requested.id.id == "io.objectbox") {
-                useModule("io.objectbox:objectbox-gradle-plugin:${requested.version}")
-            }
-        }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        // Add Maven Central to the dependency repositories
+        mavenCentral()
     }
 }
 ```
 {% endcode %}
 
-4. In the Gradle build script of your app project, apply the ObjectBox plugin next to the application or java-library plugin:
+4. In the Gradle build script of your app project, apply the ObjectBox plugin after the application or java-library plugin:
 
 {% code title="app/build.gradle.kts" %}
 ```kts
 plugins {
     id("application") // or id("java-library")
-    // Optional, if using Kotlin
+    // If using Kotlin
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.kapt)
-    
     // Apply the ObjectBox plugin
     alias(libs.plugins.objectbox)
-    
 }
 ```
 {% endcode %}
 
-5. **Optionally**, add a database library dependency for each platform that your application should run on. If you do, change to apply the ObjectBox Gradle plugin **after** the dependencies block so it doesn't add conflicting variants:
+5. **Optionally**, add a database library dependency for each platform that your application should run on:
 
 {% code title="app/build.gradle.kts" %}
 ```groovy
@@ -222,13 +195,6 @@ dependencies {
     // Linux (64-bit ARM)
     implementation("io.objectbox:objectbox-linux-armv7:$objectboxVersion")
 }
-
-// When manually adding ObjectBox dependencies, the plugin must be
-// applied after the dependencies block so it can detect them.
-// Using Groovy build scripts
-apply plugin: "io.objectbox"
-// Using KTS build scripts
-apply(plugin = "io.objectbox")
 ```
 {% endcode %}
 

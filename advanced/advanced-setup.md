@@ -20,8 +20,6 @@ To then change the default behavior of the ObjectBox plugin and processor read o
 
 The ObjectBox Gradle plugin adds required libraries and the annotation processor to your projects dependencies automatically, but you can also add them manually.
 
-Just make sure to apply the ObjectBox Gradle plugin after the dependencies block, so it does not replace manually added dependencies.
-
 In your app's Gradle build script:
 
 {% tabs %}
@@ -38,11 +36,6 @@ dependencies {
     // Native library for Android
     implementation("io.objectbox:objectbox-android:$objectboxVersion")
 }
-
-// Apply plugin after dependencies block so they are not overwritten.
-apply plugin: 'io.objectbox'
-// Or using Kotlin DSL:
-apply(plugin = "io.objectbox")
 ```
 
 
@@ -59,11 +52,6 @@ dependencies {
     // Native library for Android
     implementation("io.objectbox:objectbox-android:$objectboxVersion")
 }
-
-// Apply plugin after dependencies block so they are not overwritten.
-apply plugin: 'io.objectbox'
-// Or using Kotlin DSL:
-apply(plugin = "io.objectbox")
 ```
 
 
@@ -76,7 +64,7 @@ apply(plugin = "io.objectbox")
 </strong>    implementation("io.objectbox:objectbox-java:$objectboxVersion")
     // Annotation processor
     annotationProcessor("io.objectbox:objectbox-processor:$objectboxVersion")
-    // One of the native libraries required for your system
+    // One of the JVM database libraries required for your system
     implementation("io.objectbox:objectbox-linux:$objectboxVersion")
     implementation("io.objectbox:objectbox-macos:$objectboxVersion")
     implementation("io.objectbox:objectbox-windows:$objectboxVersion")
@@ -85,11 +73,6 @@ apply(plugin = "io.objectbox")
     implementation("io.objectbox:objectbox-linux-arm64:$objectboxVersion")       
     implementation("io.objectbox:objectbox-linux-armv7:$objectboxVersion")
 }
-
-// Apply plugin after dependencies block so they are not overwritten.
-apply plugin: "io.objectbox"
-// Or using Kotlin DSL:
-apply(plugin = "io.objectbox")
 </code></pre>
 {% endtab %}
 
@@ -103,7 +86,7 @@ dependencies {
     implementation("io.objectbox:objectbox-kotlin:$objectboxVersion")
     // Annotation processor
     kapt("io.objectbox:objectbox-processor:$objectboxVersion")
-    // One of the native libraries required for your system
+    // One of the JVM database libraries required for your system
     implementation("io.objectbox:objectbox-linux:$objectboxVersion")
     implementation("io.objectbox:objectbox-macos:$objectboxVersion")
     implementation("io.objectbox:objectbox-windows:$objectboxVersion")
@@ -112,11 +95,6 @@ dependencies {
     implementation("io.objectbox:objectbox-linux-arm64:$objectboxVersion")       
     implementation("io.objectbox:objectbox-linux-armv7:$objectboxVersion")
 }
-
-// Apply plugin after dependencies block so they are not overwritten.
-apply plugin: "io.objectbox"
-// Or using Kotlin DSL:
-apply(plugin = "io.objectbox")
 ```
 {% endtab %}
 {% endtabs %}
@@ -124,6 +102,8 @@ apply(plugin = "io.objectbox")
 ### Add libraries for distribution
 
 For JVM apps, by default, the ObjectBox Gradle plugin only adds the native (Linux, macOS or Windows) library **required to run on your current system**. If your app wants to support multiple platforms, **manually add all of the required native libraries** listed above when you **distribute** your app.
+
+Note that when the Java API is first used, it will extract the actual database library file (such as a `.dll`, `.dylib` or `.so` file) from the included JAR to the working directory. If your application does not have permission to do so it may be required to package and install the library files directly with your application.
 
 ### **Processor Options**
 
