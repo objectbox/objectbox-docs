@@ -233,14 +233,13 @@ const query = box.query(
             .or(User_.age.greaterThan(60)))
 ).build();
 ```
-
 {% endtab %}
 {% endtabs %}
 
 #### Other notable features
 
-* In Kotlin, instead of `condition1.and(condition2)` you can write `condition1`` `**`and`**` ``condition2` (similarly `condition1`` `**`or`**` ``condition2`).
-* In Dart and Python, instead of `condition1.and(condition2)` you can write `condition1`` `**`&`**` ``condition2` (similarly `condition1`` `**`|`**` ``conditon2`).
+* In Kotlin, instead of `condition1.and(condition2)` you can write ` condition1`` `` `**`and`**` `` ``condition2 ` (similarly ` condition1`` `` `**`or`**` `` ``condition2 `).
+* In Dart and Python, instead of `condition1.and(condition2)` you can write ` condition1`` `` `**`&`**` `` ``condition2 ` (similarly ` condition1`` `` `**`|`**` `` ``conditon2 `).
 * Use `condition.alias(aliasName)` to set an alias for a `condition` that can later be used to change the parameter value of the condition on the built query.
 
 {% hint style="info" %}
@@ -374,7 +373,7 @@ Order directives can also be chained. Check the method documentation ([Java](htt
 
 ## Run a query
 
-&#x20;[Queries](queries.md) are first created (and not yet executed) by calling `build()` on the `QueryBuilder`.
+[Queries](queries.md) are first created (and not yet executed) by calling `build()` on the `QueryBuilder`.
 
 ```java
 Query<User> query = builder.build();
@@ -384,7 +383,7 @@ Once the query is created, it allows various operations, which we will explore i
 
 ### Find objects
 
-&#x20;There are a couple of find methods to retrieve objects matching the query:
+There are a couple of find methods to retrieve objects matching the query:
 
 {% tabs %}
 {% tab title="Java" %}
@@ -621,7 +620,7 @@ joes = query.set_parameter_alias_string("name", "Joe").find()
 
 ### Limit, Offset, and Pagination
 
-Sometimes you only need a subset of a query, for example, the first 10 elements to display in your user interface. This is especially helpful (and resource-efficient) when you have a high number of entities and you cannot limit the result using query conditions only.&#x20;
+Sometimes you only need a subset of a query, for example, the first 10 elements to display in your user interface. This is especially helpful (and resource-efficient) when you have a high number of entities and you cannot limit the result using query conditions only.
 
 {% tabs %}
 {% tab title="Java" %}
@@ -708,7 +707,7 @@ To learn how to observe or listen to changes to the results of a query, see the 
 
 ## Query a single property
 
-If you only want to return the values of a particular property and not a list of full objects you can use a [PropertyQuery](https://objectbox.io/files/objectbox-java/current/io/objectbox/query/PropertyQuery.html). After building a query, simply call `property(Property)`  to define the property followed by the appropriate find method.
+If you only want to return the values of a particular property and not a list of full objects you can use a [PropertyQuery](https://objectbox.io/files/objectbox-java/current/io/objectbox/query/PropertyQuery.html). After building a query, simply call `property(Property)` to define the property followed by the appropriate find method.
 
 For example, instead of getting all `User`s, to just get their email addresses:
 
@@ -744,6 +743,7 @@ query.close();
 {% tab title="TypeScript" %}
 {% hint style="info" %}
 Property queries are not yet available in TypeScript. Use `find()` and map the results instead:
+
 ```typescript
 const emails = query.find().map(user => user.email);
 ```
@@ -854,7 +854,7 @@ Property queries ([JavaDoc](https://objectbox.io/files/objectbox-java/current/io
 
 ## Query a related entity (links)
 
-After creating a relation between entities, you might want to add a query condition for a property that only exists in the related entity. In SQL this is solved using JOINs. But as ObjectBox is not a SQL database we built something very similar: links. Links are based on [Relations ](relations.md)- see the doc page for the introduction.&#x20;
+After creating a relation between entities, you might want to add a query condition for a property that only exists in the related entity. In SQL this is solved using JOINs. But as ObjectBox is not a SQL database we built something very similar: links. Links are based on [Relations ](relations.md)- see the doc page for the introduction.
 
 Assume there is a `Person` that can be associated with multiple `Address` entities:
 
@@ -916,7 +916,7 @@ class Address {
 {% endtab %}
 {% endtabs %}
 
-To get a `Person` with a certain name that also lives on a specific street, we need to query the associated `Address` entities of a `Person`. To do this, use the `link()` method of the query builder to tell that the `addresses` relation should be queried. Then add a condition for `Address`:
+To get a `Person` with a certain name that also lives on a specific street, we need to query the associated `Address` entities of a `Person`. To do this, use the "link" method of the query builder to tell that the `addresses` relation should be queried. Then add a condition for `Address`:
 
 {% tabs %}
 {% tab title="Java" %}
@@ -957,7 +957,7 @@ query.close();
 {% endtab %}
 {% endtabs %}
 
-What if we want to get a list of `Address` instead of `Person`? If you know ObjectBox relations well, you would probably add a `@Backlink` relation to `Address` and build your query using it with `link()` as shown above:
+What if we want to get a list of `Address` instead of `Person`? If you know ObjectBox relations well, you would probably add a `@Backlink` relation to `Address` and build your query using the "link" method as shown above. This approach works when using the Java API, but not for the Dart API:
 
 {% tabs %}
 {% tab title="Java" %}
@@ -1008,19 +1008,15 @@ class Address {
     final persons = ToMany<Person>();
 }
 
-// get all Address objects with street "Sesame Street"...
-QueryBuilder<Address> builder = 
-    addressBox.query(Address_.street.equals('Sesame Street'));
-// ...which are linked from a Person named "Elmo"
-builder.linkMany(Address_.persons, Person_.name.equals('Elmo'));
-Query<Address> query = builder.build();
-List<Address> sesameStreetsWithElmo = query.find();
-query.close();
+// To query the address ToMany, use the backlinkMany() query builder method shown
+// in the example below.
+// Background: for Dart ObjectBox doesn't generate the Address_.persons meta
+// property, required to build queries.
 ```
 {% endtab %}
 {% endtabs %}
 
-But actually, you do not have to modify the `Address` entity (you still can if you need the `@Backlink` elsewhere). Instead, we can use the `backlink()` method to create a backlink to the `addresses` relation from `Person` just for that query:
+An alternative, that also works using the Dart API, is to use the available "backlink" query method to create the "backlink" on-demand to the `addresses` relation from `Person` just for a query:
 
 {% tabs %}
 {% tab title="Java" %}
