@@ -106,13 +106,13 @@ Query<User> query = userBox
         .and(User_.yearOfBirth.greaterThan(2015))
         .and(User_.lastName.startsWith('O')))
     .build();
+List<User> youngJoes = query.find();
+query.close();
 
-// or use operator overloads:
-Query<User> query2 = userBox
-    .query(User_.firstName.equals('Joe') &
-        User_.yearOfBirth.greaterThan(2015) &
-        User_.lastName.startsWith('O'))
-    .build();
+// Or use operator overloads to combine conditions:
+final condition = User_.firstName.equals('Joe') &
+    User_.yearOfBirth.greaterThan(2015) &
+    User_.lastName.startsWith('O');
 ```
 {% endtab %}
 
@@ -248,27 +248,37 @@ const query = box.query(
 
 #### Other notable features
 
-* In Kotlin, instead of `condition1.and(condition2)` you can write ` condition1`` `` `**`and`**` `` ``condition2 ` (similarly ` condition1`` `` `**`or`**` `` ``condition2 `).
-* In Dart and Python, instead of `condition1.and(condition2)` you can write ` condition1`` `` `**`&`**` `` ``condition2 ` (similarly ` condition1`` `` `**`|`**` `` ``conditon2 `).
-* Use `condition.alias(aliasName)` to set an alias for a `condition` that can later be used to change the parameter value of the condition on the built query.
-
-{% hint style="info" %}
-**TypeScript:** String conditions are **case-sensitive by default**. Pass `false` as the second argument for case-insensitive matching: `User_.name.equals("joe", false)`.
-{% endhint %}
+* In Kotlin, instead of `condition1.and(condition2)` you can write `condition1 and condition2` (similarly `condition1 or condition2`).
+* In Dart and Python, instead of `condition1.and(condition2)` you can write `condition1 & condition2` (similarly `condition1 | condition2`).
+* A condition can get an alias to later change its parameter value on the built query, see [#reuse-queries-and-parameters](queries.md#reuse-queries-and-parameters "mention").
 
 ### Common conditions
 
 Apart from the standard conditions like `equal()`, `notEqual()`, `greater()` and `less()` there are also additional conditions available:
 
+* `greaterOrEqual()` and `lessOrEqual()`,
 * `isNull()` and `notNull()`,
 * `between()` to filter for values that are between the given two,
 * `oneOf()` and `notOneOf()` to filter for values that match any in the given array,
-* `startsWith()`, `endsWith()` and `contains()` for extended String filtering.
+* `startsWith()`, `endsWith()` and `contains()` for extended String filtering,
+* `containsElement()` for String lists and `containsKeyValue()` for String maps and flex properties,
+* `relationCount()` on a ToMany relation to match objects by their number of related objects (Java, Dart).
+
+Method names may differ slightly between languages.
+For example, Dart and TypeScript use `equals()`, `greaterThan()` and `lessThan()`,
+and Python uses `equals()`, `greater_than()` and `less_than()`.
 
 See the API for a full list:
 
-* Property conditions: [Java](https://objectbox.io/docfiles/java/current/io/objectbox/Property.html) and [Dart](https://pub.dev/documentation/objectbox/latest/objectbox/QueryProperty-class.html)
+* Property conditions: [Java](https://objectbox.io/docfiles/java/current/io/objectbox/Property.html), [Dart](https://pub.dev/documentation/objectbox/latest/objectbox/QueryProperty-class.html) and [Python](https://objectbox.io/docfiles/python/current/)
 * Relation conditions: [Java](https://objectbox.io/docfiles/java/current/io/objectbox/relation/RelationInfo.html)
+
+{% hint style="info" %}
+**Case sensitivity:** String conditions are case-sensitive by default in all languages.
+To match ignoring case, pass `StringOrder.CASE_INSENSITIVE` in Java and Kotlin, `caseSensitive: false` in Dart, `case_sensitive=False` in Python or `{ caseSensitive: false }` in TypeScript.
+In Dart, the default can also be changed for the whole store with `queriesCaseSensitiveDefault`.
+Note that ordering results ignores case by default.
+{% endhint %}
 
 {% hint style="info" %}
 **Dart only: DateTime caveat**
@@ -297,7 +307,8 @@ A special condition is available for vector properties with an HNSW index. See t
 
 ### Order results
 
-In addition to specifying conditions, you can order the returned results using the `order()` method. By default this sorts ASCII characters in alphabetical order while ignoring case and numbers in ascending order.
+In addition to specifying conditions, you can order the returned results using the `order()` method.
+By default, results are sorted in ascending order and strings are compared ignoring case (for ASCII characters).
 
 {% tabs %}
 {% tab title="Java" %}
@@ -334,7 +345,7 @@ Order results feature is not yet available in Python.
 
 {% tab title="TypeScript" %}
 ```typescript
-// in ascending order
+// in ascending order, ignoring case
 const query = userBox
     .query(User_.firstName.equals("Joe"))
     .order(User_.lastName)
@@ -374,16 +385,17 @@ Order results feature is not yet available in Python.
 ```typescript
 import { OrderFlags } from "objectbox";
 // ...
-.order(User_.lastName, OrderFlags.DESCENDING | OrderFlags.CASE_SENSITIVE)
+.order(User_.lastName, OrderFlags.Descending | OrderFlags.CaseSensitive)
 ```
 {% endtab %}
 {% endtabs %}
 
-Order directives can also be chained. Check the method documentation ([Java](https://objectbox.io/files/objectbox-java/current/io/objectbox/query/QueryBuilder.html#order\(io.objectbox.Property,int\))) for details.
+Order directives can also be chained: results are sorted by the first `order()` call, and objects with equal values by the next one.
+Check the method documentation ([Java](https://objectbox.io/files/objectbox-java/current/io/objectbox/query/QueryBuilder.html#order\(io.objectbox.Property,int\))) for details.
 
 ## Run a query
 
-[Queries](queries.md) are first created (and not yet executed) by calling `build()` on the `QueryBuilder`.
+Queries are first created (and not yet executed) by calling `build()` on the `QueryBuilder`.
 
 ```java
 Query<User> query = builder.build();
@@ -406,6 +418,63 @@ User joe = query.findFirst();
 
 // return the only result or null if none, throw if more than one result
 User joe = query.findUnique();
+
+// return only the IDs of matching entities
+long[] ids = query.findIds();
+
+// return the count of matching entities
+long count = query.count();
+```
+{% endtab %}
+
+{% tab title="Kotlin" %}
+```kotlin
+// return all entities matching the query
+val joes = query.find()
+
+// return only the first result or null if none
+val joe = query.findFirst()
+
+// return the only result or null if none, throw if more than one result
+val joe = query.findUnique()
+
+// return only the IDs of matching entities
+val ids = query.findIds()
+
+// return the count of matching entities
+val count = query.count()
+```
+{% endtab %}
+
+{% tab title="Dart" %}
+```dart
+// return all entities matching the query
+List<User> joes = query.find();
+
+// return only the first result or null if none
+User? joe = query.findFirst();
+
+// return the only result or null if none, throw if more than one result
+User? joe = query.findUnique();
+
+// return only the IDs of matching entities
+List<int> ids = query.findIds();
+
+// return the count of matching entities
+int count = query.count();
+```
+{% endtab %}
+
+{% tab title="Python" %}
+```python
+# return all entities matching the query
+joes = query.find()
+
+# return only the IDs of matching entities
+ids = query.find_ids()
+
+# return the count of matching entities
+count = query.count()
 ```
 {% endtab %}
 
@@ -434,6 +503,9 @@ To return all entities matching the query simply call `find()`.
 To only return the first result, use `findFirst()`.
 
 If you expect a unique result, call `findUnique()` instead. It will give you a single result or null, if no matching entity was found and throw an exception if there was more than one result.
+
+To only get the IDs of matching objects use `findIds()`, and to only count them use `count()`.
+Both avoid creating objects and are therefore faster than `find()`.
 
 ### Remove objects
 
@@ -522,14 +594,15 @@ final query = userBox.query(User_.firstName.equals('')).build();
 {% tab title="Python" %}
 ```python
 # build a query
-query = userBox.query(User.firstName.equals('')).build();
+query = userBox.query(User.firstName.equals('')).build()
 ```
 {% endtab %}
 
 {% tab title="TypeScript" %}
-{% hint style="info" %}
-Query parameter reuse via `setParameter()` is not yet available in TypeScript. Rebuild the query with new values instead.
-{% endhint %}
+```typescript
+// build a query
+const query = userBox.query(User_.firstName.equals("")).build();
+```
 {% endtab %}
 {% endtabs %}
 
@@ -573,7 +646,17 @@ final jakes = (query..param(User_.firstName).value = 'Jake').find();
 joes = query.set_parameter_string(User.firstName, "Joe").find()
 
 # Change firstName parameter to "Jake" and get results
-jakes = query.set_parameter_srting(User.firstName, "Jake").find()
+jakes = query.set_parameter_string(User.firstName, "Jake").find()
+```
+{% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+// Change firstName parameter to "Joe" and get results
+const joes = query.setParameter(User_.firstName, "Joe").find();
+
+// Change firstName parameter to "Jake" and get results
+const jakes = query.setParameter(User_.firstName, "Jake").find();
 ```
 {% endtab %}
 {% endtabs %}
@@ -585,7 +668,8 @@ You might already be wondering what happens if you have more than one condition 
 ```java
 // assign alias "name" to the equal query parameter
 Query<User> query = userBox
-    .query(User_.firstName.equal("").alias("name"));
+    .query(User_.firstName.equal("").alias("name"))
+    .build();
 ```
 {% endtab %}
 
@@ -594,6 +678,7 @@ Query<User> query = userBox
 // assign alias "name" to the equal query parameter
 val query = userBox
     .query(User_.firstName.equal("").alias("name"))
+    .build()
 ```
 {% endtab %}
 
@@ -607,7 +692,14 @@ final query = userBox.query(User_.firstName.equals('', alias: 'name')).build();
 {% tab title="Python" %}
 ```python
 # Assign alias "name" to the equals query parameter
-query = userBox.query(User.firstName.equals('').alias("name")).build();
+query = userBox.query(User.firstName.equals('').alias("name")).build()
+```
+{% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+// assign alias "name" to the equals query parameter
+const query = userBox.query(User_.firstName.equals("", { alias: "name" })).build();
 ```
 {% endtab %}
 {% endtabs %}
@@ -642,6 +734,13 @@ final joes = (query..param(User_.firstName, alias: 'name').value = 'Joe').find()
 joes = query.set_parameter_alias_string("name", "Joe").find()
 ```
 {% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+// Change parameter with alias "name" to "Joe" and get results
+const joes = query.setParameter("name", "Joe").find();
+```
+{% endtab %}
 {% endtabs %}
 
 ### Limit, Offset, and Pagination
@@ -674,12 +773,10 @@ List<User> joes = query.find();
 {% endtab %}
 
 {% tab title="Python" %}
-<pre class="language-python"><code class="lang-python"># Offset by 10, limit to at most 5 results
-<strong>joes = query \
-</strong><strong>    .offset(10)
-</strong><strong>    .limit(5)
-</strong><strong>    .find()
-</strong></code></pre>
+```python
+# offset by 10, limit to at most 5 results
+joes = query.offset(10).limit(5).find()
+```
 {% endtab %}
 
 {% tab title="TypeScript" %}
@@ -693,6 +790,9 @@ const joes = query.offset(10).limit(5).find();
 `offset:` The first `offset` results are skipped.
 
 `limit:` At most `limit` results are returned.
+
+In Java and Kotlin, offset and limit only apply to that `find()` call.
+In Dart, Python and TypeScript, they are set on the query and stay in effect for all following calls until changed.
 
 ### Lazy-load results (Java)
 
@@ -716,7 +816,7 @@ Instead of reading the whole result (list of objects) using `find()` you can str
 {% tab title="Dart" %}
 ```dart
 Query<User> query = userBox.query().build();
-Stream<User stream = query.stream();
+Stream<User> stream = query.stream();
 await stream.forEach((User user) => print(user));
 query.close();
 ```
@@ -732,6 +832,12 @@ To learn how to observe or listen to changes to the results of a query, see the 
 {% endcontent-ref %}
 
 ## Query a single property
+
+{% hint style="warning" %}
+Property queries are semi-deprecated; use regular object queries instead.
+ObjectBox is extremely fast at creating objects, so selecting individual properties (like it is common in SQL) is typically an optimization not needed.
+Having the full object is much more flexible and allows to get any number of properties you are interested in.
+{% endhint %}
 
 If you only want to return the values of a particular property and not a list of full objects you can use a [PropertyQuery](https://objectbox.io/files/objectbox-java/current/io/objectbox/query/PropertyQuery.html). After building a query, simply call `property(Property)` to define the property followed by the appropriate find method.
 
@@ -766,14 +872,21 @@ query.close();
 ```
 {% endtab %}
 
-{% tab title="TypeScript" %}
+{% tab title="Python" %}
 {% hint style="info" %}
-Property queries are not yet available in TypeScript. Use `find()` and map the results instead:
-
-```typescript
-const emails = query.find().map(user => user.email);
-```
+Property queries are not yet available in Python.
 {% endhint %}
+{% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+const query = userBox.query().build();
+// The property query must be closed separately from the query
+const propertyQuery = query.property(User_.email);
+const emails = propertyQuery.find() as string[];
+propertyQuery.close();
+query.close();
+```
 {% endtab %}
 {% endtabs %}
 
@@ -814,6 +927,13 @@ List<String> emails = query.property(User_.email).find(replaceNullWith: 'unknown
 query.close();
 ```
 {% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+// includes 'unknown' for each null email
+const emails = query.property(User_.email).find({ replaceNullWith: "unknown" }) as string[];
+```
+{% endtab %}
 {% endtabs %}
 
 ### Distinct and unique results
@@ -831,7 +951,7 @@ String[] names = pq.distinct().findStrings();
 // returns ['Joe', 'joe', 'JOE']
 String[] names = pq.distinct(StringOrder.CASE_SENSITIVE).findStrings();
 
-// the query can be configured to throw there is more than one value
+// the query can be configured to throw if there is more than one value
 String[] names = pq.unique().findStrings();
 ```
 {% endtab %}
@@ -846,7 +966,7 @@ val names = pq.distinct().findStrings()
 // returns ['Joe', 'joe', 'JOE']
 val names = pq.distinct(StringOrder.CASE_SENSITIVE).findStrings()
 
-// the query can be configured to throw there is more than one value
+// the query can be configured to throw if there is more than one value
 val names = pq.unique().findStrings()
 ```
 {% endtab %}
@@ -866,6 +986,18 @@ List<String> names = pq.find();
 query.close();
 ```
 {% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+const pq = query.property(User_.firstName);
+
+// returns ['joe']
+const names = pq.distinct(true, { caseSensitive: false }).find() as string[];
+
+// returns ['Joe', 'joe', 'JOE']
+const namesCaseSensitive = pq.distinct(true, { caseSensitive: true }).find() as string[];
+```
+{% endtab %}
 {% endtabs %}
 
 ### Aggregate values
@@ -879,6 +1011,10 @@ Property queries ([JavaDoc](https://objectbox.io/files/objectbox-java/current/io
 * `count()`: returns the number of results. This is faster than finding and getting the length of the result array. Can be combined with `distinct()` to count only the number of distinct values.
 
 ## Query a related entity (links)
+
+{% hint style="info" %}
+Only Java/Kotlin and Dart. Relations are not yet available in Python and TypeScript.
+{% endhint %}
 
 After creating a relation between entities, you might want to add a query condition for a property that only exists in the related entity. In SQL this is solved using JOINs. But as ObjectBox is not a SQL database we built something very similar: links. Links are based on [Relations ](relations.md)- see the doc page for the introduction.
 
@@ -927,22 +1063,23 @@ class Address {
 ```dart
 @Entity()
 class Person {
-    int id;
-    String name;
+    int id = 0;
+    String? name;
     final addresses = ToMany<Address>();
 }
 
 @Entity()
 class Address {
-    int id;
-    String street;
-    String zip;
+    int id = 0;
+    String? street;
+    String? zip;
 }
 ```
 {% endtab %}
 {% endtabs %}
 
-To get a `Person` with a certain name that also lives on a specific street, we need to query the associated `Address` entities of a `Person`. To do this, use the "link" method of the query builder to tell that the `addresses` relation should be queried. Then add a condition for `Address`:
+To get a `Person` with a certain name that also lives on a specific street, we need to query the associated `Address` entities of a `Person`. To do this, use the "link" method of the query builder to tell that the `addresses` relation should be queried. Then add a condition for `Address`.
+This works the same for `ToOne` relations; in Dart, use `link()` for `ToOne` and `linkMany()` for `ToMany` relations:
 
 {% tabs %}
 {% tab title="Java" %}
@@ -1019,7 +1156,7 @@ val builder = addressBox
     .query(Address_.street.equal("Sesame Street"))
 // ...which are linked from a Person named "Elmo"
 builder.link(Address_.persons)
-    .apply(Person_.name.equal("Elmo")
+    .apply(Person_.name.equal("Elmo"))
 val sesameStreetsWithElmo = builder.build().find()
 ```
 {% endtab %}
@@ -1086,7 +1223,9 @@ query.close();
 ## Eager-load relations
 
 {% hint style="info" %}
-Only Java/Kotlin. Relations are not yet available in TypeScript.
+Only Java/Kotlin.
+Dart always loads relations lazily;
+relations are not yet available in Python and TypeScript.
 {% endhint %}
 
 By default [relations](relations.md) are loaded lazily: when you first access a `ToOne` or `ToMany` property it will perform a database lookup to get its data. On each subsequent access it will use a cached version of that data.
@@ -1119,7 +1258,7 @@ List<Customer> customers = customerBox.query()
     .eager(Customer_.orders) // Customer has a ToMany called orders.
     .build()
     .find();
-// First access: this will cause a database lookup.
+// First access: this will NOT cause a database lookup.
 Order order = customers.get(0).orders.get(0);
 ```
 {% endtab %}
@@ -1135,7 +1274,7 @@ customers[0].orders[0] // first access: this will NOT cause a database lookup
 {% endtab %}
 {% endtabs %}
 
-Eager loading only works one level deep. If you have **nested relations** and you want to prefetch relations of all children, you can instead add a query filter as described below. Use it to simply access all relation properties, which triggers them to lookup there values as described above.
+Eager loading only works one level deep. If you have **nested relations** and you want to prefetch relations of all children, you can instead add a query filter as described below. Use it to simply access all relation properties, which triggers them to look up their values as described above.
 
 ## Query filters
 
@@ -1205,9 +1344,9 @@ print(query.describeParameters());
 {% endtab %}
 
 {% tab title="TypeScript" %}
-{% hint style="info" %}
-Query debugging is not yet available in TypeScript.
-{% endhint %}
+```typescript
+console.log(query.describeParameters());
+```
 {% endtab %}
 {% endtabs %}
 
@@ -1218,3 +1357,5 @@ Parameters for query #2:
 (firstName ==(i) "Joe"
  AND age < 12)
 ```
+
+In Java and Kotlin, `query.describe()` and `query.describeParameters()` also return this description as a string, without setting a debug flag.
