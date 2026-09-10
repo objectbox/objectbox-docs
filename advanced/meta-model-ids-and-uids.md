@@ -33,7 +33,7 @@ This JSON file is stored in
 * `objectbox-models/default.json` for Android or Java projects,
 * `lib/objectbox-model.json` for Dart or Flutter projects.
 
-&#x20;For example, look at a file from the [ObjectBox example project](https://github.com/objectbox/objectbox-examples):
+For example, look at a file from the [ObjectBox example project](https://github.com/objectbox/objectbox-examples):
 
 ```java
 {
@@ -141,9 +141,10 @@ io.objectbox.exception.DbSchemaException:
  Incoming entity ID 1:6645479796472661392 does not match existing UID 8096888707432154961
 ```
 
-Such a conflict can be caused by&#x20;
+Such a conflict can be caused by:
 
-* developers changing the meta model at the same time (e.g. in different version control system branches), typically by adding entity classes or properties.
+* developers changing the metamodel at the same time (e.g. in different version control system branches),
+  typically by adding entity classes or properties.
 * the `objectbox-models/default.json` model file getting accidentally deleted, it is then generated on the next build with a new set of UIDs.
 * a database file with a different model getting restored by [Android Auto Backup](https://developer.android.com/guide/topics/data/autobackup) or getting [supplied as the initial database file](https://objectbox.io/docfiles/java/current/io/objectbox/BoxStoreBuilder.html#initialDbFile\(java.io.File\)).
 

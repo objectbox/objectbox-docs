@@ -23,7 +23,7 @@ This makes setting up data flows easy while taking care of threading details.
 
 ## Reactive Observers: A First Example
 
-&#x20;Let’s start with an example to demonstrate what you can do with reactive data observers:
+Let’s start with an example to demonstrate what you can do with reactive data observers:
 
 ```java
 // Keep a reference until the subscription is cancelled
@@ -70,12 +70,12 @@ public interface DataObserver<T> {
 This observer will be called by ObjectBox when necessary: typically shortly after subscribing and when data changes.
 
 {% hint style="info" %}
-&#x20;Note: `onData()` is called asynchronously and decoupled from the thread causing the data change (like the thread that committed a transaction).
+Note: `onData()` is called asynchronously and decoupled from the thread causing the data change (like the thread that committed a transaction).
 {% endhint %}
 
 ### Observing General Changes
 
-`BoxStore` allows a `DataObserver` to subscribe to object types. Let’s say we have a to-do list app where `Task` objects get added. To get notified when `Task` objects are added in another place in our app we can do the following:&#x20;
+`BoxStore` allows a `DataObserver` to subscribe to object types. Let’s say we have a to-do list app where `Task` objects get added. To get notified when `Task` objects are added in another place in our app we can do the following:
 
 {% tabs %}
 {% tab title="Java" %}
@@ -144,7 +144,7 @@ See the [subscribe()-method](https://objectbox.io/files/objectbox-java/current/i
 
 ### Canceling Subscriptions
 
-&#x20;When you call `observer()`, it returns a subscription object implementing the `io.objectbox.reactive.DataSubscription` interface:
+When you call `observer()`, it returns a subscription object implementing the `io.objectbox.reactive.DataSubscription` interface:
 
 ```java
 public interface DataSubscription {
@@ -187,12 +187,12 @@ protected void onStop() {
 ```
 
 {% hint style="info" %}
-&#x20;Note: On Android, you would typically create the subscription in one of the `onCreate()/onStart()/onResume()` lifecycle methods and cancel it in its counterpart  `onDestroy()/onStop()/onPause()`.
+Note: On Android, you would typically create the subscription in one of the `onCreate()/onStart()/onResume()` lifecycle methods and cancel it in its counterpart  `onDestroy()/onStop()/onPause()`.
 {% endhint %}
 
 ### Observers and Transactions
 
-&#x20;Observer notifications occur after a transaction is committed. For some scenarios it is especially important to know transaction bounds. If you call `box.put()` or `remove()` individually, an implicit transaction is started and committed. For example, this code fragment would trigger data observers on `User.class` twice:
+Observer notifications occur after a transaction is committed. For some scenarios it is especially important to know transaction bounds. If you call `box.put()` or `remove()` individually, an implicit transaction is started and committed. For example, this code fragment would trigger data observers on `User.class` twice:
 
 ```java
 box.put(friendUser);
@@ -205,7 +205,7 @@ box.put(myUser);
 // Observers of User called.
 ```
 
-&#x20;There are several ways to combine several operations into one transaction, for example using one of the `runInTx()` or `callInTx()` methods in the BoxStore class. For our simple example, we can simply use an overload of `put()` accepting multiple objects:
+There are several ways to combine several operations into one transaction, for example using one of the `runInTx()` or `callInTx()` methods in the BoxStore class. For our simple example, we can simply use an overload of `put()` accepting multiple objects:
 
 ```java
 box.put(friendUser, myUser);
@@ -215,15 +215,15 @@ box.put(friendUser, myUser);
 // Observers of User called.
 ```
 
-&#x20;This results in a single transaction and thus in a single `DataObserver` notification.
+This results in a single transaction and thus in a single `DataObserver` notification.
 
 ## Reactive Extensions
 
-&#x20;In the first part you saw how data observers can help you keep your app state up to date. But there is more: ObjectBox comes with simple and convenient reactive extensions for typical tasks. While most of these are inspired by RxJava, they are not actually based on RxJava. ObjectBox brings its own features because not all developers are familiar with RxJava (for the RxJava ObjectBox library see below). We do not want to impose the complexity (Rx is almost like a new language to learn) and size of RxJava (\~10k methods) on everyone. So, let’s keep it simple and neat for now.
+In the first part you saw how data observers can help you keep your app state up to date. But there is more: ObjectBox comes with simple and convenient reactive extensions for typical tasks. While most of these are inspired by RxJava, they are not actually based on RxJava. ObjectBox brings its own features because not all developers are familiar with RxJava (for the RxJava ObjectBox library see below). We do not want to impose the complexity (Rx is almost like a new language to learn) and size of RxJava (\~10k methods) on everyone. So, let’s keep it simple and neat for now.
 
 ### Thread Scheduling
 
-&#x20;On Android, UI updates must occur on the main thread only. Luckily, ObjectBox allows to switch the observer from a background thread over to the main thread. Let’s take a look on a revised version of the to-do task example from above:
+On Android, UI updates must occur on the main thread only. Luckily, ObjectBox allows to switch the observer from a background thread over to the main thread. Let’s take a look on a revised version of the to-do task example from above:
 
 ```java
 Query<Task> query = taskBox.query().equal(Task_.complete, false).build();
@@ -233,11 +233,11 @@ subscription = query.subscribe()
     .observer(data -> updateResultDisplay(data));
 ```
 
-&#x20;Where is the difference? The additional `on()` call is all that is needed to tell where we want our observer to be called. `AndroidScheduler.mainThread()` is a built-in scheduler implementation. Alternatively, you can create an `AndroidScheduler` using a custom `Looper`, or build a fully custom scheduler by implementing the `io.objectbox.reactive.Scheduler` interface.
+Where is the difference? The additional `on()` call is all that is needed to tell where we want our observer to be called. `AndroidScheduler.mainThread()` is a built-in scheduler implementation. Alternatively, you can create an `AndroidScheduler` using a custom `Looper`, or build a fully custom scheduler by implementing the `io.objectbox.reactive.Scheduler` interface.
 
 ### Transforming Data
 
-&#x20;Maybe you want to transform the data before you hand it over to an observer. Let’s say, you want to keep track of the count of all stored objects for each type. The BoxStore subscription gives you the classes of the objects, and this example shows you how to transform them into actual object counts:
+Maybe you want to transform the data before you hand it over to an observer. Let’s say, you want to keep track of the count of all stored objects for each type. The BoxStore subscription gives you the classes of the objects, and this example shows you how to transform them into actual object counts:
 
 ```java
 subscription = boxStore.subscribe()
@@ -262,7 +262,7 @@ Some additional notes on transformers:
 
 ### ErrorObserver
 
-&#x20;Maybe you noticed that a transformer may throw any type of exception. Also, a `DataObserver` might throw a `RuntimeException`. In both cases, you can provide an `ErrorObserver` to be notified about an exception that occurred. The `io.objectbox.reactive.ErrorObserver` is straight-forward:
+Maybe you noticed that a transformer may throw any type of exception. Also, a `DataObserver` might throw a `RuntimeException`. In both cases, you can provide an `ErrorObserver` to be notified about an exception that occurred. The `io.objectbox.reactive.ErrorObserver` is straight-forward:
 
 ```java
 public interface ErrorObserver {
@@ -322,7 +322,7 @@ Query query = box.query().build();
 disposable = RxQuery.observable(query).subscribe(this);
 ```
 
-&#x20;The extension library is open-source and available [GitHub](https://github.com/objectbox/objectbox-java/tree/master/objectbox-rxjava).
+The extension library is open-source and available [GitHub](https://github.com/objectbox/objectbox-java/tree/master/objectbox-rxjava).
 
 ## ObjectBox Dart - Reactive Queries <a href="#flutter-dart" id="flutter-dart"></a>
 

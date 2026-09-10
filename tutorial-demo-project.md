@@ -107,7 +107,7 @@ class Task:
 {% endtab %}
 {% endtabs %}
 
-In general, an ObjectBox _entity_ is an annotated class persisted in the database with its properties. In order to extend the note or to create new entities, you simply modify or create new plain classes and annotate them with `@Entity` and `@Id;` in Python opt-in `uid` argument i.e. `@Entity(uid=)`.&#x20;
+In general, an ObjectBox _entity_ is an annotated class persisted in the database with its properties. In order to extend the note or to create new entities, you simply modify or create new plain classes and annotate them with `@Entity` and `@Id;` in Python opt-in `uid` argument i.e. `@Entity(uid=)`.
 
 {% content-ref url="entity-annotations.md" %}
 [entity-annotations.md](entity-annotations.md)
@@ -123,7 +123,7 @@ Go ahead and build the project, for example by using **Build > Make project** in
 {% endtab %}
 
 {% tab title="Dart" %}
-Before running the app, run the ObjectBox code generator to create binding code for the entity classes: `flutter pub run build_runner build`&#x20;
+Before running the app, run the ObjectBox code generator to create binding code for the entity classes: `flutter pub run build_runner build`
 
 Also re-run this after changing the note class.
 {% endtab %}

@@ -994,7 +994,7 @@ This is because **ObjectBox only puts related entities with an ID of 0**. See th
 
 ### Updating ToMany
 
-The `ToMany` relation class is based on a standard `List` with added change tracking for Objects. As [mentioned above](relations.md#updating-relations), it will put new Objects (ID == 0) that are added to it once the Object owning it is put. And when removing Objects from it, just the relation is cleared, the Objects are not removed from their Box.&#x20;
+The `ToMany` relation class is based on a standard `List` with added change tracking for Objects. As [mentioned above](relations.md#updating-relations), it will put new Objects (ID == 0) that are added to it once the Object owning it is put. And when removing Objects from it, just the relation is cleared, the Objects are not removed from their Box.
 
 See the documentation on [One-to-Many](relations.md#one-to-many-1-n) and [Many-to-Many](relations.md#many-to-many-n-m) above for details.
 

@@ -87,7 +87,7 @@ If your app uses **split APKs or App Bundle**: some users might have sideloaded 
 If you are doing Android instrumentation (especially with Espresso), you may get a warning like this:\
 `Error:Conflict with dependency ‘com.google.code.findbugs:jsr305’ in project ‘:app’. Resolved versions for app (3.0.2) and test app (2.0.1) differ. See` [`http://g.co/androidstudio/app-test-app-conflict`](http://g.co/androidstudio/app-test-app-conflict) `for details.`
 
-You can easily resolve the version conflict by adding this Gradle dependency: `androidTestCompile 'com.google.code.findbugs:jsr305:3.0.2'`&#x20;
+You can easily resolve the version conflict by adding this Gradle dependency: `androidTestCompile 'com.google.code.findbugs:jsr305:3.0.2'`
 
 [Background info](https://github.com/objectbox/objectbox-java/issues/73).
 
@@ -98,7 +98,7 @@ Check the[ data model migration guide](https://docs.objectbox.io/advanced/data-m
 
 or
 
-&#x20;`Cannot change the following flags for Property`
+`Cannot change the following flags for Property`
 
 ## Flutter iOS builds for armv7 fail with "ObjectBox does not contain that architecture"
 

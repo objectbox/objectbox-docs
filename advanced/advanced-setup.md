@@ -6,9 +6,9 @@ description: Additional configuration options when creating an ObjectBox databas
 
 This page contains:
 
-&#x20;[#objectbox-for-java-advanced-setup](advanced-setup.md#objectbox-for-java-advanced-setup "mention")&#x20;
+[#objectbox-for-java-advanced-setup](advanced-setup.md#objectbox-for-java-advanced-setup "mention")
 
-&#x20;[#objectbox-for-flutter-dart-advanced-setup](advanced-setup.md#objectbox-for-flutter-dart-advanced-setup "mention")
+[#objectbox-for-flutter-dart-advanced-setup](advanced-setup.md#objectbox-for-flutter-dart-advanced-setup "mention")
 
 ## ObjectBox for Java - Advanced Setup
 

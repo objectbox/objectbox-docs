@@ -360,7 +360,7 @@ See the 2.8.0 release notes below for the latest changes.
 
 * Added [Sync](https://objectbox.io/sync/) API.
 * Fixed "illegal reflective access" warning in the plugin.
-* The data browser notification is now silent by default, for quieter testing. [#903](https://github.com/objectbox/objectbox-java/issues/903)&#x20;
+* The data browser notification is now silent by default, for quieter testing. [#903](https://github.com/objectbox/objectbox-java/issues/903)
 * Updated and improved API documentation in various places (e.g. on how `Query.findLazy()` and `Query.findLazyCached()` work with `LazyList` [#906](https://github.com/objectbox/objectbox-java/issues/906)).
 * Print full name and link to element for `@Index` and `@Id` errors. [#902](https://github.com/objectbox/objectbox-java/issues/902)
 * Explicitly allow to remove a `DbExceptionListener` by accepting null values for `BoxStore.setDbExceptionListener(listener)`.
@@ -375,7 +375,7 @@ See the 2.8.0 release notes below for the latest changes.
 
 * Several database store improvements for`BoxStore` and `BoxStoreBuilder`
   * New configuration options to open the database, e.g. a new read-only mode and using the previous data snapshot (second last commit) to potentially recover data.
-  * Database validation. We got a GitHub report indicating that some specific devices ship with a broken file system. While this is not a general concern (file systems should not be broken), we decided to detect some typical problems and provide some options to deal with these.&#x20;
+  * Database validation. We got a GitHub report indicating that some specific devices ship with a broken file system. While this is not a general concern (file systems should not be broken), we decided to detect some typical problems and provide some options to deal with these.
   * Get the size on disk
 * Add an efficient check if an object exist in a `Box` via `contains(id)`.
 * Android improvements
@@ -529,7 +529,7 @@ V2.4.0-RC - Release Candidate 2019/10/03
 * Avoid UnsatisfiedLinkError on Android devices that are not identifying as Android correctly
 * Fix displaying large objects in Object Browser 32 bit
 * Kotlin properties starting with "is" of any type are detected
-* Add `objectbox-kotlin` to dependencies if `kotlin-android` plugin is applied (previously only for `kotlin` plugin)&#x20;
+* Add `objectbox-kotlin` to dependencies if `kotlin-android` plugin is applied (previously only for `kotlin` plugin)
 * @BaseEntity classes can be generic
 
 ### **V2.3.3 - 2019/02/14** <a href="#v-2-2-2018-09-27" id="v-2-2-2018-09-27"></a>
@@ -549,7 +549,7 @@ V2.4.0-RC - Release Candidate 2019/10/03
 
 #### Improvements & Fixes
 
-* Query improvements: findIds and LazyList also consider the order; offset and limit for findIds&#x20;
+* Query improvements: findIds and LazyList also consider the order; offset and limit for findIds
 * Improved 32 bit support: Windows 32 version officially deployed, fixed a corner case crash
 * Property queries for a boolean property now allow sum()
 * Added Box.isEmpty()
@@ -601,7 +601,7 @@ Other changes:
 * Rework of Query APIs: type safe properties (property now knows its owning entity)
 * Allow query conditions of links using properties (without parameter alias)
 * Query performance improvements when using order
-* [Property based count](queries.md#aggregating-values): query for non-null or unique occurrences of entity properties (non-null and unique)&#x20;
+* [Property based count](queries.md#aggregating-values): query for non-null or unique occurrences of entity properties (non-null and unique)
 * Additional query conditions for strings: "greater than", "less than", "in"
 * Added query conditions for byte arrays
 * Set query parameters for "in" condition (int\[] and long\[])

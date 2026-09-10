@@ -65,4 +65,4 @@ For details see the documentation about [updating relations](../relations.md#upd
 
 ## String ID alias (future work)
 
-&#x20;Check [this issue](https://github.com/objectbox/objectbox-java/issues/167) on Github for status.
+Check [this issue](https://github.com/objectbox/objectbox-java/issues/167) on Github for status.
