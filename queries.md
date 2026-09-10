@@ -15,7 +15,7 @@ Querying data in ObjectBox follows 3 steps:
 
 ## Build a query
 
-To build a query start with `box.query(...)` and supply it with condition on one or more properties.
+To build a query, start with `box.query(...)` and supply it with a condition on one or more properties.
 
 Create conditions via the "underscore class" of the entity, which carries the available properties of the entity class.
 E.g. if your `User` class has a property `firstName`, you can build a condition like `User_.firstName.equal("Joe")`.
@@ -471,13 +471,15 @@ const removedCount: number = query.remove();
 {% endtab %}
 {% endtabs %}
 
-### Closing the query
+### Close the query
 
-**Once done, `close()` the query** to free its native resources early.
-This is preferred over the relying on the garbage collector to run finalizers, which is non-deterministic.
+Once done, `close()` the query to free its native resources early.
+This is preferred over relying on the garbage collector to run finalizers, which is non-deterministic.
 
-In Kotlin, `Query` implements `Closeable`, so `use { }` closes it at the end of the block;
-in Dart, a `try`/`finally` makes sure `close()` runs.
+In Java and Kotlin, `Query` implements `Closeable`, so try-with-resources or Kotlin's `use { }` closes it at the end of the block.
+In TypeScript, `Query` supports `using` declarations, which close it at the end of the scope.
+In Dart, a `try`/`finally` makes sure `close()` runs.
+In Python, `Query` currently has no `close()`.
 
 If you run the same query often, do not build it every time:
 keep one instance and change its parameters, see the next section on reusing queries.
