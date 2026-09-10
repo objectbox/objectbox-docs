@@ -163,6 +163,9 @@ DataSubscription subscription = boxStore.subscribe().observer(myObserver);
 subscription.cancel();
 ```
 
+Cancelling a subscription created from a query does not close that `Query`;
+close the query as well once it is no longer needed.
+
 If you have more than one query subscription, you might find it useful to create a  `DataSubscriptionList` instance instead to keep track of multiple  `DataSubscription` objects. Pass the list to the `query.subscribe(subList)` overload. A basic example goes like this:
 
 ```java
@@ -337,6 +340,12 @@ final sub1 = watchedQuery.listen((Query<Note> query) {
 ...
 sub1.cancel(); // Cancel the subscription after your code is done.
 ```
+
+{% hint style="info" %}
+`watch()` builds a single `Query` and emits that same instance on every change.
+Cancelling the subscription stops the events, but does not close the query.
+If the stream is short-lived, keep the last emitted query and call `close()` on it after cancelling.
+{% endhint %}
 
 For a Flutter app you typically want to get the latest results immediately when listening to the stream, and also get a list of objects instead of a query instance:
 
