@@ -164,10 +164,11 @@ public long preciseTimestamp;
 
 {% tab title="Dart" %}
 ```dart
-// Millisecond precision (default): read back as a local-time DateTime
+// Millisecond precision (default), inits a local-time DateTime
+@Property(type: PropertyType.date)
 DateTime? createdAt;
 
-// Same stored value, read back as a UTC DateTime (isUtc == true)
+// Same stored value, inits UTC DateTime (isUtc == true)
 @Property(type: PropertyType.dateUtc)
 DateTime? createdAtUtc;
 
@@ -181,8 +182,11 @@ DateTime? preciseTimestamp;
 All date types store as UTC timestamps in ObjectBox.
 What differs is the Dart side: `date` and `dateNano` use a local-time `DateTime`,
 while `dateUtc` and `dateNanoUtc` (ObjectBox 5.1 and later) return a UTC one.
+A `DateTime` field without an annotation defaults to `date`,
+but since 5.1 the generator warns about it, so state the type explicitly.
 
-On similar note: Dart's `==` on `DateTime` also compares the time zone flag, so a local `DateTime` stored via `dateUtc` is not equal to the value read back, although both mark the same instant.
+On a similar note: Dart's `==` on `DateTime` also compares the time zone flag,
+so a local `DateTime` stored via `dateUtc` is not equal to the value read back, although both mark the same instant.
 Use `isAtSameMomentAs` where that matters, and note that the millisecond types drop microseconds.
 {% endhint %}
 {% endtab %}
