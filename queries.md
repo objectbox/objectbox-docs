@@ -548,10 +548,53 @@ const removedCount: number = query.remove();
 Once done, `close()` the query to free its native resources early.
 This is preferred over relying on the garbage collector to run finalizers, which is non-deterministic.
 
-In Java and Kotlin, `Query` implements `Closeable`, so try-with-resources or Kotlin's `use { }` closes it at the end of the block.
-In TypeScript, `Query` supports `using` declarations, which close it at the end of the scope.
-In Dart, a `try`/`finally` makes sure `close()` runs.
-In Python, `Query` currently has no `close()`.
+For a short-lived query, use the resource management of the language to make sure `close()` runs, also if an exception occurs:
+
+{% tabs %}
+{% tab title="Java" %}
+```java
+// Query implements Closeable, so try-with-resources closes it
+try (Query<User> query = userBox.query(User_.firstName.equal("Joe")).build()) {
+    List<User> joes = query.find();
+}
+```
+{% endtab %}
+
+{% tab title="Kotlin" %}
+```kotlin
+// Query implements Closeable, so use() closes it at the end of the block
+val joes = userBox.query(User_.firstName.equal("Joe")).build().use { query ->
+    query.find()
+}
+```
+{% endtab %}
+
+{% tab title="Dart" %}
+```dart
+final query = userBox.query(User_.firstName.equals('Joe')).build();
+try {
+  final joes = query.find();
+} finally {
+  query.close();
+}
+```
+{% endtab %}
+
+{% tab title="Python" %}
+{% hint style="info" %}
+`Query` currently has no `close()` in Python.
+{% endhint %}
+{% endtab %}
+
+{% tab title="TypeScript" %}
+```typescript
+// Query supports using declarations (TypeScript 5.2 or newer),
+// which close it at the end of the scope
+using query = userBox.query(User_.firstName.equals("Joe")).build();
+const joes = query.find();
+```
+{% endtab %}
+{% endtabs %}
 
 If you run the same query often, do not build it every time:
 keep one instance and change its parameters, see the next section on reusing queries.
