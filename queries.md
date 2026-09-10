@@ -7,15 +7,22 @@ description: >-
 
 # ObjectBox Queries
 
+Querying data in ObjectBox follows 3 steps:
+
+1. Formulate the query condition(s) and build the query
+2. Use the query object to get results
+3. Once done, close the query object
+
 ## Build a query
 
-Use `box.query(condition)` and supply a `condition` on one or more properties to start building a query.
+To build a query start with `box.query(...)` and supply it with condition on one or more properties.
 
-Create a `condition` by accessing a property via the underscore class of the entity, e.g. `User_.firstName.equal("Joe")`.
+Create conditions via the "underscore class" of the entity, which carries the available properties of the entity class.
+E.g. if your `User` class has a property `firstName`, you can build a condition like `User_.firstName.equal("Joe")`.
 
-Use `build()` to create a re-usable query instance. To then retrieve all results use `find()` on the query. More options on retrieving results are discussed later in [#run-a-query](queries.md#run-a-query "mention").
-
-Once done, `close()` the query to clean up resources.
+Once all conditions are in place, use `build()` to create a re-usable query instance.
+To then retrieve all results use `find()` on the query.
+More options on retrieving results are discussed later in [#run-a-query](queries.md#run-a-query "mention").
 
 Here is a full example to query for all users with the first name “Joe”:
 
@@ -60,7 +67,10 @@ query.close();
 {% endtab %}
 {% endtabs %}
 
-**To combine multiple conditions** use `and(condition)` and `or(condition)`. This implicitly adds parentheses around the combined conditions, e.g. `cond1.and(cond2)` is logically equivalent to `(cond1 AND cond2)`.
+### Multiple query conditions
+
+To combine multiple conditions use `and(condition)` and `or(condition)`.
+This implicitly adds parentheses around the combined conditions, e.g. `cond1.and(cond2)` is logically equivalent to `(cond1 AND cond2)`.
 
 For example to get users with the first name “Joe” that are born later than 2015 and whose last name starts with “O”:
 
@@ -461,9 +471,23 @@ const removedCount: number = query.remove();
 {% endtab %}
 {% endtabs %}
 
+### Closing the query
+
+**Once done, `close()` the query** to free its native resources early.
+This is preferred over the relying on the garbage collector to run finalizers, which is non-deterministic.
+
+In Kotlin, `Query` implements `Closeable`, so `use { }` closes it at the end of the block;
+in Dart, a `try`/`finally` makes sure `close()` runs.
+
+If you run the same query often, do not build it every time:
+keep one instance and change its parameters, see the next section on reusing queries.
+
 ### Reuse Queries and Parameters
 
-If you frequently run the same query you should cache the `Query` object and re-use it. To make a `Query` more reusable you can change the values, or query parameters, of each condition you added even after the `Query` is built. Let's see how.
+If you frequently run the same query you should cache the `Query` object and re-use it.
+Such a query lives as long as the object that owns it; close it when that owner is closed.
+To make a `Query` more reusable you can change the values of its query parameters after the `Query` is built.
+Let's see how.
 
 {% hint style="info" %}
 Query is not thread safe. To use a query in a different thread, either build a new query or synchronize access to it. Alternatively, in Java use `query.copy()` or a `QueryThreadLocal` to obtain an instance for each thread.
