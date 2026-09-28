@@ -179,15 +179,9 @@ DateTime? preciseTimestamp;
 ```
 
 {% hint style="info" %}
-All date types store as UTC timestamps in ObjectBox.
-What differs is the Dart side: `date` and `dateNano` use a local-time `DateTime`,
-while `dateUtc` and `dateNanoUtc` (ObjectBox 5.1 and later) return a UTC one.
-A `DateTime` field without an annotation defaults to `date`,
-but since 5.1 the generator warns about it, so state the type explicitly.
+All date types store as UTC timestamps in ObjectBox. What differs is the Dart side: `date` and `dateNano` use a local-time `DateTime`, while `dateUtc` and `dateNanoUtc` (ObjectBox 5.1 and later) return a UTC one. A `DateTime` field without an annotation defaults to `date`, but since 5.1 the generator warns about it, so state the type explicitly.
 
-On a similar note: Dart's `==` on `DateTime` also compares the time zone flag,
-so a local `DateTime` stored via `dateUtc` is not equal to the value read back, although both mark the same instant.
-Use `isAtSameMomentAs` where that matters, and note that the millisecond types drop microseconds.
+On a similar note: Dart's `==` on `DateTime` also compares the time zone flag, so a local `DateTime` stored via `dateUtc` is not equal to the value read back, although both mark the same instant. Use `isAtSameMomentAs` where that matters, and note that the millisecond types drop microseconds.
 {% endhint %}
 {% endtab %}
 {% endtabs %}
@@ -349,16 +343,16 @@ class Customer {
   int id = 0;
   
   // Stores any supported type at runtime
-  dynamic tag;
+  Object? tag;
   
   // Or explicitly use a String map (JSON-like)
-  Map<String, dynamic>? stringMap;
+  Map<String, Object?>? stringMap;
   
   // Or a list with mixed types
-  List<dynamic>? flexList;
+  List<Object?>? flexList;
   
   // Or a list of maps
-  List<Map<String, dynamic>>? nestedList;
+  List<Map<String, Object?>>? nestedList;
 }
 
 final customerStrTag = Customer()..tag = "string-tag";
