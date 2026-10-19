@@ -53,6 +53,12 @@ long id;
 int id = 0;
 ```
 {% endtab %}
+
+{% tab title="Python" %}
+```python
+id = Id(assignable=True)
+```
+{% endtab %}
 {% endtabs %}
 
 This will allow putting an entity with any valid ID (see [#special-object-ids](object-ids.md#special-object-ids "mention")). If the `@Id` field is writable, it can still be set to zero to let ObjectBox auto-assign a new ID.
