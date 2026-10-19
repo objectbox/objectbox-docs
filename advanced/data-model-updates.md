@@ -118,31 +118,38 @@ Note: Instead of the above you can also find the UID of the entity/property in t
 
 ### How-to and Example (Python)
 
-Since in Python there isn't a build step, the steps for renaming an Entity are different. Say we want to rename the Entity `MyName` to `MyNewName`:
+Since in Python there isn't a build step, the steps for renaming an entity or a property are different.
+Say we want to rename the entity `MyName` to `MyNewName`, and its property `some_property` to `renamed_property`:
 
 ```python
 @Entity()
 class MyName:
     id = Id
-    some_property = Int
+    some_property = Int64
 ```
 
-**Step 1**: Find out the UID of the entity `MyName`:
+**Step 1**: Find out the UIDs in the model JSON file (`objectbox-model.json`):
+the `id` of an entity or property is written as `ID:UID`, e.g. `"id": "1:6645479796472661392"` for the entity
+`MyName`. Note that property names are stored in camelCase, e.g. `someProperty`.
+Alternatively, print them while the store is open (they are assigned when it is opened):
 
-<pre class="language-python"><code class="lang-python"><strong>print(MyName._uid)
-</strong># 6645479796472661392
-</code></pre>
+```python
+print(MyName._uid)  # 6645479796472661392
+print(MyName._get_property("some_property").uid)  # 4159594742529025880
+```
 
-**Step 2**: Rename `MyName` to `MyNewName` and explicitly specify the old UID:
+**Step 2**: Rename the entity and the property and specify their old UIDs:
 
 ```python
 @Entity(uid=6645479796472661392)
 class MyNewName:
     id = Id
-    some_property = Int
+    renamed_property = Int64(uid=4159594742529025880)
 ```
 
-This makes possible for Objectbox to associate the old entity to the new one, and retain persisted data. If you don't specify the old UID, Objectbox will discard the old data and add a fresh new entity called `MyNameName` to the schema.
+This makes it possible for ObjectBox to associate the old entity and property with the new ones, and retain persisted
+data. If you don't specify the old UIDs, ObjectBox will discard the old data and add a fresh new entity called
+`MyNewName` (or property `renamed_property`) to the schema.
 
 ## Changing Property Types
 
