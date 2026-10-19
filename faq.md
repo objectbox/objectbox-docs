@@ -38,6 +38,9 @@ ObjectBox supports **iOS 12** or newer on **64-bit devices** only. An iOS librar
 
 ObjectBox also runs on Linux (x86\_64, arm64, armv7), Windows (x86\_64) and macOS 10.15 or newer (x86\_64, Apple M1) with support for [Kotlin, Java, Dart, Flutter, Go, C, Swift and Python](https://objectbox.io/offline-first-mobile-database/).
 
+ObjectBox for Python (5.0 and newer, Python 3.7 or newer) runs on Linux x86\_64, arm64 and armv7 (glibc 2.28 or newer),
+macOS 11 or newer (x86\_64 and Apple Silicon) and Windows x86\_64 and ARM64.
+
 ## **Can I use ObjectBox on the desktop/server?**
 
 Yes, you can ObjectBox on the desktop/server side. Contact us for details if you are interested in running ObjectBox in client/server mode or containerized!
