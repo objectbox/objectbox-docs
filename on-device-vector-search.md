@@ -266,20 +266,23 @@ Once the query is built, one of its "find" methods is called to execute it. For 
 {% tab title="Python" %}
 ```python
 # Query vector
-madrid = [40.416775, -3.703790]  
+madrid = [40.416775, -3.703790]
 
 # Prepare a Query object to search for the 2 closest neighbors:
-query = box.query(City.location.nearest_neighbor(madrid, 2)).build()
+query = box.query(City.location.nearest_neighbors(madrid, 2)).build()
 
-# Retrieve IDs
+# Combine with other conditions as usual
+query = box.query(City.location.nearest_neighbors(madrid, 2) & City.name.starts_with("B")).build()
+
+# Retrieve IDs: IdWithScore tuples (id, score)
 results = query.find_ids_with_scores()
 for id_, score in results:
     print(f"City ID: {id_}, distance: {score}")
 
-# Retrieve objects
+# Retrieve objects: ObjectWithScore tuples (object, score)
 results = query.find_with_scores()
-for object_, score in results: 
-    print(f"City: {object_.name}, distance: {score}")
+for result in results:
+    print(f"City: {result.object.name}, distance: {result.score}")
 ```
 {% endtab %}
 
