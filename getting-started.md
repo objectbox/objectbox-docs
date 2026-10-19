@@ -312,13 +312,27 @@ If it is not found there, it falls back to using system directories (using Dart'
 Prefer to look at example code? Check out our [examples directory](https://github.com/objectbox/objectbox-python/tree/main/example).
 {% endhint %}
 
-ObjectBox for Python is available via PyPI:\
-\
-Stable Version (4.0.0):
+ObjectBox for Python is available via PyPI (version 5.0.0; requires Python 3.7 or newer):
 
 ```sh
-pip install --upgrade objectbox
+pip install objectbox
 ```
+
+To use [ObjectBox Sync](https://sync.objectbox.io/), install `objectbox-sync` **instead of** `objectbox`:
+it provides the same `objectbox` module with the Sync variant of the ObjectBox library.
+
+```sh
+pip install objectbox-sync
+```
+
+{% hint style="warning" %}
+**Upgrading from 4.x with pip: uninstall `objectbox` first** (`pip uninstall objectbox`, then `pip install objectbox`).
+Since 5.0, the Python code is in the package `objectbox-api`, which `objectbox` installs along with the ObjectBox library
+(`objectbox-clib`).
+An in-place `pip install --upgrade objectbox` from 4.x breaks the installation;
+repair it with `pip install --force-reinstall --no-deps objectbox-api`.
+Fresh installs and upgrades with uv are not affected.
+{% endhint %}
 {% endtab %}
 {% endtabs %}
 
@@ -456,9 +470,17 @@ Actually we lied above. The generator will process `lib` and `test` folders sepa
 {% endtab %}
 
 {% tab title="Python" %}
+There is no code generation step in Python: the model is built at runtime from the `@Entity()` classes
+and synced with the JSON model file when a `Store` is opened.
+Entities are added to a default model unless specified otherwise.
+Like in the other languages, the model file keeps the schema history (i.e. to handle add/remove/rename of entities and
+properties): commit it to your version control system.
+
 {% hint style="info" %}
-Python bindings offer a convenient default Model to which Entity definitions are automatically associated if not specified otherwise.\
-Similar to the other bindings, a JSON model file is also used for management of Schema history (i.e. to handle add/remove/rename of Entity and Property).
+Property names are stored in camelCase, e.g. `date_created` is `dateCreated` in the database and the model file,
+like in the other ObjectBox languages (e.g. to share a model for Sync).
+Python code always uses the attribute names.
+To store the names as written in Python, use `@Entity(python_names=True)`.
 {% endhint %}
 {% endtab %}
 {% endtabs %}
@@ -778,7 +800,7 @@ user = User(name="Tina")
 user_box.put(user)
 
 users = get_new_users()
-user_box.put(*users)
+ids = user_box.put(users)  # A list: one transaction; returns the IDs
 ```
 {% endtab %}
 {% endtabs %}
@@ -906,6 +928,8 @@ userBox.removeAll();
 ```python
 is_removed = user_box.remove(user_id)
 
+removed_count = user_box.remove_many(user_ids)
+
 user_box.remove_all()
 ```
 {% endtab %}
@@ -933,8 +957,8 @@ final userCount = userBox.count();
 {% endtab %}
 
 {% tab title="Python" %}
-```
-user_box.count()
+```python
+user_count = user_box.count()
 ```
 {% endtab %}
 {% endtabs %}
@@ -1071,9 +1095,9 @@ expect(userBox.count(), equals(100));
 {% endtab %}
 
 {% tab title="Python" %}
-{% hint style="info" %}
-Currently work in progress.
-{% endhint %}
+The Python API has no asynchronous operations.
+To put many objects efficiently, put them as a list (`box.put(objects)`) or in one [transaction](transactions.md)
+(`with store.write_tx():`); each put outside a transaction is its own transaction.
 {% endtab %}
 {% endtabs %}
 
@@ -1113,9 +1137,11 @@ final id = user.id;
 {% endtab %}
 
 {% tab title="Python" %}
-```
+```python
 user = User()
+# user.id == 0
 box.put(user)
+# user.id != 0
 id: int = user.id
 ```
 {% endtab %}
