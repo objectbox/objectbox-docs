@@ -1329,7 +1329,8 @@ with builder.build() as query:
 {% hint style="info" %}
 Only Java/Kotlin.
 Dart always loads relations lazily;
-relations are not yet available in Python and TypeScript.
+Python relations are plain IDs (nothing is loaded);
+relations are not yet available in TypeScript.
 {% endhint %}
 
 By default [relations](relations.md) are loaded lazily: when you first access a `ToOne` or `ToMany` property it will perform a database lookup to get its data. On each subsequent access it will use a cached version of that data.
