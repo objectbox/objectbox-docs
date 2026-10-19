@@ -35,7 +35,9 @@ Standard types include boolean, integers, floating point types, string, and date
 | Date (ns)        | DateNano       | 8 bytes (long) |
 
 {% hint style="info" %}
-**Nullable types:** All ObjectBox property types support null values. In Java, use wrapper classes (`Integer` vs `int`) for nullable types. In Kotlin, Dart, and Python, nullability is part of the type system.
+**Nullable types:** All ObjectBox property types support null values. In Java, use wrapper classes (`Integer` vs `int`) for nullable types. In Kotlin and Dart, nullability is part of the type system.
+In Python, a property set to `None` is stored as null, but reads back as its type's default (e.g. `0` or `""`);
+query null values with `is_null()`.
 {% endhint %}
 
 ### Integers
@@ -128,6 +130,13 @@ double score = 0;  // stored as 32-bit
 double precise = 0;  // 64-bit (default)
 ```
 {% endtab %}
+
+{% tab title="Python" %}
+```python
+score = Float32    # 32-bit, ~7 significant digits
+precise = Float64  # 64-bit, ~15 significant digits
+```
+{% endtab %}
 {% endtabs %}
 
 ### Strings
@@ -182,6 +191,24 @@ DateTime? preciseTimestamp;
 All date types store as UTC timestamps in ObjectBox. What differs is the Dart side: `date` and `dateNano` use a local-time `DateTime`, while `dateUtc` and `dateNanoUtc` (ObjectBox 5.1 and later) return a UTC one. A `DateTime` field without an annotation defaults to `date`, but since 5.1 the generator warns about it, so state the type explicitly.
 
 On a similar note: Dart's `==` on `DateTime` also compares the time zone flag, so a local `DateTime` stored via `dateUtc` is not equal to the value read back, although both mark the same instant. Use `isAtSameMomentAs` where that matters, and note that the millisecond types drop microseconds.
+{% endhint %}
+{% endtab %}
+
+{% tab title="Python" %}
+```python
+# Millisecond precision; reads back as a UTC datetime (the default py_type)
+created_at = Date(py_type=datetime)
+
+# Nanosecond precision, read back as an int
+precise_timestamp = DateNano(py_type=int)
+```
+
+{% hint style="info" %}
+Assigned values are converted by their Python type: a `datetime` with a time zone is stored exactly,
+a naive `datetime` is interpreted in the machine's local time zone, a `float` is taken as seconds (e.g. `time.time()`),
+and an `int` as is (milliseconds for `Date`, nanoseconds for `DateNano`).
+So `int(time.time())` (seconds) in a `Date` reads back as a date in January 1970.
+With `py_type=int`, values read back as milliseconds (nanoseconds for `DateNano`), with `py_type=float` as seconds.
 {% endhint %}
 {% endtab %}
 {% endtabs %}
@@ -257,9 +284,12 @@ List<String>? tags;
 
 {% tab title="Python" %}
 ```python
-image_data = Int8Vector
-scores = Int32Vector
+image_data = Bytes             # bytes
+scores = Int32Vector           # numpy arrays
 measurements = Float64Vector
+scores_list = Int32List        # Python lists
+measurements_list = Float64List
+# String lists are not supported in Python yet
 ```
 {% endtab %}
 {% endtabs %}
@@ -358,6 +388,21 @@ class Customer {
 final customerStrTag = Customer()..tag = "string-tag";
 final customerIntTag = Customer()..tag = 1234;
 box.putMany([customerStrTag, customerIntTag]);
+```
+{% endtab %}
+
+{% tab title="Python" %}
+```python
+@Entity()
+class Customer:
+    id = Id
+    # Stores any supported type at runtime: dict, list, str, int, float, bool or None
+    tag = Flex
+
+customer_str_tag = Customer(tag="string-tag")
+customer_int_tag = Customer(tag=1234)
+customer_map_tag = Customer(tag={"name": "tag", "values": [1, 2]})
+box.put([customer_str_tag, customer_int_tag, customer_map_tag])
 ```
 {% endtab %}
 {% endtabs %}
