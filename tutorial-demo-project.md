@@ -130,8 +130,8 @@ Also re-run this after changing the note class.
 
 {% tab title="Python" %}
 ```
-# Make sure to install objectbox >= 4.0.0
-$ pip install --upgrade objectbox
+# Install objectbox 5.0 or newer (upgrading from 4.x? Run "pip uninstall objectbox" first)
+$ pip install objectbox
 $ ls example
 ollama 
 tasks
