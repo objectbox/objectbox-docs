@@ -53,8 +53,9 @@ query.close();
 
 {% tab title="Python" %}
 ```python
-query = userBox.query(User.firstName.equals("Joe")).build()
+query = user_box.query(User.first_name.equals("Joe")).build()
 joes = query.find()
+query.close()
 ```
 {% endtab %}
 
@@ -118,10 +119,10 @@ final condition = User_.firstName.equals('Joe') &
 
 {% tab title="Python" %}
 ```python
-query = userBox.query( 
-  User.firstName.equals("Joe") & 
-  User.yearOfBirth.greater_than(2015) & 
-  User.lastName.starts_with('O')
+query = user_box.query(
+    User.first_name.equals("Joe")
+    & User.year_of_birth.greater_than(2015)
+    & User.last_name.starts_with("O")
 ).build()
 joes = query.find()
 ```
@@ -221,17 +222,12 @@ Query<User> query = box.query(
 
 {% tab title="Python" %}
 ```python
-query = userBox.query(
-        (User.firstName.equals("Joe")
-            & User.yearOfBirth.greater_than(1970)) | 
-        User.lastName.starts_with('O')
-    ).build()
-joes = query.find()
+# equals AND (less_than OR one_of)
+query = user_box.query(
+    User.first_name.equals("Joe")
+    & (User.age.less_than(12) | User.stamp.one_of([1012]))
+).build()
 ```
-
-{% hint style="info" %}
-one\_of is not yet available in Python.
-{% endhint %}
 {% endtab %}
 
 {% tab title="TypeScript" %}
@@ -297,6 +293,20 @@ final query = box
 ```
 {% endhint %}
 
+{% hint style="info" %}
+**Python: dates**
+
+Conditions on `Date` and `DateNano` properties take a `datetime` (or `float` seconds) like assigning a value does,
+e.g. to find all orders in 2023:
+
+```python
+query = box.query(Order.date.between(datetime(2023, 1, 1, tzinfo=timezone.utc),
+                                     datetime(2024, 1, 1, tzinfo=timezone.utc) - timedelta(milliseconds=1))).build()
+```
+
+An `int` is taken as is: milliseconds for `Date`, nanoseconds for `DateNano`.
+{% endhint %}
+
 ### Nearest neighbor vector search
 
 A special condition is available for vector properties with an HNSW index. See the dedicated page for details:
@@ -338,9 +348,12 @@ final query = qBuilder.build();
 {% endtab %}
 
 {% tab title="Python" %}
-{% hint style="info" %}
-Order results feature is not yet available in Python.
-{% endhint %}
+```python
+query = user_box \
+    .query(User.first_name.equals("Joe")) \
+    .order(User.last_name) \
+    .build()  # in ascending order, ignoring case
+```
 {% endtab %}
 
 {% tab title="TypeScript" %}
@@ -376,9 +389,11 @@ You can also pass flags to `order()` to sort in descending order, to sort case s
 {% endtab %}
 
 {% tab title="Python" %}
-{% hint style="info" %}
-Order results feature is not yet available in Python.
-{% endhint %}
+```python
+from objectbox import OrderFlags
+# ...
+.order(User.last_name, OrderFlags.DESCENDING | OrderFlags.CASE_SENSITIVE)
+```
 {% endtab %}
 
 {% tab title="TypeScript" %}
@@ -469,6 +484,12 @@ int count = query.count();
 ```python
 # return all entities matching the query
 joes = query.find()
+
+# return only the first result or None if none
+joe = query.find_first()
+
+# return the only result or None if none, raise NonUniqueResultError if more than one result
+joe = query.find_unique()
 
 # return only the IDs of matching entities
 ids = query.find_ids()
@@ -581,9 +602,11 @@ try {
 {% endtab %}
 
 {% tab title="Python" %}
-{% hint style="info" %}
-`Query` currently has no `close()` in Python.
-{% endhint %}
+```python
+# Query is a context manager: the with statement closes it at the end of the block
+with user_box.query(User.first_name.equals("Joe")).build() as query:
+    joes = query.find()
+```
 {% endtab %}
 
 {% tab title="TypeScript" %}
@@ -637,7 +660,7 @@ final query = userBox.query(User_.firstName.equals('')).build();
 {% tab title="Python" %}
 ```python
 # build a query
-query = userBox.query(User.firstName.equals('')).build()
+query = user_box.query(User.first_name.equals("")).build()
 ```
 {% endtab %}
 
@@ -685,11 +708,11 @@ final jakes = (query..param(User_.firstName).value = 'Jake').find();
 
 {% tab title="Python" %}
 ```python
-# Change firstName parameter to "Joe" and get results
-joes = query.set_parameter_string(User.firstName, "Joe").find()
+# Change first_name parameter to "Joe" and get results
+joes = query.set_parameter(User.first_name, "Joe").find()
 
-# Change firstName parameter to "Jake" and get results
-jakes = query.set_parameter_string(User.firstName, "Jake").find()
+# Change first_name parameter to "Jake" and get results
+jakes = query.set_parameter(User.first_name, "Jake").find()
 ```
 {% endtab %}
 
@@ -735,7 +758,7 @@ final query = userBox.query(User_.firstName.equals('', alias: 'name')).build();
 {% tab title="Python" %}
 ```python
 # Assign alias "name" to the equals query parameter
-query = userBox.query(User.firstName.equals('').alias("name")).build()
+query = user_box.query(User.first_name.equals("").alias("name")).build()
 ```
 {% endtab %}
 
@@ -774,7 +797,7 @@ final joes = (query..param(User_.firstName, alias: 'name').value = 'Joe').find()
 {% tab title="Python" %}
 ```python
 # Change parameter with alias "name" to "Joe" and get results
-joes = query.set_parameter_alias_string("name", "Joe").find()
+joes = query.set_parameter_alias("name", "Joe").find()
 ```
 {% endtab %}
 
@@ -1056,7 +1079,8 @@ Property queries ([JavaDoc](https://objectbox.io/files/objectbox-java/current/io
 ## Query a related entity (links)
 
 {% hint style="info" %}
-Only Java/Kotlin and Dart. Relations are not yet available in Python and TypeScript.
+Java/Kotlin, Dart and Python; in Python for to-one relations only, see [Links in Python](#links-in-python) at the end of this section.
+Relations are not yet available in TypeScript.
 {% endhint %}
 
 After creating a relation between entities, you might want to add a query condition for a property that only exists in the related entity. In SQL this is solved using JOINs. But as ObjectBox is not a SQL database we built something very similar: links. Links are based on [Relations ](relations.md)- see the doc page for the introduction.
@@ -1263,6 +1287,43 @@ query.close();
 {% endtab %}
 {% endtabs %}
 
+### Links in Python
+
+Python has to-one relations: a `Relation` property holds the ID of an object of the target entity
+(see [Relations](relations.md)).
+`link()` adds conditions on the target of such a relation, `backlink()` on the objects whose relation points to the
+queried object.
+Both return the builder of the linked entity, e.g. to link further:
+
+```python
+from objectbox import Entity, Id, String, Relation
+
+@Entity()
+class Person:
+    id = Id
+    name = String
+
+@Entity()
+class Address:
+    id = Id
+    street = String
+    person_id = Relation(Person)  # the ID of the Person living there
+
+# get all Address objects with street "Sesame Street"...
+builder = address_box.query(Address.street.equals("Sesame Street"))
+# ...whose Person is named "Elmo"
+builder.link(Address.person_id, Person.name.equals("Elmo"))
+with builder.build() as query:
+    sesame_streets_with_elmo = query.find()
+
+# get all Person objects named "Elmo"...
+builder = person_box.query(Person.name.equals("Elmo"))
+# ...with an address on "Sesame Street"
+builder.backlink(Address.person_id, Address.street.equals("Sesame Street"))
+with builder.build() as query:
+    elmos_on_sesame_street = query.find()
+```
+
 ## Eager-load relations
 
 {% hint style="info" %}
@@ -1386,6 +1447,12 @@ print(query.describeParameters());
 ```
 {% endtab %}
 
+{% tab title="Python" %}
+```python
+print(query.describe_parameters())
+```
+{% endtab %}
+
 {% tab title="TypeScript" %}
 ```typescript
 console.log(query.describeParameters());
@@ -1402,3 +1469,4 @@ Parameters for query #2:
 ```
 
 In Java and Kotlin, `query.describe()` and `query.describeParameters()` also return this description as a string, without setting a debug flag.
+In Python, `query.describe()` describes the query itself (its entity and the properties of its conditions).
