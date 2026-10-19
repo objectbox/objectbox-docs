@@ -92,11 +92,16 @@ User({this.id, this.name});
 class User:
     id = Id
     name = String
-    temp_usage_count = None
+    temp_usage_count = None  # not a property type: not persisted
 ```
 
+Entity classes need a constructor without arguments: reading creates objects by calling the class without arguments.
+Create objects with keyword arguments, e.g. `User(name="Joe")`.
+
 {% hint style="info" %}
-Available Property types include: Bool, Char, Bytes, String, Int8/16/32/64, Float32/64  \*Vector and \*List variants (e.g. Float32Vector)
+Available property types include: Bool, Int8/16/32/64, Float32/64, String, Bytes, Date, DateNano, Flex,
+Relation (to-one, see [Relations](relations.md)), \*Vector (numpy arrays, e.g. Float32Vector) and \*List variants
+(Python lists, e.g. Int32List).
 {% endhint %}
 {% endtab %}
 {% endtabs %}
@@ -197,6 +202,18 @@ class StringIdEntity(
 final objects = box.query(StringIdEntity_.uid.equals('...')).build().find();
 ```
 {% endtab %}
+
+{% tab title="Python" %}
+```python
+@Entity()
+class StringIdEntity:
+    id = Id
+    uid = String(index=Index())  # or alternatively: String(unique=Unique())
+
+with box.query(StringIdEntity.uid.equals(uid)).build() as query:
+    entity = query.find_unique()
+```
+{% endtab %}
 {% endtabs %}
 
 ID properties are unique and indexed by default.
@@ -205,6 +222,7 @@ When you put a new object you do not assign an ID. By default **IDs for new obje
 
 {% hint style="info" %}
 If you **need to assign IDs by yourself** have a look at [how to switch to self-assigned IDs](advanced/object-ids.md#self-assigned-object-ids) and what side effects apply.
+In Python, declare the ID property as `Id(assignable=True)`.
 {% endhint %}
 
 ## Make entity data accessible
@@ -319,12 +337,21 @@ var notPersisted: Int = 0
 int? notPersisted;
 ```
 {% endtab %}
+
+{% tab title="Python" %}
+```python
+# Only attributes set to a property type (e.g. String) are persisted, others are not
+not_persisted = 0
+```
+{% endtab %}
 {% endtabs %}
 
 ### NameInDb
 
 {% hint style="info" %}
-Only available for Java/Kotlin at the moment
+Only available for Java/Kotlin at the moment.
+Python stores property names in camelCase (e.g. `date_created` as `dateCreated`), like the other languages;
+use `@Entity(python_names=True)` to store them as written in Python.
 {% endhint %}
 
 **`@NameInDb`** lets you define a name on the database level for a property. This allows you to rename the property without affecting the property name on the database level.
@@ -392,7 +419,8 @@ String name;
 ```python
 @Entity()
 class User:
-  name = String(index=Index())
+    id = Id
+    name = String(index=Index())
 ```
 {% endtab %}
 {% endtabs %}
@@ -424,6 +452,12 @@ var name: String? = null
 ```dart
 @Index(type: IndexType.value)
 String name;
+```
+{% endtab %}
+
+{% tab title="Python" %}
+```python
+name = String(index=Index(IndexType.VALUE))
 ```
 {% endtab %}
 {% endtabs %}
@@ -474,6 +508,12 @@ var name: String? = null
 String? name;
 ```
 {% endtab %}
+
+{% tab title="Python" %}
+```python
+name = String(unique=Unique())
+```
+{% endtab %}
 {% endtabs %}
 
 A `put()` operation will abort and throw a `UniqueViolationException` if the unique constraint is violated:
@@ -508,6 +548,17 @@ try {
 }
 ```
 {% endtab %}
+
+{% tab title="Python" %}
+```python
+from objectbox import UniqueViolatedError
+
+try:
+    box.put(User(name="Sam Flynn"))
+except UniqueViolatedError:
+    pass  # A User with that name already exists.
+```
+{% endtab %}
 {% endtabs %}
 
 For a single property it is possible to specify that a conflicting object should be replaced instead of an exception being thrown:
@@ -533,6 +584,14 @@ var name: String? = null
 String? name;
 ```
 {% endtab %}
+
+{% tab title="Python" %}
+```python
+name = String(unique=Unique(ConflictStrategy.REPLACE))
+```
+
+In Python, all unique properties of a Sync entity must use `ConflictStrategy.REPLACE`.
+{% endtab %}
 {% endtabs %}
 
 {% hint style="warning" %}
@@ -540,7 +599,8 @@ The `REPLACE` strategy will add a new object **with a different ID**. As relatio
 {% endhint %}
 
 {% hint style="info" %}
-Unique constraints are based on an index, so it is possible to further configure the index with an **@Index** annotation.
+Unique constraints are based on an index, so it is possible to further configure the index with an **@Index** annotation
+(in Python with `index=`, e.g. `String(unique=Unique(), index=Index(IndexType.VALUE))`).
 {% endhint %}
 
 ## Change database type
@@ -592,8 +652,17 @@ List<int> byteList;
 
 {% tab title="Python" %}
 ```python
-class Tasks:
-    date_started = Date(py_type=int)
+# In Python, the property class sets the database type
+@Entity()
+class Task:
+    id = Id
+    date_started = Date(py_type=int)  # time in milliseconds, read back as int
+    time_in_nanos = DateNano(py_type=int)  # time in nanoseconds
+    byte = Int8  # 1 byte
+    short = Int16  # 2 bytes
+    int32 = Int32  # 4 bytes
+    float32 = Float32  # 4 bytes
+    byte_list = Bytes
 ```
 {% endtab %}
 {% endtabs %}
