@@ -17,7 +17,10 @@ Prefer to dive right into code? Check out our
 {% endhint %}
 
 {% hint style="info" %}
-The Python API does not yet support relations.
+Python supports to-one relations as plain integer IDs (a `Relation` property, see the Python tabs below),
+queried with `link()` and `backlink()` (see [Queries](queries.md#links-in-python)).
+It has no `ToOne`/`ToMany` objects and no to-many relations:
+query the objects whose relation points to an object instead.
 {% endhint %}
 
 Objects may reference other objects, for example using a simple reference or a list of objects. In database terms, we call those references **relations**. The object defining a relation we call the **source** object, the referenced object we call the **target** object. So a relation has a direction.
@@ -88,6 +91,22 @@ class Order {
 }
 ```
 {% endtab %}
+
+{% tab title="Python" %}
+```python
+@Entity()
+class Customer:
+    id = Id
+
+@Entity()
+class Order:
+    id = Id
+    customer_id = Relation(Customer)  # the ID of a Customer; 0 for none
+```
+
+Name the property like the relation with an `_id` suffix: `customer_id` is stored as `customerId`,
+like the target ID of a `ToOne` named `customer` in Java, Kotlin and Dart, so models and data match (e.g. for Sync).
+{% endtab %}
 {% endtabs %}
 
 Now let’s add a customer and some orders. **To set** the related customer object, call `setTarget()`  (or assign `target` in Kotlin) on the ToOne instance **and put** the order object:
@@ -127,6 +146,15 @@ order.customer.target = customer;
 int orderId = store.box<Order>().put(order);
 ```
 {% endtab %}
+
+{% tab title="Python" %}
+```python
+# Put the customer first: the relation stores its ID
+customer_id = store.box(Customer).put(Customer())
+order = Order(customer_id=customer_id)
+order_id = store.box(Order).put(order)
+```
+{% endtab %}
 {% endtabs %}
 
 If the customer object does not yet exist in the database (i.e. its ID is zero), `ToOne` will put it (so there will be two puts, one for `Order`, one for `Customer`). If it already exists, `ToOne` will only create the relation (so there's only one put for `Order`, as explicitly written in the code). **See further below for details about** [**updating relations**](relations.md#updating-relations)**.**
@@ -158,6 +186,13 @@ final order = store.box<Order>().get(orderId);
 final customer = order.customer.target;
 ```
 {% endtab %}
+
+{% tab title="Python" %}
+```python
+order = store.box(Order).get(order_id)
+customer = store.box(Customer).get(order.customer_id)
+```
+{% endtab %}
 {% endtabs %}
 
 This will do a database call on the first access (lazy loading). It uses lookup by ID, which is very fast in ObjectBox. If you only need the ID instead of the whole target object, you can completely avoid this database operation because it's already loaded: use `order.customer.targetId/getTargetId()`.
@@ -183,6 +218,13 @@ boxStore.boxFor(Order::class.java).put(order)
 ```dart
 order.customer.target = null; // same as  .targetId = 0;
 store.box<Order>().put(order);
+```
+{% endtab %}
+
+{% tab title="Python" %}
+```python
+order.customer_id = 0
+store.box(Order).put(order)
 ```
 {% endtab %}
 {% endtabs %}
