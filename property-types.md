@@ -51,10 +51,10 @@ ObjectBox supports all standard integer types, from 8-bit to 64-bit. Rule of thu
 public class Sensor {
     @Id public long id;
     
-    public byte status;        // -128 to 127
-    public short temperature;  // -32,768 to 32,767  
-    public int count;          // ~2 billion range
-    public long timestamp;     // Large numbers, IDs
+    public byte status;        // 8-bit, -128 to 127
+    public short temperature;  // 16-bit, -32,768 to 32,767
+    public int count;          // 32-bit, ~2 billion range
+    public long timestamp;     // 64-bit, large numbers, IDs
 }
 ```
 {% endtab %}
@@ -64,10 +64,10 @@ public class Sensor {
 @Entity
 data class Sensor(
     @Id var id: Long = 0,
-    var status: Byte = 0,
-    var temperature: Short = 0,
-    var count: Int = 0,
-    var timestamp: Long = 0
+    var status: Byte = 0,        // 8-bit
+    var temperature: Short = 0,  // 16-bit
+    var count: Int = 0,          // 32-bit
+    var timestamp: Long = 0      // 64-bit
 )
 ```
 
@@ -80,9 +80,9 @@ so explicitly name them with `@get:JvmName` to make them usable from the generat
 data class Sensor(
     @Id var id: Long = 0,
     @get:JvmName("getStatus")
-    var status: UByte = 0u,
+    var status: UByte = 0u,  // 8-bit
     @get:JvmName("getCount")
-    var count: UInt = 0u
+    var count: UInt = 0u     // 32-bit
 )
 ```
 
