@@ -667,6 +667,58 @@ class Task:
 {% endtab %}
 {% endtabs %}
 
+## Unsigned integers
+
+In Java, Kotlin and Dart, by default, integer properties are treated as signed.
+To treat the values of an integer property as unsigned when executing queries or creating indexes,
+use `@Unsigned` in Java/Kotlin or set `signed` to `false` on `@Property` in Dart.
+
+For example, consider a set of integers sorted by the default order: \[-2, -1, 0, 1, 2].
+If all values are treated as unsigned, the order would be \[0, 1, 2, -2, -1] instead.
+
+{% tabs %}
+{% tab title="Java" %}
+```java
+// 32-bit integer treated as unsigned
+@Unsigned
+private int unsignedInteger;
+
+// 64-bit integer treated as unsigned
+@Unsigned
+private long unsignedLong;
+```
+{% endtab %}
+
+{% tab title="Kotlin" %}
+```kotlin
+// 32-bit integer treated as unsigned
+@Unsigned
+var unsignedInteger: Int = 0
+
+// 64-bit integer treated as unsigned
+@Unsigned
+var unsignedLong: Long = 0
+```
+{% endtab %}
+
+{% tab title="Dart" %}
+```dart
+// 32-bit integer treated as unsigned
+@Property(type: PropertyType.int, signed: false)
+int? unsignedInteger;
+
+// 64-bit integer treated as unsigned
+@Property(signed: false)
+int? unsignedLong;
+```
+{% endtab %}
+{% endtabs %}
+
+{% hint style="info" %}
+This only changes how the property is declared in the model and how values are compared and ordered
+by queries and indexes, the values themselves are stored unchanged.
+{% endhint %}
+
 ## Relations
 
 Creating to-one and to-many relations between objects is possible as well, see the [Relations](relations.md) documentation for details.
