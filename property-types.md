@@ -72,6 +72,22 @@ data class Sensor(
 ```
 
 Kotlin unsigned types (`UByte`, `UShort`, `UInt`, `ULong`) are also supported—they're stored as their signed equivalents.
+As these are inline value classes, their getter names are "mangled" by default,
+so explicitly name them with `@get:JvmName` to make them usable from the generated Java code:
+
+```kotlin
+@Entity
+data class Sensor(
+    @Id var id: Long = 0,
+    @get:JvmName("getStatus")
+    var status: UByte = 0u,
+    @get:JvmName("getCount")
+    var count: UInt = 0u
+)
+```
+
+To also treat their values as unsigned in queries and indexes,
+add the [`@Unsigned` annotation](entity-annotations.md#unsigned-integers).
 {% endtab %}
 
 {% tab title="Dart" %}

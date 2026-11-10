@@ -699,6 +699,21 @@ var unsignedInteger: Int = 0
 @Unsigned
 var unsignedLong: Long = 0
 ```
+
+To also read and write the values as unsigned in Kotlin, consider using the matching
+[Kotlin unsigned integer types](https://kotlinlang.org/docs/unsigned-integer-types.html) (`UByte`, `UShort`, `UInt`, `ULong`).
+As these are inline value classes, their getter names are "mangled" by default,
+so explicitly name them with `@get:JvmName` to make them usable from the generated Java code:
+
+```kotlin
+@Unsigned
+@get:JvmName("getUnsignedInt")
+var unsignedInt: UInt = 0u
+
+@Unsigned
+@get:JvmName("getUnsignedLong")
+var unsignedLong: ULong = 0u
+```
 {% endtab %}
 
 {% tab title="Dart" %}
